@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rotem Zacaim | Cyber Security</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --bg-dark: #050505;
+            --glass-bg: rgba(20, 20, 30, 0.75);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --accent-primary: #00f3ff; /* Cyber Cyan */
+            --accent-secondary: #bd00ff; /* Neon Purple */
+            --text-main: #ffffff;
+            --text-muted: #8b9bb4;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+            padding: 20px;
+        }
+
+        #particles-js {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1;
+            background: radial-gradient(circle at center, #1a1a2e 0%, #000000 100%);
+        }
+
+        /* --- Grid Layout --- */
+        .dashboard-grid {
+            position: relative;
+            z-index: 10;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-template-rows: auto auto;
+            gap: 20px;
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        /* --- Card Styles --- */
+        .card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            transition: all 0.3s ease;
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card:hover { border-color: rgba(0, 243, 255, 0.3); box-shadow: 0 0 20px rgba(0, 243, 255, 0.1); }
+
+        /* --- Profile Area --- */
+        .area-profile {
+            grid-column: span 2;
+            justify-content: center;
+        }
+        .status-pill {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: rgba(0, 243, 255, 0.1); border: 1px solid rgba(0, 243, 255, 0.3);
+            color: var(--accent-primary); padding: 6px 14px; border-radius: 50px;
+            font-size: 0.75rem; font-weight: 600; width: fit-content; margin-bottom: 15px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .status-dot { width: 8px; height: 8px; background: var(--accent-primary); border-radius: 50%; animation: pulse 2s infinite; }
+        h1 { font-size: 3rem; font-weight: 800; line-height: 1; margin-bottom: 10px; letter-spacing: -1px; }
+        h2 { font-size: 1.1rem; color: var(--text-muted); font-weight: 400; margin-bottom: 10px; }
+        .role-highlight { color: var(--accent-secondary); font-weight: 600; }
+
+        /* --- Terminal Area --- */
+        .area-terminal {
+            grid-column: span 2;
+            background: rgba(0, 0, 0, 0.6);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            border-left: 3px solid var(--accent-primary);
+            min-height: 180px;
+        }
+        .terminal-header { display: flex; gap: 6px; margin-bottom: 15px; opacity: 0.5; }
+        .dot { width: 10px; height: 10px; border-radius: 50%; background: #fff; }
+        .cmd-line { color: var(--text-muted); }
+        .cmd-input { color: var(--accent-primary); }
+        .cmd-output { color: #fff; line-height: 1.5; }
+
+        /* --- Experience Area --- */
+        .area-exp {
+            grid-column: span 3;
+        }
+        .section-title {
+            font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1.5px;
+            color: var(--text-muted); margin-bottom: 20px; display: flex; align-items: center; gap: 10px;
+            flex-shrink: 0;
+        }
+        .section-title i { color: var(--accent-primary); }
+        
+        .timeline-item {
+            display: flex; gap: 15px; margin-bottom: 20px;
+            border-left: 2px solid rgba(255, 255, 255, 0.1); padding-left: 20px;
+        }
+        .timeline-content h4 { font-size: 1rem; color: #fff; }
+        .timeline-content span { font-size: 0.8rem; color: var(--accent-primary); display: block; margin-bottom: 5px; }
+        .timeline-content p { font-size: 0.9rem; color: var(--text-muted); line-height: 1.5; }
+
+        /* --- Arsenal (Scrollable Stack) --- */
+        .area-stack {
+            grid-column: span 1;
+            max-height: 480px;
+            padding-right: 15px;
+        }
+        
+        .scroll-bubble {
+            overflow-y: auto;
+            height: 100%;
+            padding-right: 10px;
+            scrollbar-width: thin;
+            scrollbar-color: var(--accent-primary) rgba(255,255,255,0.05);
+        }
+
+        .scroll-bubble::-webkit-scrollbar { width: 5px; }
+        .scroll-bubble::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); border-radius: 10px; }
+        .scroll-bubble::-webkit-scrollbar-thumb { background: var(--accent-primary); border-radius: 10px; box-shadow: 0 0 10px var(--accent-primary); }
+
+        .tech-category {
+            font-size: 0.75rem; color: var(--text-muted);
+            margin: 15px 0 8px 0; text-transform: uppercase; letter-spacing: 1px;
+            border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 4px;
+        }
+        .tech-category:first-child { margin-top: 0; }
+
+        .tech-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+        
+        .tech-tag {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #ccc; padding: 6px 10px; border-radius: 6px;
+            font-size: 0.75rem; font-weight: 500; transition: 0.2s; cursor: default;
+        }
+        .tech-tag:hover {
+            border-color: var(--accent-primary); color: var(--accent-primary);
+            background: rgba(0, 243, 255, 0.05); transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 243, 255, 0.1);
+        }
+
+        /* --- Actions --- */
+        .area-actions {
+            grid-column: span 4; display: flex; gap: 15px; margin-top: 5px;
+        }
+        .action-btn {
+            flex: 1; display: flex; align-items: center; justify-content: center; gap: 10px;
+            padding: 16px; border-radius: 16px; text-decoration: none; font-weight: 600;
+            transition: all 0.3s; border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .btn-linkedin { background: rgba(0, 119, 181, 0.1); color: #0077b5; }
+        .btn-linkedin:hover { background: #0077b5; color: #fff; box-shadow: 0 0 30px rgba(0, 119, 181, 0.4); }
+        .btn-github { background: rgba(255, 255, 255, 0.05); color: #fff; }
+        .btn-github:hover { background: #fff; color: #000; box-shadow: 0 0 30px rgba(255, 255, 255, 0.3); }
+        .btn-email { background: rgba(234, 67, 53, 0.1); color: #ea4335; }
+        .btn-email:hover { background: #ea4335; color: #fff; box-shadow: 0 0 30px rgba(234, 67, 53, 0.4); }
+
+        @keyframes pulse { 0% { opacity: 1; box-shadow: 0 0 0 0 rgba(0, 243, 255, 0.4); } 70% { opacity: 0.7; box-shadow: 0 0 0 10px rgba(0, 243, 255, 0); } 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(0, 243, 255, 0); } }
+
+        @media (max-width: 850px) {
+            .dashboard-grid { display: flex; flex-direction: column; }
+            .area-stack { max-height: 300px; }
+            .area-actions { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="particles-js"></div>
+
+    <div class="dashboard-grid">
+
+        <div class="card area-profile" data-tilt data-tilt-max="5" data-tilt-speed="400">
+            <div class="status-pill"><div class="status-dot"></div> ACTIVE DEFENDER</div>
+            <h1>Rotem Zacaim</h1>
+            <h2>Cyber Security <span class="role-highlight">Analyst</span></h2>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">
+                Information Security Analyst & Infrastructure Operations at National Digital Agency. Expert in SIEM (Splunk), Infrastructure Security, and End-to-End Troubleshooting.
+            </p>
+        </div>
+
+        <div class="card area-terminal" data-tilt data-tilt-max="3" data-tilt-speed="400">
+            <div class="terminal-header">
+                <div class="dot" style="background:#ff5f56"></div>
+                <div class="dot" style="background:#ffbd2e"></div>
+                <div class="dot" style="background:#27c93f"></div>
+            </div>
+            <div id="typewriter"></div>
+        </div>
+
+        <div class="card area-exp" data-tilt data-tilt-max="3">
+            <div class="section-title"><i class="fas fa-shield-alt"></i> National Digital Agency</div>
+            
+            <div class="timeline-item">
+                <div class="timeline-content">
+                    <h4>Security Products</h4>
+                    <span>FW / WAF / PAM</span>
+                    <p>Hands-on experience with: <strong>CheckPoint (FW), Imperva, F5, IPS/IDS, CyberArk, IronPort, Blue-AV, FireGlass, Cloudflare</strong>.</p>
+                </div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="timeline-content">
+                    <h4>SIEM & Log Analysis</h4>
+                    <span>Splunk Operations</span>
+                    <p>Daily use of <strong>SIEM (Splunk)</strong> for log analysis, network traffic investigation, and troubleshooting.</p>
+                </div>
+            </div>
+
+            <div class="timeline-item" style="border:none; margin:0;">
+                <div class="timeline-content">
+                    <h4>Web & SSL Infrastructure</h4>
+                    <span>Troubleshooting & Hosting</span>
+                    <p>Managing <strong>SSL certificates</strong> (IIS, LB), API Gateways (DataPower), and solving web hosting issues (performance/availability).</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="card area-stack" data-tilt data-tilt-max="5">
+            <div class="section-title"><i class="fas fa-layer-group"></i> Full Arsenal</div>
+            
+            <div class="scroll-bubble">
+                
+                <div class="tech-category">Security Core</div>
+                <div class="tech-grid">
+                    <div class="tech-tag">Splunk</div>
+                    <div class="tech-tag">CheckPoint</div>
+                    <div class="tech-tag">Imperva</div>
+                    <div class="tech-tag">F5 LTM/WAF</div>
+                    <div class="tech-tag">CyberArk</div>
+                    <div class="tech-tag">IronPort</div>
+                    <div class="tech-tag">FireGlass</div>
+                    <div class="tech-tag">Cloudflare</div>
+                    <div class="tech-tag">Blue-AV</div>
+                    <div class="tech-tag">IPS/IDS</div>
+                </div>
+
+                <div class="tech-category">Infrastructure & Cloud</div>
+                <div class="tech-grid">
+                    <div class="tech-tag">Linux (Kali)</div>
+                    <div class="tech-tag">Windows Server</div>
+                    <div class="tech-tag">VMware vSphere</div>
+                    <div class="tech-tag">AWS</div>
+                    <div class="tech-tag">GCP</div>
+                    <div class="tech-tag">DataPower</div>
+                    <div class="tech-tag">IIS</div>
+                </div>
+
+                <div class="tech-category">Monitoring</div>
+                <div class="tech-grid">
+                    <div class="tech-tag">Dynatrace</div>
+                    <div class="tech-tag">SCOM</div>
+                    <div class="tech-tag">Nimsoft</div>
+                    <div class="tech-tag">Montier</div>
+                    <div class="tech-tag">ELK Stack</div>
+                    <div class="tech-tag">PRTG</div>
+                </div>
+
+                <div class="tech-category">Networking & Protocols</div>
+                <div class="tech-grid">
+                    <div class="tech-tag">TCP/IP</div>
+                    <div class="tech-tag">DNS/DHCP</div>
+                    <div class="tech-tag">HTTP/S</div>
+                    <div class="tech-tag">SSL/TLS</div>
+                    <div class="tech-tag">VPN</div>
+                    <div class="tech-tag">Routing</div>
+                    <div class="tech-tag">Wireshark</div>
+                </div>
+
+                <div class="tech-category">Dev & Tools</div>
+                <div class="tech-grid">
+                    <div class="tech-tag">Python</div>
+                    <div class="tech-tag">SQL</div>
+                    <div class="tech-tag">HTML5/JS</div>
+                    <div class="tech-tag">Jira</div>
+                    <div class="tech-tag">ServiceNow</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="area-actions">
+            <a href="https://www.linkedin.com/in/rotem-zacaim-b4a709223" target="_blank" class="action-btn btn-linkedin">
+                <i class="fab fa-linkedin-in"></i> LinkedIn
+            </a>
+            <a href="https://github.com/rotem-zacaim" target="_blank" class="action-btn btn-github">
+                <i class="fab fa-github"></i> GitHub
+            </a>
+            <a href="mailto:Rotemvnkll@gmail.com" class="action-btn btn-email">
+                <i class="fas fa-envelope"></i> Email Me
+            </a>
+        </div>
+
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.7.0/vanilla-tilt.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script>
+        particlesJS("particles-js", {
+            "particles": {
+                "number": { "value": 80 },
+                "color": { "value": "#00f3ff" },
+                "shape": { "type": "circle" },
+                "opacity": { "value": 0.5, "random": true },
+                "size": { "value": 3, "random": true },
+                "line_linked": { "enable": true, "distance": 150, "color": "#00f3ff", "opacity": 0.15, "width": 1 },
+                "move": { "enable": true, "speed": 1.5, "direction": "none", "random": false, "out_mode": "out" }
+            },
+            "interactivity": {
+                "detect_on": "canvas",
+                "events": { "onhover": { "enable": true, "mode": "grab" }, "onclick": { "enable": true, "mode": "push" } },
+                "modes": { "grab": { "distance": 140, "line_linked": { "opacity": 0.6 } } }
+            }
+        });
+
+        const terminalText = [
+            "<span class='cmd-line'>user@rotem-pc:~$</span> <span class='cmd-input'>whoami</span><br>",
+            "<span class='cmd-output'>Rotem Zacaim, Cyber Security Analyst.</span><br><br>",
+            "<span class='cmd-line'>user@rotem-pc:~$</span> <span class='cmd-input'>cat skills.txt</span><br>",
+            "<span class='cmd-output'>Loading full arsenal... Done.</span><br><br>",
+            "<span class='cmd-line'>user@rotem-pc:~$</span> <span class='cmd-input'>./status_check.sh</span><br>",
+            "<span class='cmd-output' style='color:#00f3ff'>[SYSTEM] All Systems Operational.<br>[SYSTEM] Ready for challenges.</span><span class='status-dot' style='display:inline-block; margin-left:5px'></span>"
+        ];
+
+        let lineIndex = 0;
+        let charIndex = 0;
+        const element = document.getElementById("typewriter");
+        let currentHTML = "";
+
+        function typeWriter() {
+            if (lineIndex < terminalText.length) {
+                const line = terminalText[lineIndex];
+                element.innerHTML = currentHTML + line.substring(0, charIndex);
+                if (charIndex < line.length) {
+                    charIndex++;
+                    setTimeout(typeWriter, 20);
+                } else {
+                    currentHTML += line;
+                    lineIndex++;
+                    charIndex = 0;
+                    setTimeout(typeWriter, 300);
+                }
+            }
+        }
+        setTimeout(typeWriter, 1000);
+    </script>
+</body>
+</html>
