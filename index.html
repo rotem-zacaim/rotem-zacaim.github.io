@@ -3,366 +3,749 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rotem Zacaim | Cyber Security</title>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <style>
-        :root {
-            --bg-dark: #050505;
-            --glass-bg: rgba(20, 20, 30, 0.75);
-            --glass-border: rgba(255, 255, 255, 0.08);
-            --accent-primary: #00f3ff; /* Cyber Cyan */
-            --accent-secondary: #bd00ff; /* Neon Purple */
-            --text-main: #ffffff;
-            --text-muted: #8b9bb4;
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-
-        body {
-            background-color: var(--bg-dark);
-            color: var(--text-main);
-            font-family: 'Inter', sans-serif;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow-x: hidden;
-            padding: 20px;
-        }
-
-        #particles-js {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1;
-            background: radial-gradient(circle at center, #1a1a2e 0%, #000000 100%);
-        }
-
-        /* --- Grid Layout --- */
-        .dashboard-grid {
-            position: relative;
-            z-index: 10;
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            grid-template-rows: auto auto;
-            gap: 20px;
-            max-width: 1200px;
-            width: 100%;
-        }
-
-        /* --- Card Styles --- */
-        .card {
-            background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border);
-            border-radius: 24px;
-            padding: 25px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
-            transition: all 0.3s ease;
-            overflow: hidden;
-            position: relative;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .card:hover { border-color: rgba(0, 243, 255, 0.3); box-shadow: 0 0 20px rgba(0, 243, 255, 0.1); }
-
-        /* --- Profile Area --- */
-        .area-profile {
-            grid-column: span 2;
-            justify-content: center;
-        }
-        .status-pill {
-            display: inline-flex; align-items: center; gap: 8px;
-            background: rgba(0, 243, 255, 0.1); border: 1px solid rgba(0, 243, 255, 0.3);
-            color: var(--accent-primary); padding: 6px 14px; border-radius: 50px;
-            font-size: 0.75rem; font-weight: 600; width: fit-content; margin-bottom: 15px;
-            font-family: 'JetBrains Mono', monospace;
-        }
-        .status-dot { width: 8px; height: 8px; background: var(--accent-primary); border-radius: 50%; animation: pulse 2s infinite; }
-        h1 { font-size: 3rem; font-weight: 800; line-height: 1; margin-bottom: 10px; letter-spacing: -1px; }
-        h2 { font-size: 1.1rem; color: var(--text-muted); font-weight: 400; margin-bottom: 10px; }
-        .role-highlight { color: var(--accent-secondary); font-weight: 600; }
-
-        /* --- Terminal Area --- */
-        .area-terminal {
-            grid-column: span 2;
-            background: rgba(0, 0, 0, 0.6);
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.85rem;
-            border-left: 3px solid var(--accent-primary);
-            min-height: 180px;
-        }
-        .terminal-header { display: flex; gap: 6px; margin-bottom: 15px; opacity: 0.5; }
-        .dot { width: 10px; height: 10px; border-radius: 50%; background: #fff; }
-        .cmd-line { color: var(--text-muted); }
-        .cmd-input { color: var(--accent-primary); }
-        .cmd-output { color: #fff; line-height: 1.5; }
-
-        /* --- Experience Area --- */
-        .area-exp {
-            grid-column: span 3;
-        }
-        .section-title {
-            font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1.5px;
-            color: var(--text-muted); margin-bottom: 20px; display: flex; align-items: center; gap: 10px;
-            flex-shrink: 0;
-        }
-        .section-title i { color: var(--accent-primary); }
-        
-        .timeline-item {
-            display: flex; gap: 15px; margin-bottom: 20px;
-            border-left: 2px solid rgba(255, 255, 255, 0.1); padding-left: 20px;
-        }
-        .timeline-content h4 { font-size: 1rem; color: #fff; }
-        .timeline-content span { font-size: 0.8rem; color: var(--accent-primary); display: block; margin-bottom: 5px; }
-        .timeline-content p { font-size: 0.9rem; color: var(--text-muted); line-height: 1.5; }
-
-        /* --- Arsenal (Scrollable Stack) --- */
-        .area-stack {
-            grid-column: span 1;
-            max-height: 480px;
-            padding-right: 15px;
-        }
-        
-        .scroll-bubble {
-            overflow-y: auto;
-            height: 100%;
-            padding-right: 10px;
-            scrollbar-width: thin;
-            scrollbar-color: var(--accent-primary) rgba(255,255,255,0.05);
-        }
-
-        .scroll-bubble::-webkit-scrollbar { width: 5px; }
-        .scroll-bubble::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); border-radius: 10px; }
-        .scroll-bubble::-webkit-scrollbar-thumb { background: var(--accent-primary); border-radius: 10px; box-shadow: 0 0 10px var(--accent-primary); }
-
-        .tech-category {
-            font-size: 0.75rem; color: var(--text-muted);
-            margin: 15px 0 8px 0; text-transform: uppercase; letter-spacing: 1px;
-            border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 4px;
-        }
-        .tech-category:first-child { margin-top: 0; }
-
-        .tech-grid { display: flex; flex-wrap: wrap; gap: 8px; }
-        
-        .tech-tag {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: #ccc; padding: 6px 10px; border-radius: 6px;
-            font-size: 0.75rem; font-weight: 500; transition: 0.2s; cursor: default;
-        }
-        .tech-tag:hover {
-            border-color: var(--accent-primary); color: var(--accent-primary);
-            background: rgba(0, 243, 255, 0.05); transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(0, 243, 255, 0.1);
-        }
-
-        /* --- Actions --- */
-        .area-actions {
-            grid-column: span 4; display: flex; gap: 15px; margin-top: 5px;
-        }
-        .action-btn {
-            flex: 1; display: flex; align-items: center; justify-content: center; gap: 10px;
-            padding: 16px; border-radius: 16px; text-decoration: none; font-weight: 600;
-            transition: all 0.3s; border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        .btn-linkedin { background: rgba(0, 119, 181, 0.1); color: #0077b5; }
-        .btn-linkedin:hover { background: #0077b5; color: #fff; box-shadow: 0 0 30px rgba(0, 119, 181, 0.4); }
-        .btn-github { background: rgba(255, 255, 255, 0.05); color: #fff; }
-        .btn-github:hover { background: #fff; color: #000; box-shadow: 0 0 30px rgba(255, 255, 255, 0.3); }
-        .btn-email { background: rgba(234, 67, 53, 0.1); color: #ea4335; }
-        .btn-email:hover { background: #ea4335; color: #fff; box-shadow: 0 0 30px rgba(234, 67, 53, 0.4); }
-
-        @keyframes pulse { 0% { opacity: 1; box-shadow: 0 0 0 0 rgba(0, 243, 255, 0.4); } 70% { opacity: 0.7; box-shadow: 0 0 0 10px rgba(0, 243, 255, 0); } 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(0, 243, 255, 0); } }
-
-        @media (max-width: 850px) {
-            .dashboard-grid { display: flex; flex-direction: column; }
-            .area-stack { max-height: 300px; }
-            .area-actions { flex-direction: column; }
-        }
-    </style>
+    <meta
+        name="description"
+        content="Rotem Zacaim is an Information Security Analyst at the National Digital Agency focused on SIEM investigations, security tooling, and web infrastructure resilience."
+    >
+    <meta name="robots" content="index, follow">
+    <meta name="theme-color" content="#0b1220">
+    <meta name="color-scheme" content="dark">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://rotem-zacaim.github.io/">
+    <meta property="og:title" content="Rotem Zacaim | Security Operations & Infrastructure">
+    <meta
+        property="og:description"
+        content="Information Security Analyst working across Splunk investigations, edge security products, SSL and gateway troubleshooting, and operator-focused tooling."
+    >
+    <meta property="og:site_name" content="Rotem Zacaim">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Rotem Zacaim | Security Operations & Infrastructure">
+    <meta
+        name="twitter:description"
+        content="Information Security Analyst working across Splunk investigations, edge security products, SSL and gateway troubleshooting, and operator-focused tooling."
+    >
+    <title>Rotem Zacaim | Security Operations & Infrastructure</title>
+    <link rel="canonical" href="https://rotem-zacaim.github.io/">
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Space+Grotesk:wght@400;500;700&display=swap"
+        rel="stylesheet"
+    >
+    <link rel="stylesheet" href="styles.css">
+    <script defer src="script.js"></script>
 </head>
 <body>
+    <a class="skip-link" href="#main-content">Skip to content</a>
+    <div class="background-glow background-glow-left" aria-hidden="true"></div>
+    <div class="background-glow background-glow-right" aria-hidden="true"></div>
+    <div class="scanline-layer" aria-hidden="true"></div>
+    <canvas class="ambient-canvas" aria-hidden="true"></canvas>
 
-    <div id="particles-js"></div>
+    <div class="site-shell">
+        <header class="topbar" id="home">
+            <a class="brand" href="#home">Rotem Zacaim</a>
+            <nav class="topnav" aria-label="Primary">
+                <a href="#overview">Overview</a>
+                <a href="#expertise">Expertise</a>
+                <a href="#workflow">Workflow</a>
+                <a href="#builds">Builds</a>
+                <a href="#experience">Experience</a>
+                <a href="#toolkit">Toolkit</a>
+                <a href="#contact">Contact</a>
+            </nav>
+            <a class="topbar-link" href="mailto:rotemvnkll@gmail.com">Let's connect</a>
+        </header>
 
-    <div class="dashboard-grid">
+        <main id="main-content">
+            <section class="hero section" id="overview">
+                <div class="hero-copy" data-reveal>
+                    <p class="eyebrow">Security operations for public-sector platforms</p>
+                    <h1>Security work that keeps critical systems protected and available.</h1>
+                    <p class="lead">
+                        I'm Rotem Zacaim, an Information Security Analyst at the National Digital Agency working
+                        across Splunk investigations, perimeter security products, SSL and gateway troubleshooting,
+                        and operator-focused tooling for production environments.
+                    </p>
 
-        <div class="card area-profile" data-tilt data-tilt-max="5" data-tilt-speed="400">
-            <div class="status-pill"><div class="status-dot"></div> ACTIVE DEFENDER</div>
-            <h1>Rotem Zacaim</h1>
-            <h2>Cyber Security <span class="role-highlight">Analyst</span></h2>
-            <p style="color: var(--text-muted); font-size: 0.9rem;">
-                Information Security Analyst & Infrastructure Operations at National Digital Agency. Expert in SIEM (Splunk), Infrastructure Security, and End-to-End Troubleshooting.
-            </p>
-        </div>
+                    <ul class="hero-proof" aria-label="Current focus">
+                        <li>National Digital Agency</li>
+                        <li>Public-sector production systems</li>
+                        <li>SIEM, edge security, and tooling workflows</li>
+                    </ul>
 
-        <div class="card area-terminal" data-tilt data-tilt-max="3" data-tilt-speed="400">
-            <div class="terminal-header">
-                <div class="dot" style="background:#ff5f56"></div>
-                <div class="dot" style="background:#ffbd2e"></div>
-                <div class="dot" style="background:#27c93f"></div>
-            </div>
-            <div id="typewriter"></div>
-        </div>
+                    <div class="hero-actions">
+                        <a class="button button-primary" href="#builds">View builds</a>
+                        <a
+                            class="button button-secondary"
+                            href="https://github.com/rotem-zacaim"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            Open GitHub
+                        </a>
+                    </div>
 
-        <div class="card area-exp" data-tilt data-tilt-max="3">
-            <div class="section-title"><i class="fas fa-shield-alt"></i> National Digital Agency</div>
-            
-            <div class="timeline-item">
-                <div class="timeline-content">
-                    <h4>Security Products</h4>
-                    <span>FW / WAF / PAM</span>
-                    <p>Hands-on experience with: <strong>CheckPoint (FW), Imperva, F5, IPS/IDS, CyberArk, IronPort, Blue-AV, FireGlass, Cloudflare</strong>.</p>
-                </div>
-            </div>
-
-            <div class="timeline-item">
-                <div class="timeline-content">
-                    <h4>SIEM & Log Analysis</h4>
-                    <span>Splunk Operations</span>
-                    <p>Daily use of <strong>SIEM (Splunk)</strong> for log analysis, network traffic investigation, and troubleshooting.</p>
-                </div>
-            </div>
-
-            <div class="timeline-item" style="border:none; margin:0;">
-                <div class="timeline-content">
-                    <h4>Web & SSL Infrastructure</h4>
-                    <span>Troubleshooting & Hosting</span>
-                    <p>Managing <strong>SSL certificates</strong> (IIS, LB), API Gateways (DataPower), and solving web hosting issues (performance/availability).</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="card area-stack" data-tilt data-tilt-max="5">
-            <div class="section-title"><i class="fas fa-layer-group"></i> Full Arsenal</div>
-            
-            <div class="scroll-bubble">
-                
-                <div class="tech-category">Security Core</div>
-                <div class="tech-grid">
-                    <div class="tech-tag">Splunk</div>
-                    <div class="tech-tag">CheckPoint</div>
-                    <div class="tech-tag">Imperva</div>
-                    <div class="tech-tag">F5 LTM/WAF</div>
-                    <div class="tech-tag">CyberArk</div>
-                    <div class="tech-tag">IronPort</div>
-                    <div class="tech-tag">FireGlass</div>
-                    <div class="tech-tag">Cloudflare</div>
-                    <div class="tech-tag">Blue-AV</div>
-                    <div class="tech-tag">IPS/IDS</div>
+                    <ul class="hero-tags" aria-label="Core strengths">
+                        <li>Splunk investigations</li>
+                        <li>Perimeter security</li>
+                        <li>SSL and gateway operations</li>
+                        <li>Infrastructure troubleshooting</li>
+                        <li>Python tooling</li>
+                    </ul>
                 </div>
 
-                <div class="tech-category">Infrastructure & Cloud</div>
-                <div class="tech-grid">
-                    <div class="tech-tag">Linux (Kali)</div>
-                    <div class="tech-tag">Windows Server</div>
-                    <div class="tech-tag">VMware vSphere</div>
-                    <div class="tech-tag">AWS</div>
-                    <div class="tech-tag">GCP</div>
-                    <div class="tech-tag">DataPower</div>
-                    <div class="tech-tag">IIS</div>
+                <aside class="hero-panel">
+                    <div class="command-card card" data-reveal>
+                        <div class="panel-topline">
+                            <span class="status-pill">Live operator profile</span>
+                            <span class="panel-label">Signal to action</span>
+                        </div>
+
+                        <div class="console-shell" aria-label="Operator snapshot">
+                            <div class="console-chrome">
+                                <div class="console-dots" aria-hidden="true">
+                                    <span></span>
+                                    <span></span>
+                                    <span></span>
+                                </div>
+                                <p class="console-path">ops://rotem/live-profile</p>
+                            </div>
+
+                            <div class="console-body">
+                                <p class="console-line"><span class="console-prompt">&gt;</span> profile.load()</p>
+                                <p class="console-output">Security analyst focused on SIEM, infrastructure resilience, and operator tooling.</p>
+                                <p class="console-line"><span class="console-prompt">&gt;</span> current_scope --active</p>
+                                <p class="console-output">Public sector systems, web platforms, certificates, gateways, and layered controls.</p>
+                                <p class="console-line"><span class="console-prompt">&gt;</span> mode</p>
+                                <p class="console-output accent-output">observe / validate / stabilize / report</p>
+                            </div>
+                        </div>
+
+                        <div class="hero-stat-grid" aria-label="Primary lanes">
+                            <article class="hero-stat">
+                                <p class="hero-stat-value">01</p>
+                                <p class="hero-stat-copy">Detection and analysis through Splunk, traffic review, and incident-driven workflows.</p>
+                            </article>
+                            <article class="hero-stat">
+                                <p class="hero-stat-value">02</p>
+                                <p class="hero-stat-copy">Security products across firewall, WAF, PAM, and edge-facing service layers.</p>
+                            </article>
+                            <article class="hero-stat">
+                                <p class="hero-stat-value">03</p>
+                                <p class="hero-stat-copy">Web troubleshooting across SSL, gateways, hosting, and service continuity.</p>
+                            </article>
+                        </div>
+                    </div>
+
+                    <div class="visual-deck">
+                        <div class="visual-card card" data-reveal>
+                            <div class="visual-radar" aria-hidden="true">
+                                <div class="radar-ring radar-ring-one"></div>
+                                <div class="radar-ring radar-ring-two"></div>
+                                <div class="radar-ring radar-ring-three"></div>
+                                <div class="radar-sweep"></div>
+                                <span class="radar-node radar-node-one"></span>
+                                <span class="radar-node radar-node-two"></span>
+                                <span class="radar-node radar-node-three"></span>
+                                <span class="radar-node radar-node-four"></span>
+                                <div class="radar-core"></div>
+                            </div>
+
+                            <div class="visual-copy">
+                                <p class="visual-kicker">Live focus</p>
+                                <p class="visual-title">Signal, analysis, stabilization.</p>
+                                <p class="visual-text">
+                                    The work lives where monitoring, security tooling, and platform operations overlap.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="system-card card" data-reveal>
+                            <div class="system-card-header">
+                                <p class="visual-kicker">System lanes</p>
+                                <p class="system-badge">Nominal</p>
+                            </div>
+
+                            <div class="system-list" aria-label="Current lanes">
+                                <div class="system-row">
+                                    <span>SIEM investigations</span>
+                                    <strong>online</strong>
+                                </div>
+                                <div class="system-row">
+                                    <span>WAF / perimeter tools</span>
+                                    <strong>active</strong>
+                                </div>
+                                <div class="system-row">
+                                    <span>SSL and gateway work</span>
+                                    <strong>stable</strong>
+                                </div>
+                                <div class="system-row">
+                                    <span>Operator tooling builds</span>
+                                    <strong>expanding</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </aside>
+            </section>
+
+            <section class="signal-strip" aria-label="Core capability stream" data-reveal>
+                <div class="signal-track">
+                    <div class="signal-group">
+                        <span>Splunk</span>
+                        <span>Check Point</span>
+                        <span>Imperva</span>
+                        <span>F5 WAF</span>
+                        <span>CyberArk</span>
+                        <span>Cloudflare</span>
+                        <span>DataPower</span>
+                        <span>SSL / TLS</span>
+                        <span>IIS</span>
+                        <span>Python tooling</span>
+                        <span>Recon workflows</span>
+                    </div>
+                    <div class="signal-group" aria-hidden="true">
+                        <span>Splunk</span>
+                        <span>Check Point</span>
+                        <span>Imperva</span>
+                        <span>F5 WAF</span>
+                        <span>CyberArk</span>
+                        <span>Cloudflare</span>
+                        <span>DataPower</span>
+                        <span>SSL / TLS</span>
+                        <span>IIS</span>
+                        <span>Python tooling</span>
+                        <span>Recon workflows</span>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section" id="expertise">
+                <div class="section-heading" data-reveal>
+                    <p class="eyebrow">What I do</p>
+                    <h2>Security work that bridges operations, infrastructure, and response.</h2>
+                    <p class="section-copy">
+                        My focus sits at the point where security visibility, platform reliability, and incident-driven
+                        troubleshooting meet.
+                    </p>
                 </div>
 
-                <div class="tech-category">Monitoring</div>
-                <div class="tech-grid">
-                    <div class="tech-tag">Dynatrace</div>
-                    <div class="tech-tag">SCOM</div>
-                    <div class="tech-tag">Nimsoft</div>
-                    <div class="tech-tag">Montier</div>
-                    <div class="tech-tag">ELK Stack</div>
-                    <div class="tech-tag">PRTG</div>
+                <div class="feature-grid">
+                    <article class="feature-card card" data-reveal>
+                        <p class="feature-index">01</p>
+                        <h3>SIEM and investigation workflows</h3>
+                        <p>
+                            Daily hands-on work with Splunk for event triage, log correlation, network traffic analysis,
+                            and operational troubleshooting.
+                        </p>
+                    </article>
+
+                    <article class="feature-card card" data-reveal>
+                        <p class="feature-index">02</p>
+                        <h3>Security product operations</h3>
+                        <p>
+                            Experience supporting firewall, WAF, PAM, email, browser isolation, and layered defense
+                            solutions in production environments.
+                        </p>
+                    </article>
+
+                    <article class="feature-card card" data-reveal>
+                        <p class="feature-index">03</p>
+                        <h3>Web infrastructure troubleshooting</h3>
+                        <p>
+                            Solving issues around SSL certificates, API gateways, IIS hosting, load balancing, and
+                            performance or availability degradations.
+                        </p>
+                    </article>
+                </div>
+            </section>
+
+            <section class="section workflow-section" id="workflow">
+                <div class="section-heading" data-reveal>
+                    <p class="eyebrow">Operator loop</p>
+                    <h2>From first signal to something a team can actually act on.</h2>
+                    <p class="section-copy">
+                        The strongest work is not just spotting issues. It's turning noise into decisions,
+                        remediation paths, and repeatable operational clarity.
+                    </p>
                 </div>
 
-                <div class="tech-category">Networking & Protocols</div>
-                <div class="tech-grid">
-                    <div class="tech-tag">TCP/IP</div>
-                    <div class="tech-tag">DNS/DHCP</div>
-                    <div class="tech-tag">HTTP/S</div>
-                    <div class="tech-tag">SSL/TLS</div>
-                    <div class="tech-tag">VPN</div>
-                    <div class="tech-tag">Routing</div>
-                    <div class="tech-tag">Wireshark</div>
+                <div class="workflow-shell card" data-reveal>
+                    <div class="workflow-summary">
+                        <p class="workflow-kicker">Execution model</p>
+                        <h3>Collect clearly. Validate fast. Stabilize deliberately.</h3>
+                        <p>
+                            Whether the problem starts as a noisy alert, a broken certificate chain, or suspicious
+                            web behavior, the goal is the same: produce a reliable picture and move the system back
+                            toward control.
+                        </p>
+                    </div>
+
+                    <div class="workflow-grid">
+                        <article class="workflow-step">
+                            <p class="workflow-step-index">01</p>
+                            <h4>Collect</h4>
+                            <p>Pull evidence from logs, network behavior, platform context, and available telemetry.</p>
+                        </article>
+
+                        <article class="workflow-step">
+                            <p class="workflow-step-index">02</p>
+                            <h4>Validate</h4>
+                            <p>Correlate findings across security controls, infrastructure components, and application flow.</p>
+                        </article>
+
+                        <article class="workflow-step">
+                            <p class="workflow-step-index">03</p>
+                            <h4>Stabilize</h4>
+                            <p>Resolve the issue without losing sight of service continuity, scope, and production risk.</p>
+                        </article>
+
+                        <article class="workflow-step">
+                            <p class="workflow-step-index">04</p>
+                            <h4>Package</h4>
+                            <p>Turn technical detail into usable reporting, evidence, and next actions for the team.</p>
+                        </article>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section" id="builds">
+                <div class="section-heading" data-reveal>
+                    <p class="eyebrow">Selected builds</p>
+                    <h2>Security tools I've built for structured, operator-friendly workflows.</h2>
+                    <p class="section-copy">
+                        A selection of public projects focused on authorized reconnaissance, evidence collection,
+                        and practical visibility for security work.
+                    </p>
                 </div>
 
-                <div class="tech-category">Dev & Tools</div>
-                <div class="tech-grid">
-                    <div class="tech-tag">Python</div>
-                    <div class="tech-tag">SQL</div>
-                    <div class="tech-tag">HTML5/JS</div>
-                    <div class="tech-tag">Jira</div>
-                    <div class="tech-tag">ServiceNow</div>
+                <div class="build-grid">
+                    <article class="build-card card" data-reveal>
+                        <div class="build-header">
+                            <div>
+                                <p class="build-kicker">Python · Active public repo</p>
+                                <h3>ZACAIM</h3>
+                            </div>
+                            <a
+                                class="build-link"
+                                href="https://github.com/rotem-zacaim/Zacaim-WiFi-Tool"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                Open repo
+                            </a>
+                        </div>
+
+                        <p class="build-copy">
+                            A terminal-first operator workbench for authorized host discovery, web reconnaissance,
+                            evidence capture, engagement tracking, and Markdown or JSON reporting.
+                        </p>
+
+                        <ul class="build-points">
+                            <li>Interactive terminal dashboard with guided host and web recon flows.</li>
+                            <li>Profile-driven pipelines for safe, standard, and deeper collection paths.</li>
+                            <li>Session artifacts, notes, evidence capture, and structured reports in one workflow.</li>
+                        </ul>
+
+                        <div class="chip-group">
+                            <span>Python 3.11+</span>
+                            <span>CLI workbench</span>
+                            <span>Recon workflows</span>
+                            <span>Evidence capture</span>
+                            <span>JSON / Markdown reports</span>
+                        </div>
+                    </article>
+
+                    <article class="build-card card" data-reveal>
+                        <div class="build-header">
+                            <div>
+                                <p class="build-kicker">Python · GUI scanner</p>
+                                <h3>ROTEMZ Web Security Scanner</h3>
+                            </div>
+                            <a
+                                class="build-link"
+                                href="https://github.com/rotem-zacaim/ROTEMZ-Web-Security-Scanner"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                Open repo
+                            </a>
+                        </div>
+
+                        <p class="build-copy">
+                            A modular Kali-oriented web security scanner with a GUI that lets an operator choose
+                            scan engines, review live output, and export results from a single dashboard.
+                        </p>
+
+                        <ul class="build-points">
+                            <li>Selectable modules for port scanning, WAF detection, subdomain enumeration, and more.</li>
+                            <li>Secrets and API key hunting across JavaScript assets plus cloud bucket discovery.</li>
+                            <li>Live terminal output, raw data views, and exported reporting from one interface.</li>
+                        </ul>
+
+                        <div class="chip-group">
+                            <span>CustomTkinter</span>
+                            <span>Modular scanning</span>
+                            <span>JS secrets hunting</span>
+                            <span>Cloud buckets</span>
+                            <span>Operator dashboard</span>
+                        </div>
+                    </article>
                 </div>
-            </div>
-        </div>
 
-        <div class="area-actions">
-            <a href="https://www.linkedin.com/in/rotem-zacaim-b4a709223" target="_blank" class="action-btn btn-linkedin">
-                <i class="fab fa-linkedin-in"></i> LinkedIn
-            </a>
-            <a href="https://github.com/rotem-zacaim" target="_blank" class="action-btn btn-github">
-                <i class="fab fa-github"></i> GitHub
-            </a>
-            <a href="mailto:Rotemvnkll@gmail.com" class="action-btn btn-email">
-                <i class="fas fa-envelope"></i> Email Me
-            </a>
-        </div>
+                <p class="build-note" data-reveal>
+                    These projects are presented as public examples of tooling and workflow design for authorized
+                    security assessment use.
+                </p>
+            </section>
 
+            <section class="section experience-section" id="experience">
+                <div class="section-heading" data-reveal>
+                    <p class="eyebrow">Current role</p>
+                    <h2>National Digital Agency</h2>
+                    <p class="section-copy">
+                        Supporting platforms where secure operations and reliable delivery have to coexist every day.
+                    </p>
+                </div>
+
+                <div class="experience-layout">
+                    <article class="experience-card card" data-reveal>
+                        <div class="timeline">
+                            <div class="timeline-item">
+                                <p class="timeline-label">Security products</p>
+                                <h3>FW, WAF, PAM, and edge security</h3>
+                                <p>
+                                    Working with Check Point, Imperva, F5, CyberArk, IronPort, FireGlass,
+                                    Cloudflare, Blue-AV, and IPS/IDS technologies.
+                                </p>
+                            </div>
+
+                            <div class="timeline-item">
+                                <p class="timeline-label">Monitoring and visibility</p>
+                                <h3>Splunk-centered investigations</h3>
+                                <p>
+                                    Using SIEM workflows to analyze logs, review traffic, surface anomalies,
+                                    and support incident-driven troubleshooting.
+                                </p>
+                            </div>
+
+                            <div class="timeline-item">
+                                <p class="timeline-label">Web and platform operations</p>
+                                <h3>Certificates, gateways, and service health</h3>
+                                <p>
+                                    Managing SSL across IIS and load balancers, supporting DataPower gateways,
+                                    and resolving availability or performance issues.
+                                </p>
+                            </div>
+                        </div>
+                    </article>
+
+                    <aside class="principles-card card" data-reveal>
+                        <p class="eyebrow">How I work</p>
+                        <h3>Calm under pressure, structured in the details.</h3>
+                        <ul class="principles-list">
+                            <li>Start with observability and evidence before changing production systems.</li>
+                            <li>Translate between security products, infrastructure teams, and service owners.</li>
+                            <li>Keep reliability in focus while solving security-driven incidents.</li>
+                            <li>Prefer practical fixes that reduce repeat work and future risk.</li>
+                        </ul>
+                    </aside>
+                </div>
+            </section>
+
+            <section class="section" id="toolkit">
+                <div class="section-heading" data-reveal>
+                    <p class="eyebrow">Toolkit</p>
+                    <h2>Technologies I work with across the stack.</h2>
+                </div>
+
+                <div class="toolkit-grid">
+                    <article class="tool-card card" data-reveal>
+                        <h3>Security stack</h3>
+                        <div class="chip-group">
+                            <span>Splunk</span>
+                            <span>Check Point</span>
+                            <span>Imperva</span>
+                            <span>F5 LTM / WAF</span>
+                            <span>CyberArk</span>
+                            <span>IronPort</span>
+                            <span>FireGlass</span>
+                            <span>Cloudflare</span>
+                            <span>IPS / IDS</span>
+                        </div>
+                    </article>
+
+                    <article class="tool-card card" data-reveal>
+                        <h3>Infrastructure and platforms</h3>
+                        <div class="chip-group">
+                            <span>Linux</span>
+                            <span>Windows Server</span>
+                            <span>VMware vSphere</span>
+                            <span>AWS</span>
+                            <span>GCP</span>
+                            <span>DataPower</span>
+                            <span>IIS</span>
+                            <span>SSL / TLS</span>
+                        </div>
+                    </article>
+
+                    <article class="tool-card card" data-reveal>
+                        <h3>Monitoring and diagnostics</h3>
+                        <div class="chip-group">
+                            <span>Dynatrace</span>
+                            <span>SCOM</span>
+                            <span>Nimsoft</span>
+                            <span>ELK Stack</span>
+                            <span>PRTG</span>
+                            <span>Wireshark</span>
+                            <span>TCP / IP</span>
+                            <span>HTTP / S</span>
+                        </div>
+                    </article>
+
+                    <article class="tool-card card" data-reveal>
+                        <h3>Workflow and tooling</h3>
+                        <div class="chip-group">
+                            <span>Python</span>
+                            <span>SQL</span>
+                            <span>Jira</span>
+                            <span>ServiceNow</span>
+                            <span>Routing</span>
+                            <span>DNS / DHCP</span>
+                            <span>VPN</span>
+                            <span>API troubleshooting</span>
+                        </div>
+                    </article>
+                </div>
+            </section>
+
+            <section class="contact-banner card" id="contact" data-reveal>
+                <div>
+                    <p class="eyebrow">Open to connect</p>
+                    <h2>Need someone who can investigate clearly, stabilize fast, and communicate across teams?</h2>
+                    <p class="contact-copy">
+                        I'm open to conversations about security operations, infrastructure-facing security roles,
+                        and operator-tooling work.
+                    </p>
+                </div>
+                <div class="contact-actions">
+                    <a class="button button-primary" href="mailto:rotemvnkll@gmail.com">Email me</a>
+                    <a
+                        class="button button-secondary"
+                        href="https://www.linkedin.com/in/rotem-zacaim-b4a709223"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        View LinkedIn
+                    </a>
+                </div>
+            </section>
+        </main>
+
+        <footer class="footer">
+            <p>Rotem Zacaim</p>
+            <p>Security Operations and Infrastructure</p>
+            <p>&copy; <span data-year></span></p>
+        </footer>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.7.0/vanilla-tilt.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
-    <script>
-        particlesJS("particles-js", {
-            "particles": {
-                "number": { "value": 80 },
-                "color": { "value": "#00f3ff" },
-                "shape": { "type": "circle" },
-                "opacity": { "value": 0.5, "random": true },
-                "size": { "value": 3, "random": true },
-                "line_linked": { "enable": true, "distance": 150, "color": "#00f3ff", "opacity": 0.15, "width": 1 },
-                "move": { "enable": true, "speed": 1.5, "direction": "none", "random": false, "out_mode": "out" }
-            },
-            "interactivity": {
-                "detect_on": "canvas",
-                "events": { "onhover": { "enable": true, "mode": "grab" }, "onclick": { "enable": true, "mode": "push" } },
-                "modes": { "grab": { "distance": 140, "line_linked": { "opacity": 0.6 } } }
-            }
-        });
+    <div class="assistant-widget" data-assistant-widget data-state="greet" data-compact="false" data-expanded="true">
+        <div class="assistant-bubble" id="assistant-bubble" data-assistant-bubble>
+            <div class="assistant-bubble-head">
+                <div class="assistant-bubble-dots" aria-hidden="true">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+            <p class="assistant-bubble-text" data-assistant-message>Hello there.</p>
+        </div>
+        <div
+            class="assistant-stage"
+            data-assistant-stage
+            data-state="greet"
+            role="button"
+            tabindex="0"
+            aria-controls="assistant-bubble"
+            aria-expanded="true"
+            aria-label="Toggle assistant notes"
+        >
+            <div class="assistant-dock" aria-hidden="true">
+                <span class="assistant-dock-ring assistant-dock-ring-outer"></span>
+                <span class="assistant-dock-ring assistant-dock-ring-mid"></span>
+                <span class="assistant-dock-ring assistant-dock-ring-inner"></span>
+                <span class="assistant-dock-core"></span>
+            </div>
+            <div class="assistant-bot-frame" aria-hidden="true">
+                <div class="assistant-bot" data-assistant-bot data-state="greet">
+                    <svg class="assistant-bot-art" viewBox="0 0 220 220" role="presentation">
+                        <defs>
+                            <linearGradient id="assistant-head-shell" x1="10%" y1="0%" x2="88%" y2="100%">
+                                <stop offset="0%" stop-color="#2a3748" />
+                                <stop offset="42%" stop-color="#1b2838" />
+                                <stop offset="100%" stop-color="#0d1724" />
+                            </linearGradient>
+                            <linearGradient id="assistant-head-shadow-shell" x1="10%" y1="0%" x2="90%" y2="100%">
+                                <stop offset="0%" stop-color="#131d2a" />
+                                <stop offset="100%" stop-color="#050b13" />
+                            </linearGradient>
+                            <linearGradient id="assistant-body-shell" x1="18%" y1="0%" x2="82%" y2="100%">
+                                <stop offset="0%" stop-color="#243142" />
+                                <stop offset="46%" stop-color="#182434" />
+                                <stop offset="100%" stop-color="#0b1420" />
+                            </linearGradient>
+                            <linearGradient id="assistant-pod-shell" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#334258" />
+                                <stop offset="100%" stop-color="#0e1724" />
+                            </linearGradient>
+                            <linearGradient id="assistant-visor" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#0f1b29" />
+                                <stop offset="50%" stop-color="#050c16" />
+                                <stop offset="100%" stop-color="#010409" />
+                            </linearGradient>
+                            <linearGradient id="assistant-limb-shell" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#324154" />
+                                <stop offset="58%" stop-color="#1b2939" />
+                                <stop offset="100%" stop-color="#0b141f" />
+                            </linearGradient>
+                            <linearGradient id="assistant-cable" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#233650" />
+                                <stop offset="100%" stop-color="#08111d" />
+                            </linearGradient>
+                            <linearGradient id="assistant-glow" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#e4fff9" />
+                                <stop offset="100%" stop-color="#45dfff" />
+                            </linearGradient>
+                            <radialGradient id="assistant-core" cx="50%" cy="50%" r="55%">
+                                <stop offset="0%" stop-color="#d8fff5" />
+                                <stop offset="100%" stop-color="#4fe0c4" />
+                            </radialGradient>
+                            <radialGradient id="assistant-neck-light" cx="50%" cy="45%" r="60%">
+                                <stop offset="0%" stop-color="rgba(121, 226, 255, 0.56)" />
+                                <stop offset="100%" stop-color="rgba(121, 226, 255, 0)" />
+                            </radialGradient>
+                            <filter id="assistant-soft-shadow" x="-30%" y="-30%" width="160%" height="160%">
+                                <feDropShadow dx="0" dy="10" stdDeviation="8" flood-color="#020712" flood-opacity="0.18" />
+                            </filter>
+                        </defs>
 
-        const terminalText = [
-            "<span class='cmd-line'>user@rotem-pc:~$</span> <span class='cmd-input'>whoami</span><br>",
-            "<span class='cmd-output'>Rotem Zacaim, Cyber Security Analyst.</span><br><br>",
-            "<span class='cmd-line'>user@rotem-pc:~$</span> <span class='cmd-input'>cat skills.txt</span><br>",
-            "<span class='cmd-output'>Loading full arsenal... Done.</span><br><br>",
-            "<span class='cmd-line'>user@rotem-pc:~$</span> <span class='cmd-input'>./status_check.sh</span><br>",
-            "<span class='cmd-output' style='color:#00f3ff'>[SYSTEM] All Systems Operational.<br>[SYSTEM] Ready for challenges.</span><span class='status-dot' style='display:inline-block; margin-left:5px'></span>"
-        ];
+                        <g class="assistant-shadow">
+                            <ellipse cx="110" cy="199" rx="46" ry="12" />
+                        </g>
 
-        let lineIndex = 0;
-        let charIndex = 0;
-        const element = document.getElementById("typewriter");
-        let currentHTML = "";
+                        <g class="assistant-antenna">
+                            <path d="M110 35V17" />
+                            <circle cx="110" cy="12" r="6" />
+                        </g>
 
-        function typeWriter() {
-            if (lineIndex < terminalText.length) {
-                const line = terminalText[lineIndex];
-                element.innerHTML = currentHTML + line.substring(0, charIndex);
-                if (charIndex < line.length) {
-                    charIndex++;
-                    setTimeout(typeWriter, 20);
-                } else {
-                    currentHTML += line;
-                    lineIndex++;
-                    charIndex = 0;
-                    setTimeout(typeWriter, 300);
-                }
-            }
-        }
-        setTimeout(typeWriter, 1000);
-    </script>
+                        <g class="assistant-arm assistant-arm-left" filter="url(#assistant-soft-shadow)">
+                            <circle cx="80" cy="128" r="10" class="assistant-joint-shadow" />
+                            <circle cx="80" cy="128" r="8.2" class="assistant-joint-cap" />
+                            <path class="assistant-cable" d="M79 132C60 145 53 161 58 182" />
+                            <rect
+                                x="45"
+                                y="149"
+                                width="21"
+                                height="41"
+                                rx="10.5"
+                                class="assistant-limb-shell"
+                                transform="rotate(8 55.5 169.5)"
+                            />
+                            <ellipse cx="59" cy="153" rx="7.2" ry="5.2" class="assistant-joint-soft" />
+                            <path class="assistant-grip" d="M47 190L52 198M55 188L60 198M63 187L68 196" />
+                        </g>
+
+                        <g class="assistant-arm assistant-arm-right" filter="url(#assistant-soft-shadow)">
+                            <circle cx="140" cy="128" r="10" class="assistant-joint-shadow" />
+                            <circle cx="140" cy="128" r="8.2" class="assistant-joint-cap" />
+                            <path class="assistant-cable" d="M141 132C165 128 179 114 184 89" />
+                            <rect
+                                x="174"
+                                y="68"
+                                width="21"
+                                height="41"
+                                rx="10.5"
+                                class="assistant-limb-shell"
+                                transform="rotate(-31 184.5 88.5)"
+                            />
+                            <ellipse cx="175" cy="108" rx="7.2" ry="5.2" class="assistant-joint-soft" />
+                            <path class="assistant-grip" d="M183 64L191 57M176 66L184 60M190 69L197 63" />
+                        </g>
+
+                        <g class="assistant-body assistant-body-idle" filter="url(#assistant-soft-shadow)">
+                            <ellipse cx="110" cy="120" rx="22" ry="6.6" class="assistant-neck-glow" />
+                            <ellipse cx="110" cy="120" rx="17.5" ry="4.8" class="assistant-neck-ring" />
+                            <path class="assistant-body-upper" d="M89 126L99 112H121L131 126V153L121 165H99L89 153Z" />
+                            <path class="assistant-shell-shadow" d="M95 130L102 120H118L125 130V149L118 157H102L95 149Z" />
+                            <path class="assistant-body-contour" d="M99 127H121" />
+                            <path class="assistant-body-lower" d="M94 160L126 160L132 186L110 201L88 186Z" />
+                            <path class="assistant-belly-highlight" d="M98 172L110 180L122 172" />
+                            <ellipse cx="110" cy="169" rx="18" ry="24" class="assistant-body-core-shadow" />
+                            <path class="assistant-core-bezel" d="M91 134H129L134 140V148L129 154H91L86 148V140Z" />
+                            <path class="assistant-core-panel" d="M97 138H123L128 142V147L123 151H97L92 147V142Z" />
+                            <circle cx="100.5" cy="144.5" r="3.4" class="assistant-core-light" />
+                            <circle cx="110" cy="144.5" r="3.4" class="assistant-core-light assistant-core-light-mid" />
+                            <circle cx="119.5" cy="144.5" r="3.4" class="assistant-core-light" />
+                        </g>
+
+                        <g class="assistant-head-group assistant-head-idle" filter="url(#assistant-soft-shadow)">
+                            <path class="assistant-head-shadow" d="M61 50L81 28H139L159 50V93L139 120H81L61 93Z" />
+                            <ellipse cx="110" cy="121" rx="26" ry="8.5" class="assistant-head-underlight" />
+
+                            <g class="assistant-sidepods">
+                                <path class="assistant-pod-shadow" d="M46 72L58 76V102L46 108L39 101V77Z" />
+                                <path class="assistant-pod-shadow" d="M162 76L174 72L181 77V101L174 108L162 102Z" />
+                                <path class="assistant-sidepod-shell" d="M49 70L61 74V101L49 106L43 100V77Z" />
+                                <path class="assistant-sidepod-shell" d="M159 74L171 70L177 77V100L171 106L159 101Z" />
+                                <path class="assistant-pod-gloss" d="M50 78L58 75" />
+                                <path class="assistant-pod-gloss" d="M162 75L170 78" />
+                            </g>
+
+                            <path class="assistant-head-shell" d="M67 48L83 30H137L153 48V93L137 116H83L67 93Z" />
+                            <path class="assistant-shell-edge" d="M80 40L93 34H127L140 40" />
+                            <path class="assistant-head-rim" d="M76 52L87 40H133L144 52" />
+                            <path class="assistant-head-chin" d="M87 111H133" />
+                            <g class="assistant-face-assembly">
+                                <path class="assistant-face-bezel" d="M82 61H138L145 69V90L137 101H83L75 90V69Z" />
+                                <path class="assistant-faceplate" d="M86 65H134L140 72V88L133 97H87L80 88V72Z" />
+                                <path class="assistant-visor-shine" d="M92 71H128" />
+                                <path class="assistant-face-gloss" d="M89 77L98 70" />
+                                <path class="assistant-face-gloss assistant-face-gloss-soft" d="M125 70L132 77" />
+                                <path class="assistant-face-inner-shadow" d="M86 90H134" />
+                                <path class="assistant-brow-glow" d="M87 69H104" />
+                                <path class="assistant-brow-glow assistant-brow-glow-right" d="M116 69H133" />
+
+                                <g class="assistant-eye assistant-eye-left" data-eye-group="left">
+                                    <rect x="83" y="74" width="24" height="12" rx="4" class="assistant-eye-socket" />
+                                    <circle cx="92" cy="77" r="1.5" class="assistant-eye-glint" />
+                                    <rect x="91" y="76" width="8" height="8" rx="2.6" class="assistant-pupil" data-pupil="left" />
+                                </g>
+
+                                <g class="assistant-eye assistant-eye-right" data-eye-group="right">
+                                    <rect x="113" y="74" width="24" height="12" rx="4" class="assistant-eye-socket" />
+                                    <circle cx="122" cy="77" r="1.5" class="assistant-eye-glint" />
+                                    <rect x="119" y="76" width="8" height="8" rx="2.6" class="assistant-pupil" data-pupil="right" />
+                                </g>
+
+                                <path
+                                    class="assistant-mouth-shadow"
+                                    data-assistant-mouth-shadow
+                                    d="M100 98C105 101 116 101 120 98"
+                                />
+                                <path
+                                    class="assistant-mouth"
+                                    data-assistant-mouth
+                                    d="M103 99C107 101 113 101 117 99"
+                                />
+                            </g>
+                        </g>
+
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
