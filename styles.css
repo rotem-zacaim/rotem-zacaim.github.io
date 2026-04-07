@@ -41,6 +41,10 @@ body {
     overflow-x: hidden;
 }
 
+body.is-booting {
+    overflow: hidden;
+}
+
 body::before {
     content: "";
     position: fixed;
@@ -64,6 +68,278 @@ body::after {
     mix-blend-mode: screen;
     pointer-events: none;
     z-index: -1;
+}
+
+.boot-screen {
+    display: none;
+}
+
+.boot-screen[hidden],
+.loader-skip .boot-screen {
+    display: none !important;
+}
+
+.js .boot-screen {
+    position: fixed;
+    inset: 0;
+    z-index: 80;
+    display: grid;
+    place-items: center;
+    padding: 1.25rem;
+    background:
+        radial-gradient(circle at 18% 22%, rgba(99, 237, 216, 0.11), transparent 26%),
+        radial-gradient(circle at 84% 12%, rgba(255, 186, 84, 0.1), transparent 22%),
+        linear-gradient(180deg, rgba(6, 12, 23, 0.92), rgba(4, 8, 16, 0.96));
+    backdrop-filter: blur(16px);
+    opacity: 1;
+    visibility: visible;
+    transition:
+        opacity 560ms ease,
+        visibility 0s linear 560ms;
+}
+
+.boot-screen.is-ready {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.boot-screen-panel {
+    position: relative;
+    width: min(33rem, 100%);
+    padding: 1.5rem;
+    border-radius: 30px;
+    border: 1px solid rgba(159, 176, 198, 0.22);
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.05), transparent 42%),
+        rgba(5, 10, 18, 0.88);
+    box-shadow:
+        0 28px 90px rgba(0, 0, 0, 0.42),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    overflow: hidden;
+}
+
+.boot-screen-panel::before,
+.boot-screen-panel::after {
+    content: "";
+    position: absolute;
+    pointer-events: none;
+}
+
+.boot-screen-panel::before {
+    inset: 0;
+    background-image:
+        linear-gradient(rgba(255, 255, 255, 0.028) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.028) 1px, transparent 1px);
+    background-size: 44px 44px;
+    mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.92), transparent);
+    opacity: 0.34;
+}
+
+.boot-screen-panel::after {
+    inset: 1px;
+    border-radius: inherit;
+    border: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.boot-screen-meta,
+.boot-screen-status,
+.boot-screen-row {
+    position: relative;
+    z-index: 1;
+}
+
+.boot-screen-kicker,
+.boot-screen-label,
+.boot-screen-stamp,
+.boot-screen-row strong {
+    font-family: "IBM Plex Mono", monospace;
+}
+
+.boot-screen-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 0.8rem;
+}
+
+.boot-screen-kicker,
+.boot-screen-stamp,
+.boot-screen-label,
+.boot-screen-row strong {
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+}
+
+.boot-screen-kicker,
+.boot-screen-stamp,
+.boot-screen-label {
+    margin: 0;
+}
+
+.boot-screen-kicker {
+    color: var(--accent);
+    font-size: 0.76rem;
+}
+
+.boot-screen-stamp {
+    padding: 0.32rem 0.58rem;
+    border-radius: 999px;
+    border: 1px solid rgba(159, 176, 198, 0.18);
+    background: rgba(255, 255, 255, 0.04);
+    color: rgba(244, 247, 251, 0.88);
+    font-size: 0.68rem;
+}
+
+.boot-screen-label {
+    position: relative;
+    z-index: 1;
+    color: rgba(159, 176, 198, 0.74);
+    font-size: 0.76rem;
+}
+
+.boot-screen-panel h2 {
+    position: relative;
+    z-index: 1;
+    max-width: 13ch;
+    margin: 0;
+    font-size: clamp(2.2rem, 6vw, 3.5rem);
+    line-height: 0.95;
+    letter-spacing: -0.045em;
+}
+
+.boot-screen-copy {
+    position: relative;
+    z-index: 1;
+    min-height: 2.8em;
+    max-width: 34ch;
+    margin: 1rem 0 0;
+    color: var(--muted);
+}
+
+.boot-screen-progress {
+    position: relative;
+    z-index: 1;
+    margin-top: 1.45rem;
+    height: 0.48rem;
+    border-radius: 999px;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.boot-screen-progress-line,
+.boot-screen-progress-fill {
+    position: absolute;
+    inset: 0;
+}
+
+.boot-screen-progress-line {
+    background:
+        linear-gradient(90deg, rgba(99, 237, 216, 0.12), transparent 24%, rgba(255, 186, 84, 0.12));
+}
+
+.boot-screen-progress-fill {
+    width: calc(var(--boot-progress, 0) * 100%);
+    background: linear-gradient(90deg, var(--accent), #97f4e8 58%, var(--accent-strong));
+    box-shadow: 0 0 24px rgba(99, 237, 216, 0.24);
+    transition: width 340ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.boot-screen-status {
+    display: grid;
+    gap: 0.58rem;
+    margin-top: 1.15rem;
+}
+
+.boot-screen-row {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.78rem 0.88rem;
+    border-radius: 16px;
+    border: 1px solid rgba(159, 176, 198, 0.1);
+    background: rgba(255, 255, 255, 0.025);
+    color: rgba(244, 247, 251, 0.94);
+    transition:
+        transform 260ms ease,
+        border-color 260ms ease,
+        background-color 260ms ease;
+}
+
+.boot-screen-row::before {
+    content: "";
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background: rgba(159, 176, 198, 0.22);
+    box-shadow: 0 0 0 rgba(99, 237, 216, 0);
+    transition:
+        background-color 220ms ease,
+        box-shadow 220ms ease;
+}
+
+.boot-screen-row span,
+.boot-screen-row strong {
+    display: block;
+}
+
+.boot-screen-row span {
+    font-size: 0.95rem;
+}
+
+.boot-screen-row strong {
+    color: rgba(159, 176, 198, 0.68);
+    font-size: 0.68rem;
+}
+
+.boot-screen-row[data-state="active"] {
+    transform: translateX(0.4rem);
+    border-color: rgba(99, 237, 216, 0.28);
+    background:
+        linear-gradient(90deg, rgba(99, 237, 216, 0.09), transparent 70%),
+        rgba(255, 255, 255, 0.032);
+}
+
+.boot-screen-row[data-state="active"]::before {
+    background: var(--accent);
+    box-shadow: 0 0 18px rgba(99, 237, 216, 0.44);
+}
+
+.boot-screen-row[data-state="active"] strong {
+    color: var(--accent);
+}
+
+.boot-screen-row[data-state="done"] {
+    border-color: rgba(99, 237, 216, 0.18);
+    background:
+        linear-gradient(90deg, rgba(255, 186, 84, 0.07), rgba(99, 237, 216, 0.045) 64%, transparent),
+        rgba(255, 255, 255, 0.03);
+}
+
+.boot-screen-row[data-state="done"]::before {
+    background: #dffaf3;
+    box-shadow: 0 0 14px rgba(99, 237, 216, 0.22);
+}
+
+.boot-screen-row[data-state="done"] strong {
+    color: rgba(223, 250, 243, 0.88);
+}
+
+.site-shell,
+.assistant-widget {
+    transition:
+        opacity 520ms ease,
+        transform 720ms cubic-bezier(0.22, 1, 0.36, 1),
+        filter 520ms ease;
+}
+
+body.is-booting .site-shell,
+body.is-booting .assistant-widget {
+    opacity: 0.01;
+    transform: translateY(18px) scale(0.992);
+    filter: blur(8px);
 }
 
 a {
@@ -2215,6 +2491,25 @@ a {
 }
 
 @media (max-width: 760px) {
+    .boot-screen-panel {
+        padding: 1.15rem;
+        border-radius: 24px;
+    }
+
+    .boot-screen-panel h2 {
+        font-size: clamp(1.9rem, 10vw, 2.9rem);
+    }
+
+    .boot-screen-row {
+        grid-template-columns: auto 1fr;
+        align-items: start;
+    }
+
+    .boot-screen-row strong {
+        grid-column: 2;
+        margin-top: 0.15rem;
+    }
+
     .site-shell {
         width: min(var(--max-width), calc(100% - 1rem));
         padding-top: 0.8rem;

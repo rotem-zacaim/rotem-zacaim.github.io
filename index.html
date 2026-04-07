@@ -33,10 +33,57 @@
         href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Space+Grotesk:wght@400;500;700&display=swap"
         rel="stylesheet"
     >
+    <script>
+        document.documentElement.classList.add("js");
+
+        try {
+            if (window.sessionStorage.getItem("rz-loader-seen") === "1") {
+                document.documentElement.classList.add("loader-skip");
+            }
+        } catch (error) {
+            // Session storage can be unavailable in restricted contexts.
+        }
+    </script>
     <link rel="stylesheet" href="styles.css">
     <script defer src="script.js"></script>
 </head>
 <body>
+    <div class="boot-screen" data-boot-screen role="status" aria-live="polite" aria-label="Loading site">
+        <div class="boot-screen-panel">
+            <div class="boot-screen-meta">
+                <p class="boot-screen-kicker">System handoff</p>
+                <p class="boot-screen-stamp" data-boot-stamp>INIT</p>
+            </div>
+            <p class="boot-screen-label">Rotem Zacaim / command deck</p>
+            <h2>Preparing interface, live profile, and ambient systems.</h2>
+            <p class="boot-screen-copy" data-boot-copy>Staging the deck for first contact.</p>
+
+            <div class="boot-screen-progress" aria-hidden="true">
+                <span class="boot-screen-progress-line"></span>
+                <span class="boot-screen-progress-fill" data-boot-progress></span>
+            </div>
+
+            <div class="boot-screen-status" aria-label="Boot sequence">
+                <div class="boot-screen-row" data-boot-step="shell">
+                    <span>Shell integrity</span>
+                    <strong>pending</strong>
+                </div>
+                <div class="boot-screen-row" data-boot-step="fonts">
+                    <span>Type system sync</span>
+                    <strong>pending</strong>
+                </div>
+                <div class="boot-screen-row" data-boot-step="ambient">
+                    <span>Ambient field</span>
+                    <strong>pending</strong>
+                </div>
+                <div class="boot-screen-row" data-boot-step="profile">
+                    <span>Operator handoff</span>
+                    <strong>pending</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <a class="skip-link" href="#main-content">Skip to content</a>
     <div class="background-glow background-glow-left" aria-hidden="true"></div>
     <div class="background-glow background-glow-right" aria-hidden="true"></div>

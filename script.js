@@ -2,6 +2,10 @@ const revealItems = Array.from(document.querySelectorAll("[data-reveal]"));
 const yearNode = document.querySelector("[data-year]");
 const cards = Array.from(document.querySelectorAll(".card"));
 const ambientCanvas = document.querySelector(".ambient-canvas");
+const bootScreenElement = document.querySelector("[data-boot-screen]");
+const bootCopyElement = document.querySelector("[data-boot-copy]");
+const bootStampElement = document.querySelector("[data-boot-stamp]");
+const bootSteps = Array.from(document.querySelectorAll("[data-boot-step]"));
 const assistantBotElement = document.querySelector("[data-assistant-bot]");
 const assistantBubble = document.querySelector("[data-assistant-bubble]");
 const assistantMessage = document.querySelector("[data-assistant-message]");
@@ -129,6 +133,218 @@ if (!prefersReducedMotion.matches && cards.length > 0) {
         card.addEventListener("pointerleave", resetSpotlight);
         card.addEventListener("pointercancel", resetSpotlight);
     });
+}
+
+class BootLoader {
+    constructor(screen, copyNode, stampNode, steps, canvas, reducedMotion) {
+        this.screen = screen;
+        this.copyNode = copyNode;
+        this.stampNode = stampNode;
+        this.steps = steps;
+        this.canvas = canvas;
+        this.reducedMotion = reducedMotion;
+        this.stepMap = new Map(
+            steps.map((step) => [step.dataset.bootStep, step])
+        );
+        this.sessionKey = "rz-loader-seen";
+        this.minDuration = 3500;
+        this.isSkipped = document.documentElement.classList.contains("loader-skip");
+    }
+
+    async start() {
+        if (!this.screen) {
+            return;
+        }
+
+        if (this.isSkipped) {
+            this.teardown({ immediate: true });
+            return;
+        }
+
+        document.body.classList.add("is-booting");
+        this.updateStamp();
+        this.setProgress(0.04);
+
+        try {
+            const minDelay = this.wait(this.minDuration);
+
+            await this.advanceStep(
+                "shell",
+                "Checking shell integrity and interface boundaries.",
+                0.22,
+                this.wait(this.reducedMotion ? 70 : 160)
+            );
+
+            await this.advanceStep(
+                "fonts",
+                "Syncing the type system and command labels.",
+                0.5,
+                this.waitForFonts()
+            );
+
+            await this.advanceStep(
+                "ambient",
+                "Calibrating the ambient field and interface depth.",
+                0.78,
+                this.waitForCanvasReady()
+            );
+
+            await Promise.all([minDelay, this.waitForStableFrame()]);
+
+            await this.advanceStep(
+                "profile",
+                "Operator profile ready. Opening the deck.",
+                1,
+                this.wait(this.reducedMotion ? 70 : 180)
+            );
+        } catch (error) {
+            this.setCopy("Fallback handoff engaged. Opening the deck.");
+            this.setProgress(1);
+        }
+
+        this.complete();
+    }
+
+    setProgress(value) {
+        const clamped = Math.max(0, Math.min(1, value));
+        this.screen.style.setProperty("--boot-progress", clamped.toFixed(3));
+    }
+
+    setCopy(text) {
+        if (this.copyNode) {
+            this.copyNode.textContent = text;
+        }
+    }
+
+    updateStamp() {
+        if (!this.stampNode) {
+            return;
+        }
+
+        const stamp = new Date().toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: false,
+        });
+
+        this.stampNode.textContent = stamp;
+    }
+
+    setStepState(stepName, state, label) {
+        const row = this.stepMap.get(stepName);
+
+        if (!row) {
+            return;
+        }
+
+        row.dataset.state = state;
+
+        const labelNode = row.querySelector("strong");
+
+        if (labelNode) {
+            labelNode.textContent = label;
+        }
+    }
+
+    async advanceStep(stepName, copy, progress, task) {
+        this.setCopy(copy);
+        this.setStepState(stepName, "active", "active");
+        await task;
+        this.setStepState(stepName, "done", "ready");
+        this.setProgress(progress);
+    }
+
+    waitForFonts() {
+        if (!("fonts" in document) || !document.fonts.ready) {
+            return this.wait(120);
+        }
+
+        return Promise.race([
+            document.fonts.ready.catch(() => undefined),
+            this.wait(this.reducedMotion ? 220 : 1400),
+        ]);
+    }
+
+    waitForCanvasReady() {
+        if (!this.canvas) {
+            return this.wait(120);
+        }
+
+        if (this.canvas.classList.contains("is-ready")) {
+            return Promise.resolve();
+        }
+
+        return new Promise((resolve) => {
+            let resolved = false;
+            let fallbackId = 0;
+
+            const finish = () => {
+                if (resolved) {
+                    return;
+                }
+
+                resolved = true;
+                observer.disconnect();
+                window.clearTimeout(fallbackId);
+                resolve();
+            };
+
+            const observer = new MutationObserver(() => {
+                if (this.canvas.classList.contains("is-ready")) {
+                    finish();
+                }
+            });
+
+            observer.observe(this.canvas, {
+                attributes: true,
+                attributeFilter: ["class"],
+            });
+
+            fallbackId = window.setTimeout(finish, this.reducedMotion ? 220 : 1800);
+        });
+    }
+
+    waitForStableFrame() {
+        return new Promise((resolve) => {
+            window.requestAnimationFrame(() => {
+                window.requestAnimationFrame(resolve);
+            });
+        });
+    }
+
+    wait(duration) {
+        return new Promise((resolve) => {
+            window.setTimeout(resolve, duration);
+        });
+    }
+
+    complete() {
+        this.setCopy("Command deck online.");
+
+        try {
+            window.sessionStorage.setItem(this.sessionKey, "1");
+        } catch (error) {
+            // Session storage can be unavailable in restricted contexts.
+        }
+
+        this.teardown();
+    }
+
+    teardown({ immediate = false } = {}) {
+        document.body.classList.remove("is-booting");
+        this.screen.setAttribute("aria-hidden", "true");
+
+        if (immediate) {
+            this.screen.hidden = true;
+            return;
+        }
+
+        this.screen.classList.add("is-ready");
+
+        window.setTimeout(() => {
+            this.screen.hidden = true;
+        }, this.reducedMotion ? 40 : 680);
+    }
 }
 
 class AmbientBackground {
@@ -941,6 +1157,17 @@ if (ambientCanvas) {
     background.start();
 }
 
+const bootLoader = bootScreenElement
+    ? new BootLoader(
+          bootScreenElement,
+          bootCopyElement,
+          bootStampElement,
+          bootSteps,
+          ambientCanvas,
+          prefersReducedMotion.matches
+      )
+    : null;
+
 class AssistantBot {
     constructor(bot, pupils, bubble, messageNode, sections, reducedMotion) {
         this.bot = bot;
@@ -1436,4 +1663,8 @@ if (assistantBotElement) {
         prefersReducedMotion.matches
     );
     assistantBot.start();
+}
+
+if (bootLoader) {
+    bootLoader.start();
 }
