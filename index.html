@@ -36,6 +36,14 @@
     <script>
         document.documentElement.classList.add("js");
 
+        const mobileSafeMode =
+            window.matchMedia("(pointer: coarse)").matches ||
+            window.matchMedia("(max-width: 760px)").matches;
+
+        if (mobileSafeMode) {
+            document.documentElement.classList.add("mobile-safe", "loader-skip");
+        }
+
         try {
             if (window.sessionStorage.getItem("rz-loader-seen") === "1") {
                 document.documentElement.classList.add("loader-skip");

@@ -13,6 +13,12 @@ const assistantPupils = Array.from(document.querySelectorAll("[data-pupil]"));
 const messageSections = Array.from(document.querySelectorAll("main section[id]"));
 const navLinks = Array.from(document.querySelectorAll(".topnav a[href^='#']"));
 const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+const mobileViewportQuery = window.matchMedia("(max-width: 760px)");
+const coarsePointerQuery = window.matchMedia("(pointer: coarse)");
+const liteExperienceMode =
+    document.documentElement.classList.contains("mobile-safe") ||
+    mobileViewportQuery.matches ||
+    coarsePointerQuery.matches;
 const sectionLinkMap = new Map(
     navLinks.map((link) => [link.getAttribute("href").slice(1), link])
 );
@@ -24,7 +30,7 @@ if (yearNode) {
 if (revealItems.length > 0) {
     revealItems.forEach((item) => item.classList.add("reveal-ready"));
 
-    if (prefersReducedMotion.matches || !("IntersectionObserver" in window)) {
+    if (prefersReducedMotion.matches || liteExperienceMode || !("IntersectionObserver" in window)) {
         revealItems.forEach((item) => item.classList.add("is-visible"));
     } else {
         const observer = new IntersectionObserver(
@@ -114,7 +120,7 @@ if (navLinks.length > 0) {
     }
 }
 
-if (!prefersReducedMotion.matches && cards.length > 0) {
+if (!prefersReducedMotion.matches && !liteExperienceMode && cards.length > 0) {
     cards.forEach((card) => {
         const resetSpotlight = () => {
             card.classList.remove("is-active");
@@ -136,19 +142,21 @@ if (!prefersReducedMotion.matches && cards.length > 0) {
 }
 
 class BootLoader {
-    constructor(screen, copyNode, stampNode, steps, canvas, reducedMotion) {
+    constructor(screen, copyNode, stampNode, steps, canvas, reducedMotion, liteMode) {
         this.screen = screen;
         this.copyNode = copyNode;
         this.stampNode = stampNode;
         this.steps = steps;
         this.canvas = canvas;
         this.reducedMotion = reducedMotion;
+        this.liteMode = liteMode;
         this.stepMap = new Map(
             steps.map((step) => [step.dataset.bootStep, step])
         );
         this.sessionKey = "rz-loader-seen";
-        this.minDuration = 3500;
+        this.minDuration = reducedMotion ? 180 : liteMode ? 1800 : 3500;
         this.isSkipped = document.documentElement.classList.contains("loader-skip");
+        this.hasAnnouncedReady = false;
     }
 
     async start() {
@@ -300,7 +308,10 @@ class BootLoader {
                 attributeFilter: ["class"],
             });
 
-            fallbackId = window.setTimeout(finish, this.reducedMotion ? 220 : 1800);
+            fallbackId = window.setTimeout(
+                finish,
+                this.reducedMotion ? 220 : this.liteMode ? 900 : 1800
+            );
         });
     }
 
@@ -330,12 +341,26 @@ class BootLoader {
         this.teardown();
     }
 
+    announceReady() {
+        if (this.hasAnnouncedReady) {
+            return;
+        }
+
+        this.hasAnnouncedReady = true;
+        window.dispatchEvent(
+            new CustomEvent("bootloader:complete", {
+                detail: { liteMode: this.liteMode }
+            })
+        );
+    }
+
     teardown({ immediate = false } = {}) {
         document.body.classList.remove("is-booting");
         this.screen.setAttribute("aria-hidden", "true");
 
         if (immediate) {
             this.screen.hidden = true;
+            this.announceReady();
             return;
         }
 
@@ -343,16 +368,18 @@ class BootLoader {
 
         window.setTimeout(() => {
             this.screen.hidden = true;
+            this.announceReady();
         }, this.reducedMotion ? 40 : 680);
     }
 }
 
 class AmbientBackground {
-    constructor(canvas, sections, reducedMotion) {
+    constructor(canvas, sections, reducedMotion, liteMode) {
         this.canvas = canvas;
         this.ctx = canvas.getContext("2d", { alpha: true });
         this.sections = sections;
         this.reducedMotion = reducedMotion;
+        this.liteMode = liteMode;
         this.width = 0;
         this.height = 0;
         this.dpr = 1;
@@ -447,6 +474,8 @@ class AmbientBackground {
         this.maxFocal = 470;
         this.minFocal = 120;
         this.focalLength = this.maxFocal;
+        this.frameInterval = liteMode ? 1000 / 30 : 1000 / 60;
+        this.lastFrameTime = 0;
         this.pointer = {
             x: 0.5,
             y: 0.42,
@@ -459,10 +488,10 @@ class AmbientBackground {
         };
         this.morphProgress = 1;
         this.morphSpeed = 0.017;
-        this.starCount = 520;
-        this.nebulaCount = 920;
-        this.glowCount = 42;
-        this.maxSparks = 140;
+        this.starCount = liteMode ? 120 : 520;
+        this.nebulaCount = liteMode ? 180 : 920;
+        this.glowCount = liteMode ? 14 : 42;
+        this.maxSparks = liteMode ? 24 : 140;
         this.stars = Array.from({ length: this.starCount }, () => this.createStar());
         this.nebula = Array.from({ length: this.nebulaCount }, () =>
             this.createNebulaParticle(this.currentProfile)
@@ -575,9 +604,11 @@ class AmbientBackground {
         window.addEventListener("resize", this.resize);
 
         if (!this.reducedMotion) {
-            window.addEventListener("pointermove", this.onPointerMove, { passive: true });
-            window.addEventListener("blur", this.resetPointer);
-            document.addEventListener("mouseleave", this.resetPointer);
+            if (!this.liteMode) {
+                window.addEventListener("pointermove", this.onPointerMove, { passive: true });
+                window.addEventListener("blur", this.resetPointer);
+                document.addEventListener("mouseleave", this.resetPointer);
+            }
             this.rafId = window.requestAnimationFrame(this.loop);
         } else {
             this.render(0);
@@ -587,7 +618,7 @@ class AmbientBackground {
     resize() {
         this.width = window.innerWidth;
         this.height = window.innerHeight;
-        this.dpr = Math.min(window.devicePixelRatio || 1, 1.75);
+        this.dpr = Math.min(window.devicePixelRatio || 1, this.liteMode ? 1 : 1.75);
 
         this.canvas.width = Math.round(this.width * this.dpr);
         this.canvas.height = Math.round(this.height * this.dpr);
@@ -650,7 +681,7 @@ class AmbientBackground {
         this.assignGlowTargets(profile, this.reducedMotion);
 
         if (!this.reducedMotion) {
-            this.emitSparks(24);
+            this.emitSparks(this.liteMode ? 8 : 24);
         } else {
             this.currentHue = profile.hue;
             this.currentDepth = profile.depth;
@@ -739,6 +770,12 @@ class AmbientBackground {
     }
 
     loop(timestamp) {
+        if (this.lastFrameTime && timestamp - this.lastFrameTime < this.frameInterval) {
+            this.rafId = window.requestAnimationFrame(this.loop);
+            return;
+        }
+
+        this.lastFrameTime = timestamp;
         this.time = timestamp * 0.001;
         this.render(this.time);
         this.rafId = window.requestAnimationFrame(this.loop);
@@ -807,7 +844,9 @@ class AmbientBackground {
 
         const pulseRadius = 50 + ((time * 56) % 100);
 
-        for (let ring = 0; ring < 3; ring += 1) {
+        const ringCount = this.liteMode ? 1 : 3;
+
+        for (let ring = 0; ring < ringCount; ring += 1) {
             const radiusStep = pulseRadius + ring * 44;
             const alpha = Math.max(0, 0.16 - ring * 0.035 - (pulseRadius % 100) / 680);
             ctx.beginPath();
@@ -1148,13 +1187,16 @@ class AmbientBackground {
     }
 }
 
-if (ambientCanvas) {
+if (ambientCanvas && !liteExperienceMode) {
     const background = new AmbientBackground(
         ambientCanvas,
         messageSections,
-        prefersReducedMotion.matches
+        prefersReducedMotion.matches,
+        liteExperienceMode
     );
     background.start();
+} else if (ambientCanvas) {
+    ambientCanvas.hidden = true;
 }
 
 const bootLoader = bootScreenElement
@@ -1163,8 +1205,9 @@ const bootLoader = bootScreenElement
           bootCopyElement,
           bootStampElement,
           bootSteps,
-          ambientCanvas,
-          prefersReducedMotion.matches
+          liteExperienceMode ? null : ambientCanvas,
+          prefersReducedMotion.matches,
+          liteExperienceMode
       )
     : null;
 
@@ -1299,12 +1342,18 @@ class AssistantBot {
             right: { x: 123, y: 80 },
         };
         this.maxOffset = 4.1;
+        this.persistentBubbleMode = liteExperienceMode;
+        this.bootPending =
+            !!bootScreenElement &&
+            !bootScreenElement.hidden &&
+            !document.documentElement.classList.contains("loader-skip");
         this.onStageActivate = this.onStageActivate.bind(this);
         this.onStageKeyDown = this.onStageKeyDown.bind(this);
         this.onCompactModeChange = this.onCompactModeChange.bind(this);
         this.onPointerMove = this.onPointerMove.bind(this);
         this.resetEyes = this.resetEyes.bind(this);
         this.onSectionIntersect = this.onSectionIntersect.bind(this);
+        this.onBootReady = this.onBootReady.bind(this);
     }
 
     start() {
@@ -1320,9 +1369,11 @@ class AssistantBot {
         }
 
         if (this.bubble) {
+            const bubbleDelay = this.persistentBubbleMode ? 40 : 420;
+
             window.setTimeout(() => {
                 this.bubble.classList.add("is-visible");
-            }, 420);
+            }, bubbleDelay);
             this.startMessageLoop();
         }
 
@@ -1337,12 +1388,17 @@ class AssistantBot {
             this.compactQuery.addListener(this.onCompactModeChange);
         }
 
+        window.addEventListener("bootloader:complete", this.onBootReady);
+
         this.setupSectionTracking();
 
         this.updateEyes();
-        window.addEventListener("pointermove", this.onPointerMove, { passive: true });
-        window.addEventListener("blur", this.resetEyes);
-        document.addEventListener("mouseleave", this.resetEyes);
+
+        if (!liteExperienceMode) {
+            window.addEventListener("pointermove", this.onPointerMove, { passive: true });
+            window.addEventListener("blur", this.resetEyes);
+            document.addEventListener("mouseleave", this.resetEyes);
+        }
     }
 
     getStateForSection(sectionId) {
@@ -1380,6 +1436,17 @@ class AssistantBot {
     }
 
     syncCompactMode({ initial = false } = {}) {
+        if (this.persistentBubbleMode) {
+            this.isCompact = false;
+
+            if (this.widget) {
+                this.widget.dataset.compact = "false";
+            }
+
+            this.setExpanded(true, { scheduleCollapse: false });
+            return;
+        }
+
         this.isCompact = this.compactQuery.matches;
 
         if (this.widget) {
@@ -1388,8 +1455,11 @@ class AssistantBot {
 
         if (this.isCompact) {
             if (initial) {
-                this.setExpanded(true);
-                this.scheduleAutoCollapse(4600);
+                this.setExpanded(true, { scheduleCollapse: false });
+
+                if (!this.bootPending) {
+                    this.scheduleAutoCollapse(6200);
+                }
             } else {
                 this.setExpanded(false, { scheduleCollapse: false });
             }
@@ -1429,6 +1499,10 @@ class AssistantBot {
 
     startMessageLoop() {
         if (!this.bubble || !this.messageNode) {
+            return;
+        }
+
+        if (this.persistentBubbleMode) {
             return;
         }
 
@@ -1500,6 +1574,11 @@ class AssistantBot {
             return;
         }
 
+        if (this.persistentBubbleMode) {
+            this.messageNode.textContent = nextMessage;
+            return;
+        }
+
         this.bubble.classList.add("is-swapping");
         window.clearTimeout(this.swapTimer);
 
@@ -1535,6 +1614,23 @@ class AssistantBot {
 
     onCompactModeChange() {
         this.syncCompactMode();
+    }
+
+    onBootReady() {
+        this.bootPending = false;
+
+        if (!this.messageNode) {
+            return;
+        }
+
+        if (this.isCompact) {
+            this.setExpanded(true, { scheduleCollapse: false });
+            this.swapMessage(this.getNextMessage(this.currentSection));
+            this.scheduleAutoCollapse(6400);
+            return;
+        }
+
+        this.swapMessage(this.getNextMessage(this.currentSection));
     }
 
     onPointerMove(event) {
