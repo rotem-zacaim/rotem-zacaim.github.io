@@ -28,6 +28,415 @@ const sectionLinkMap = new Map(
     navLinks.map((link) => [link.getAttribute("href").slice(1), link])
 );
 
+const I18N = {
+    he: {
+        pageTitle: "רותם זכאים | אבטחת מידע, תשתיות ו-AI אופרטיבי",
+        metaDescription: "רותם זכאים הוא אנליסט אבטחת מידע ותשתיות שבונה כלי AI אופרטיביים, כולל מעבדת Maya המחברת WhatsApp, מודלים מקומיים, ניטור, בית חכם ו-Cloudflare.",
+        ogTitle: "רותם זכאים | אבטחת מידע, תשתיות ו-AI אופרטיבי",
+        ogDescription: "פרופיל מקצועי בעברית: Security Operations, תשתיות, SIEM, Cloudflare, ומעבדת AI אישית בשם Maya.",
+        twitterTitle: "רותם זכאים | אבטחת מידע, תשתיות ו-AI אופרטיבי",
+        twitterDescription: "אנליסט אבטחת מידע ותשתיות שבונה כלי AI אופרטיביים.",
+        brand: "רותם זכאים",
+        primaryNavLabel: "ניווט ראשי",
+        languageToggleLabel: "Switch to English",
+        skipLink: "דלג לתוכן",
+        bootKicker: "טעינת מערכת",
+        bootLabel: "רותם זכאים / about",
+        bootTitle: "מכין פרופיל, מעבדה וקישורי קשר.",
+        bootCopy: "מסדר את תמונת המצב לפני פתיחה.",
+        bootStepShell: "בדיקת ממשק",
+        bootStepFonts: "טעינת טיפוגרפיה",
+        bootStepAmbient: "כיול רקע",
+        bootStepProfile: "פרופיל מוכן",
+        navOverview: "פתיחה",
+        navProfile: "יכולות",
+        navMaya: "Maya AI Lab",
+        navSystems: "מערכות",
+        navExperience: "ניסיון",
+        navContact: "קשר",
+        topbarContact: "יצירת קשר",
+        heroEyebrow: "Security Operations + AI Lab",
+        heroTitle: "אנליסט אבטחת מידע ותשתיות שבונה כלי AI אופרטיביים",
+        heroLead: "אני רותם זכאים, עובד בעולמות אבטחת מידע, תפעול תשתיות וחקירת תקלות בארגונים גדולים, ובמקביל בונה מעבדת AI אישית שמחברת WhatsApp, מודלים מקומיים, ניטור, בית חכם ו-Cloudflare למערכת אחת.",
+        heroProofLabel: "מוקדי התמחות",
+        heroProofSecurity: "Security Operations",
+        heroProofInfra: "תשתיות, WAF, SSL ו-Cloudflare",
+        heroProofAi: "AI agents ומודלים מקומיים",
+        heroPrimaryCta: "לראות את מעבדת מאיה",
+        heroSecondaryCta: "LinkedIn / יצירת קשר",
+        heroTagsLabel: "טכנולוגיות מרכזיות",
+        heroPanelStatus: "פרופיל תפעולי",
+        consoleLabel: "תמונת פרופיל",
+        consoleOne: "אבטחת מידע, תשתיות, ניטור ותגובה בסביבות אמיתיות.",
+        consoleTwo: "Maya: סוכן WhatsApp עם כלים, זיכרון, מודלים מקומיים ושליטה בתשתיות.",
+        consoleThree: "observe / validate / automate / report",
+        signalLabel: "זרם יכולות מרכזי",
+        profileEyebrow: "פרופיל מרכזי",
+        profileTitle: "מה אני יודע לפתור בפועל",
+        profileCopy: "החוזקה שלי יושבת בחיבור בין אבטחת מידע, תשתיות, ניטור, לוגים, תעבורה וכלים שמקצרים עבודה.",
+        capabilityOneTitle: "חקירת אירועים ולוגים",
+        capabilityOneCopy: "עבודה יומיומית עם Splunk, ניתוח לוגים, תעבורת רשת, תקלות שירות וזיהוי חריגות.",
+        capabilityTwoTitle: "Edge security ותשתיות",
+        capabilityTwoCopy: "ניסיון עם WAF, Proxy, Load Balancer, Check Point, Imperva, F5, CyberArk, FireGlass ו-Cloudflare.",
+        capabilityThreeTitle: "SSL, Gateway ושרתים",
+        capabilityThreeCopy: "תחקור תקלות ב-Windows/Linux, תעודות SSL, IIS, API Gateway, IBM DataPower וזמינות אתרים.",
+        mayaEyebrow: "Maya AI Lab",
+        mayaTitle: "מעבדת AI אישית שמחברת מודלים, WhatsApp ותשתיות",
+        mayaCopy: "מאיה היא סוכן אישי בעברית שמחבר שיחה טבעית לכלים אמיתיים: זיכרון, יומן, קול, תמונות, בית חכם, ניטור, Cloudflare ומודלים מקומיים.",
+        mayaClosedLabTitle: "מודלים מקומיים במסגרת מעבדה סגורה",
+        mayaClosedLabCopy: "הרצת מודלים מקומיים בסביבת מעבדה סגורה, ללא תלות בסינון של ספק חיצוני, לצורכי מחקר, בדיקה והבנת סיכוני AI.",
+        systemsEyebrow: "מערכות נבחרות",
+        systemsTitle: "פרויקטים שמראים בנייה מקצה לקצה",
+        systemWhatsapp: "שיחה בעברית, tool-calling, זיכרון ארוך טווח, קול, תמונות ותזכורות פרואקטיביות.",
+        systemRoteMgpt: "ממשק שיחה מול מודל מקומי OpenAI-compatible עם Markdown, העתקה ו-session חי.",
+        systemHome: "פאנל בית חכם לטאבלט, מזגן, שואב, מצלמות, תריס ותאורת שרת OpenRGB.",
+        systemRedLab: "סביבת PT מורשית עם recon, כלים allowlisted, ראיות ודוחות טכניים בעברית.",
+        systemAndroid: "שליטה במכשיר Android במעבדה דרך ADB, scrcpy, מסך, הקלדה ופעולות מוגבלות למכשיר מאושר.",
+        systemCloudflare: "Tunnel, Access, Browser SSH, VNC, systemd וניטור שרת מאחורי שכבת גישה מאובטחת.",
+        experienceEyebrow: "ניסיון",
+        experienceTitle: "ניסיון מקצועי ותפעולי",
+        expOneTitle: "אנליסט אבטחת מידע ותפעול תשתיות / מערך הדיגיטל הלאומי",
+        expOneCopy: "SIEM, מוצרי אבטחה, תשתיות, Cloudflare, WAF, SSL, ניטור ותחקור תקלות מקצה לקצה.",
+        expTwoTitle: "מרכז שליטה ובקרה / משרד הבריאות",
+        expTwoCopy: "תמיכה טכנית ואפליקטיבית, Active Directory, הרשאות, אוטומציות ותמיכה במערכות בריאות.",
+        expThreeTitle: "ERP SAP וניהול מלאי / צה״ל",
+        expThreeCopy: "תפעול SAP, ניהול מלאי ולוגיסטיקה; סיום קורס ניהול מלאי בהצטיינות.",
+        certEyebrow: "הסמכות",
+        certTitle: "הכשרות והסמכות",
+        certOne: "קורס מגן סייבר / ג׳ון ברייס, 650 שעות",
+        certTwo: "QA תוכנה / טכניון",
+        certThree: "Cisco CCNA 200-301 Packet Tracer Labs",
+        certFour: "Applied Ethical Hacking and Rules of Engagement",
+        certFive: "Jr Penetration Tester Certificate / TryHackMe",
+        contactEyebrow: "קשר",
+        contactTitle: "מחפשים אדם שמבין אבטחה, תשתיות ו-AI מעשי?",
+        contactCopy: "אפשר לפנות אליי לשיחות על Security Operations, תשתיות, אוטומציה, AI tooling ומעבדות מחקר סגורות.",
+        contactEmail: "אימייל",
+        footerName: "רותם זכאים",
+        footerTagline: "אבטחת מידע, תשתיות ו-AI אופרטיבי",
+        assistantInitialMessage: "שלום, אני כאן.",
+        assistantToggleLabel: "החלפת הערות assistant",
+        bootAdvanceShell: "בודק את תקינות הממשק וגבולות התצוגה.",
+        bootAdvanceFonts: "מסנכרן טיפוגרפיה ותוויות פעולה.",
+        bootAdvanceAmbient: "מכייל את הרקע ואת עומק הממשק.",
+        bootAdvanceProfile: "הפרופיל מוכן. פותח את הדף.",
+        bootFallbackCopy: "מעבר חלופי הופעל. פותח את הדף.",
+        bootReadyCopy: "הדף מוכן.",
+        bootStateActive: "פעיל",
+        bootStateDone: "מוכן",
+    },
+    en: {
+        pageTitle: "Rotem Zacaim | Security, Infrastructure and Operational AI",
+        metaDescription: "Rotem Zacaim is a security and infrastructure analyst building operational AI tooling, including the Maya lab across WhatsApp, local models, monitoring, smart home systems and Cloudflare.",
+        ogTitle: "Rotem Zacaim | Security, Infrastructure and Operational AI",
+        ogDescription: "A professional profile covering Security Operations, infrastructure, SIEM, Cloudflare and the Maya personal AI lab.",
+        twitterTitle: "Rotem Zacaim | Security, Infrastructure and Operational AI",
+        twitterDescription: "A security and infrastructure analyst building operational AI tooling.",
+        brand: "Rotem Zacaim",
+        primaryNavLabel: "Primary navigation",
+        languageToggleLabel: "Switch to Hebrew",
+        skipLink: "Skip to content",
+        bootKicker: "System loading",
+        bootLabel: "Rotem Zacaim / about",
+        bootTitle: "Preparing profile, lab and contact paths.",
+        bootCopy: "Staging the profile before first contact.",
+        bootStepShell: "Interface check",
+        bootStepFonts: "Type system",
+        bootStepAmbient: "Ambient field",
+        bootStepProfile: "Profile ready",
+        navOverview: "Overview",
+        navProfile: "Capabilities",
+        navMaya: "Maya AI Lab",
+        navSystems: "Systems",
+        navExperience: "Experience",
+        navContact: "Contact",
+        topbarContact: "Contact",
+        heroEyebrow: "Security Operations + AI Lab",
+        heroTitle: "Security and infrastructure analyst building operational AI tooling",
+        heroLead: "I am Rotem Zacaim, working across information security, infrastructure operations and real-world troubleshooting, while building a personal AI lab that connects WhatsApp, local models, monitoring, smart home systems and Cloudflare into one operating layer.",
+        heroProofLabel: "Focus areas",
+        heroProofSecurity: "Security Operations",
+        heroProofInfra: "Infrastructure, WAF, SSL and Cloudflare",
+        heroProofAi: "AI agents and local models",
+        heroPrimaryCta: "Explore Maya AI Lab",
+        heroSecondaryCta: "LinkedIn / Contact",
+        heroTagsLabel: "Core technologies",
+        heroPanelStatus: "Operator profile",
+        consoleLabel: "Profile snapshot",
+        consoleOne: "Security, infrastructure, monitoring and response in real environments.",
+        consoleTwo: "Maya: a WhatsApp agent with tools, memory, local models and infrastructure control.",
+        consoleThree: "observe / validate / automate / report",
+        signalLabel: "Core capability stream",
+        profileEyebrow: "Core profile",
+        profileTitle: "What I solve in practice",
+        profileCopy: "My strength sits where security operations, infrastructure, monitoring, logs, traffic and practical tooling meet.",
+        capabilityOneTitle: "Event and log investigation",
+        capabilityOneCopy: "Daily work with Splunk, log analysis, network traffic, service issues and anomaly discovery.",
+        capabilityTwoTitle: "Edge security and infrastructure",
+        capabilityTwoCopy: "Hands-on experience with WAF, Proxy, Load Balancer, Check Point, Imperva, F5, CyberArk, FireGlass and Cloudflare.",
+        capabilityThreeTitle: "SSL, gateways and servers",
+        capabilityThreeCopy: "Troubleshooting Windows/Linux, SSL certificates, IIS, API Gateway, IBM DataPower and website availability.",
+        mayaEyebrow: "Maya AI Lab",
+        mayaTitle: "A personal AI lab connecting models, WhatsApp and infrastructure",
+        mayaCopy: "Maya is a Hebrew-first personal agent that connects natural conversation to real tools: memory, calendar, voice, images, smart home, monitoring, Cloudflare and local models.",
+        mayaClosedLabTitle: "Local models inside a closed lab",
+        mayaClosedLabCopy: "Running local models inside a closed lab environment, without dependency on external provider filtering, for research, testing and AI risk understanding.",
+        systemsEyebrow: "Selected systems",
+        systemsTitle: "Projects that prove end-to-end building",
+        systemWhatsapp: "Hebrew conversation, tool calling, long-term memory, voice, images and proactive reminders.",
+        systemRoteMgpt: "A chat interface for a local OpenAI-compatible model with Markdown, copy actions and live sessions.",
+        systemHome: "A smart home tablet panel for AC, vacuum, cameras, shutter control and OpenRGB server lighting.",
+        systemRedLab: "An authorized PT workspace with recon, allowlisted tools, evidence and Hebrew technical reports.",
+        systemAndroid: "Android lab control through ADB, scrcpy, screen actions, typing and serial allowlisting.",
+        systemCloudflare: "Tunnel, Access, Browser SSH, VNC, systemd and server monitoring behind a protected access layer.",
+        experienceEyebrow: "Experience",
+        experienceTitle: "Professional and operational experience",
+        expOneTitle: "Information Security and Infrastructure Operations Analyst / National Digital Agency",
+        expOneCopy: "SIEM, security products, infrastructure, Cloudflare, WAF, SSL, monitoring and end-to-end troubleshooting.",
+        expTwoTitle: "Command and Control Center / Ministry of Health",
+        expTwoCopy: "Technical and application support, Active Directory, permissions, automation and health-system support.",
+        expThreeTitle: "ERP SAP and inventory operations / IDF",
+        expThreeCopy: "SAP operations, inventory and logistics; completed inventory management training with excellence.",
+        certEyebrow: "Certifications",
+        certTitle: "Training and certifications",
+        certOne: "Cyber Defender course / John Bryce, 650 hours",
+        certTwo: "Software QA / Technion",
+        certThree: "Cisco CCNA 200-301 Packet Tracer Labs",
+        certFour: "Applied Ethical Hacking and Rules of Engagement",
+        certFive: "Jr Penetration Tester Certificate / TryHackMe",
+        contactEyebrow: "Contact",
+        contactTitle: "Looking for someone who understands security, infrastructure and practical AI?",
+        contactCopy: "Reach out for conversations about Security Operations, infrastructure, automation, AI tooling and closed research labs.",
+        contactEmail: "Email",
+        footerName: "Rotem Zacaim",
+        footerTagline: "Security Operations, Infrastructure and Operational AI",
+        assistantInitialMessage: "Hello, I am here.",
+        assistantToggleLabel: "Toggle assistant notes",
+        bootAdvanceShell: "Checking interface integrity and viewport bounds.",
+        bootAdvanceFonts: "Syncing typography and action labels.",
+        bootAdvanceAmbient: "Calibrating the background and interface depth.",
+        bootAdvanceProfile: "Profile ready. Opening the page.",
+        bootFallbackCopy: "Fallback transition activated. Opening the page.",
+        bootReadyCopy: "Page ready.",
+        bootStateActive: "Active",
+        bootStateDone: "Ready",
+    },
+};
+const LANGUAGE_STORAGE_KEY = "rz-about-language";
+let currentLanguage = "he";
+let assistantBot = null;
+
+function normalizeLanguage(language) {
+    const code = String(language || "").trim().toLowerCase();
+
+    return code === "en" || code.startsWith("en-") ? "en" : "he";
+}
+
+function getTranslation(key, language = currentLanguage) {
+    const normalized = normalizeLanguage(language);
+    const languagePack = I18N[normalized] || I18N.he;
+
+    return languagePack[key] || I18N.he[key] || "";
+}
+
+function resolveInitialLanguage() {
+    try {
+        const storedLanguage = window.localStorage.getItem(LANGUAGE_STORAGE_KEY);
+
+        if (storedLanguage === "he" || storedLanguage === "en") {
+            return storedLanguage;
+        }
+    } catch (error) {
+        // Local storage can be unavailable in restricted contexts.
+    }
+
+    return normalizeLanguage(document.documentElement.lang);
+}
+
+function setMetaContent(selector, value) {
+    document.querySelectorAll(selector).forEach((node) => {
+        node.setAttribute("content", value);
+    });
+}
+
+function setTranslatedAttributes(languagePack) {
+    translatedAttributeNodes.forEach((node) => {
+        const pairs = (node.dataset.i18nAttr || "")
+            .split(/[;,]/)
+            .map((pair) => pair.trim())
+            .filter(Boolean);
+
+        pairs.forEach((pair) => {
+            const separatorIndex = pair.indexOf(":");
+
+            if (separatorIndex === -1) {
+                return;
+            }
+
+            const attributeName = pair.slice(0, separatorIndex).trim();
+            const key = pair.slice(separatorIndex + 1).trim();
+
+            if (!attributeName || !Object.prototype.hasOwnProperty.call(languagePack, key)) {
+                return;
+            }
+
+            node.setAttribute(attributeName, languagePack[key]);
+        });
+    });
+}
+
+function applyLanguage(language) {
+    const normalized = normalizeLanguage(language);
+    const languagePack = I18N[normalized] || I18N.he;
+
+    currentLanguage = normalized;
+    document.documentElement.lang = normalized;
+    document.documentElement.dir = normalized === "he" ? "rtl" : "ltr";
+    document.title = languagePack.pageTitle;
+
+    document.querySelectorAll("[data-page-title]").forEach((node) => {
+        node.textContent = languagePack.pageTitle;
+    });
+    setMetaContent("[data-meta-description]", languagePack.metaDescription);
+    setMetaContent("[data-og-title]", languagePack.ogTitle || languagePack.pageTitle);
+    setMetaContent("[data-og-description]", languagePack.ogDescription || languagePack.metaDescription);
+    setMetaContent("[data-twitter-title]", languagePack.twitterTitle || languagePack.pageTitle);
+    setMetaContent("[data-twitter-description]", languagePack.twitterDescription || languagePack.metaDescription);
+
+    translatedNodes.forEach((node) => {
+        const key = node.dataset.i18n;
+
+        if (Object.prototype.hasOwnProperty.call(languagePack, key)) {
+            node.textContent = languagePack[key];
+        }
+    });
+
+    setTranslatedAttributes(languagePack);
+
+    if (languageToggle) {
+        languageToggle.dataset.language = normalized;
+    }
+
+    if (languageCurrent) {
+        languageCurrent.textContent = normalized === "he" ? "עברית" : "English";
+    }
+
+    if (languageNext) {
+        languageNext.textContent = normalized === "he" ? "English" : "עברית";
+    }
+
+    try {
+        window.localStorage.setItem(LANGUAGE_STORAGE_KEY, normalized);
+    } catch (error) {
+        // Keep the page usable when local storage writes are blocked.
+    }
+
+    if (assistantBot) {
+        assistantBot.refreshMessage();
+    }
+}
+
+function getAssistantMessageSets(language) {
+    const normalized = normalizeLanguage(language);
+    const messages = {
+        he: {
+            overview: [
+                "זה מבט מהיר על החיבור בין אבטחה, תשתיות ו-AI מעשי.",
+                "כאן מתחיל הפרופיל: עבודה יציבה, אות ברור וכלים שמחזיקים מציאות.",
+                "אפשר להתחיל ממעבדת Maya כדי לראות את הבנייה בפועל."
+            ],
+            profile: [
+                "זה הלב התפעולי: לוגים, תעבורה, תקלות ושכבות הגנה.",
+                "הכוח כאן הוא בחיבור בין חקירה טכנית לבין תשתיות חיות.",
+                "פחות סיסמאות, יותר עבודה יומיומית שמחזיקה מערכות."
+            ],
+            "maya-lab": [
+                "Maya מחברת שיחה טבעית לכלים אמיתיים, זיכרון ומודלים מקומיים.",
+                "זו מעבדה אישית בעברית, בנויה סביב שימוש מעשי ולא דמו בלבד.",
+                "המיקוד הוא שליטה, בדיקה והבנה של מערכות AI בסביבה סגורה."
+            ],
+            systems: [
+                "המערכות כאן הן הוכחות בנייה מקצה לקצה.",
+                "כל פרויקט מחבר ממשק, אוטומציה ותפעול אמיתי.",
+                "הקו המשותף: להפוך תהליך מורכב לפעולה ברורה."
+            ],
+            experience: [
+                "הניסיון מגיע מסביבות ייצור שבהן יציבות וזמינות חשובות באמת.",
+                "אבטחה טובה מתחזקת כשגם תחקור תקלות נשאר מדויק ורגוע.",
+                "זה הרקע שמזין את כלי ה-AI והאוטומציה."
+            ],
+            certifications: [
+                "ההכשרות משלימות את העבודה המעשית בשטח.",
+                "יש כאן בסיס מסודר באבטחה, בדיקות, רשתות ו-PT מורשה.",
+                "ידע טוב נשאר שימושי כשהוא מחובר לתרגול אמיתי."
+            ],
+            contact: [
+                "אם צריך אדם שמבין גם אבטחה וגם תשתיות, זה מקום טוב להתחיל.",
+                "אפשר לדבר על תפעול אבטחה, אוטומציה, תשתיות וכלי AI.",
+                "תודה שקפצת לפרופיל."
+            ],
+            fallback: [
+                "נשארים סקרנים.",
+                "ממשיכים לחקור.",
+                "מערכות יציבות מתחילות מחשיבה יציבה."
+            ],
+        },
+        en: {
+            overview: [
+                "This is the quick read on security, infrastructure and practical AI.",
+                "The profile starts here: stable operations, clear signal and tools that hold up.",
+                "Start with the Maya lab to see the build work in motion."
+            ],
+            profile: [
+                "This is the operational core: logs, traffic, service issues and protective layers.",
+                "The strength is where technical investigation meets live infrastructure.",
+                "Less slogan, more day-to-day work that keeps systems steady."
+            ],
+            "maya-lab": [
+                "Maya connects natural conversation to real tools, memory and local models.",
+                "It is a Hebrew-first personal lab built for practical use, not just demos.",
+                "The focus is control, testing and understanding AI systems in a closed environment."
+            ],
+            systems: [
+                "These systems are the end-to-end proof points.",
+                "Each project connects interface, automation and real operational flow.",
+                "The shared line: turn complex processes into clear action."
+            ],
+            experience: [
+                "The experience comes from production settings where stability and availability matter.",
+                "Security gets stronger when troubleshooting stays precise and calm.",
+                "This is the background behind the AI and automation tooling."
+            ],
+            certifications: [
+                "The training rounds out the practical work.",
+                "There is structured grounding here in security, QA, networking and authorized PT.",
+                "Good knowledge stays useful when it is tied to real practice."
+            ],
+            contact: [
+                "If you need someone who understands security and infrastructure, this is a good place to start.",
+                "Happy to talk about security operations, automation, infrastructure and AI tooling.",
+                "Thanks for visiting the profile."
+            ],
+            fallback: [
+                "Stay curious.",
+                "Keep exploring.",
+                "Steady systems come from steady thinking."
+            ],
+        },
+    };
+
+    return messages[normalized] || messages.he;
+}
+
+const initialLanguage = resolveInitialLanguage();
+applyLanguage(initialLanguage);
+
+if (languageToggle) {
+    languageToggle.addEventListener("click", () => {
+        applyLanguage(currentLanguage === "he" ? "en" : "he");
+    });
+}
+
 if (yearNode) {
     yearNode.textContent = new Date().getFullYear();
 }
@@ -183,21 +592,21 @@ class BootLoader {
 
             await this.advanceStep(
                 "shell",
-                "בודק את תקינות הממשק וגבולות התצוגה.",
+                getTranslation("bootAdvanceShell"),
                 0.22,
                 this.wait(this.reducedMotion ? 70 : 160)
             );
 
             await this.advanceStep(
                 "fonts",
-                "מסנכרן טיפוגרפיה ותוויות פעולה.",
+                getTranslation("bootAdvanceFonts"),
                 0.5,
                 this.waitForFonts()
             );
 
             await this.advanceStep(
                 "ambient",
-                "מכייל את הרקע ואת עומק הממשק.",
+                getTranslation("bootAdvanceAmbient"),
                 0.78,
                 this.waitForCanvasReady()
             );
@@ -206,12 +615,12 @@ class BootLoader {
 
             await this.advanceStep(
                 "profile",
-                "הפרופיל מוכן. פותח את הדף.",
+                getTranslation("bootAdvanceProfile"),
                 1,
                 this.wait(this.reducedMotion ? 70 : 180)
             );
         } catch (error) {
-            this.setCopy("מעבר חלופי הופעל. פותח את הדף.");
+            this.setCopy(getTranslation("bootFallbackCopy"));
             this.setProgress(1);
         }
 
@@ -261,9 +670,9 @@ class BootLoader {
 
     async advanceStep(stepName, copy, progress, task) {
         this.setCopy(copy);
-        this.setStepState(stepName, "active", "פעיל");
+        this.setStepState(stepName, "active", getTranslation("bootStateActive"));
         await task;
-        this.setStepState(stepName, "done", "מוכן");
+        this.setStepState(stepName, "done", getTranslation("bootStateDone"));
         this.setProgress(progress);
     }
 
@@ -335,7 +744,7 @@ class BootLoader {
     }
 
     complete() {
-        this.setCopy("הדף מוכן.");
+        this.setCopy(getTranslation("bootReadyCopy"));
 
         try {
             window.sessionStorage.setItem(this.sessionKey, "1");
@@ -404,7 +813,7 @@ class AmbientBackground {
                 cloudOpacity: 0.035,
                 depth: 0.14
             },
-            expertise: {
+            profile: {
                 hue: 188,
                 spread: 250,
                 arms: 4,
@@ -415,7 +824,7 @@ class AmbientBackground {
                 cloudOpacity: 0.03,
                 depth: 0.2
             },
-            workflow: {
+            "maya-lab": {
                 hue: 258,
                 spread: 326,
                 arms: 7,
@@ -426,7 +835,7 @@ class AmbientBackground {
                 cloudOpacity: 0.05,
                 depth: 0.4
             },
-            builds: {
+            systems: {
                 hue: 204,
                 spread: 312,
                 arms: 5,
@@ -448,7 +857,7 @@ class AmbientBackground {
                 cloudOpacity: 0.028,
                 depth: 0.3
             },
-            toolkit: {
+            certifications: {
                 hue: 176,
                 spread: 336,
                 arms: 6,
@@ -1231,11 +1640,11 @@ class AssistantBot {
         this.compactQuery = window.matchMedia("(max-width: 760px)");
         this.sectionStates = {
             overview: "greet",
-            expertise: "focus",
-            workflow: "explain",
-            builds: "build",
+            profile: "focus",
+            "maya-lab": "explain",
+            systems: "build",
             experience: "steady",
-            toolkit: "scan",
+            certifications: "scan",
             contact: "cta",
         };
         this.expressions = {
@@ -1281,48 +1690,6 @@ class AssistantBot {
                 mouthTransform: "translateY(-0.22px) scaleY(1.06)",
                 shadowTransform: "translateY(-0.15px) scaleY(1.04)",
             },
-        };
-        this.messageSets = {
-            overview: [
-                "Tracking security, stability, and production signal from one deck.",
-                "This robot mirrors the site: calm, technical, and a little alive.",
-                "Start with the builds if you want the fastest proof of work."
-            ],
-            expertise: [
-                "This is the operational core: visibility, edge controls, and troubleshooting.",
-                "The strongest part of the stack is where investigations meet infrastructure.",
-                "These lanes are less about buzzwords and more about daily production work."
-            ],
-            workflow: [
-                "Good workflows turn noisy systems into clear next actions.",
-                "Collect. Validate. Stabilize. Package. That loop matters more than tools alone.",
-                "The process here is meant to feel steady under production pressure."
-            ],
-            builds: [
-                "These projects are operator-first builds, not just concepts.",
-                "The goal in both repos is guided workflow, evidence, and usable output.",
-                "Open a repo and you'll see the same structure-first thinking as the site."
-            ],
-            experience: [
-                "This section is the production context behind the tooling work.",
-                "Real environments shape the instincts behind good incident handling.",
-                "Security is stronger when troubleshooting stays calm and service-aware."
-            ],
-            toolkit: [
-                "The toolkit is broad because most incidents cross layers.",
-                "This stack is less about collecting logos and more about practical coverage.",
-                "Different systems, one steady operating model."
-            ],
-            contact: [
-                "If you need ops-minded security help, this is the right place to reach out.",
-                "Happy to connect about investigations, infrastructure-facing security, or tooling.",
-                "Thanks for visiting the command deck."
-            ],
-            fallback: [
-                "Stay curious.",
-                "Keep exploring.",
-                "Steady systems come from steady thinking."
-            ]
         };
         this.messageIndexes = new Map();
         this.currentSection = "overview";
@@ -1567,11 +1934,30 @@ class AssistantBot {
     }
 
     getNextMessage(sectionId = this.currentSection) {
-        const set = this.messageSets[sectionId] || this.messageSets.fallback;
-        const currentIndex = this.messageIndexes.get(sectionId) ?? -1;
+        const messageSets = getAssistantMessageSets(currentLanguage);
+        const set = messageSets[sectionId] || messageSets.fallback;
+        const indexKey = `${currentLanguage}:${sectionId}`;
+        const currentIndex = this.messageIndexes.get(indexKey) ?? -1;
         const nextIndex = (currentIndex + 1) % set.length;
-        this.messageIndexes.set(sectionId, nextIndex);
+        this.messageIndexes.set(indexKey, nextIndex);
         return set[nextIndex];
+    }
+
+    refreshMessage() {
+        if (!this.messageNode) {
+            return;
+        }
+
+        const indexKey = `${currentLanguage}:${this.currentSection}`;
+        this.messageIndexes.delete(indexKey);
+        const nextMessage = this.getNextMessage(this.currentSection);
+
+        if (this.bubble) {
+            this.swapMessage(nextMessage);
+            return;
+        }
+
+        this.messageNode.textContent = nextMessage;
     }
 
     swapMessage(nextMessage) {
@@ -1755,7 +2141,7 @@ class AssistantBot {
 }
 
 if (assistantBotElement) {
-    const assistantBot = new AssistantBot(
+    assistantBot = new AssistantBot(
         assistantBotElement,
         assistantPupils,
         assistantBubble,
