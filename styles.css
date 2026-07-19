@@ -446,7 +446,7 @@ a {
     position: fixed;
     top: 1rem;
     left: 1rem;
-    z-index: 60;
+    z-index: 90;
     padding: 0.8rem 1rem;
     border-radius: 999px;
     background: rgba(8, 16, 30, 0.96);
@@ -2211,6 +2211,33 @@ a {
 .lab-copy h3,
 .system-tile h3 {
     margin: 0 0 0.65rem;
+}
+
+.lab-details {
+    display: grid;
+    gap: 0.65rem;
+    margin: 1rem 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.lab-details li {
+    position: relative;
+    padding-inline-start: 1.1rem;
+    color: var(--muted);
+    font-size: 0.92rem;
+    line-height: 1.55;
+}
+
+.lab-details li::before {
+    content: "";
+    position: absolute;
+    inset-inline-start: 0;
+    top: 0.62em;
+    width: 0.4rem;
+    height: 0.4rem;
+    border-radius: 50%;
+    background: var(--accent);
 }
 
 .systems-grid {

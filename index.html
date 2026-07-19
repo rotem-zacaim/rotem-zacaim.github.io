@@ -55,8 +55,8 @@
             // Session storage can be unavailable in restricted contexts.
         }
     </script>
-    <link rel="stylesheet" href="styles.css">
-    <script defer src="script.js"></script>
+    <link rel="stylesheet" href="styles.css?v=20260719-about">
+    <script defer src="script.js?v=20260719-about"></script>
 </head>
 <body>
     <div class="boot-screen" data-boot-screen role="status" aria-live="polite" aria-label="טוען אתר" data-i18n-attr="aria-label:bootScreenLabel">
@@ -236,11 +236,18 @@
                 </div>
                 <div class="lab-shell card" data-reveal>
                     <div class="lab-map" aria-hidden="true">
-                        <span>WhatsApp</span><span>Memory</span><span>RoteMGPT</span><span>Home Assistant</span><span>RedLab</span><span>Cloudflare</span>
+                        <span>WhatsApp</span><span>Google Calendar</span><span>OAuth</span><span>SQLite</span><span>GGUF</span><span>RoteMGPT</span><span>Home Assistant</span><span>Browser Lab</span><span>Game Lab</span><span>Maya Command OS</span><span>server observability</span><span>Cloudflare</span>
                     </div>
                     <div class="lab-copy">
                         <h3 data-i18n="mayaClosedLabTitle">מודלים מקומיים במסגרת מעבדה סגורה</h3>
                         <p data-i18n="mayaClosedLabCopy">הרצת מודלים מקומיים בסביבת מעבדה סגורה, ללא תלות בסינון של ספק חיצוני, לצורכי מחקר, בדיקה והבנת סיכוני AI.</p>
+                        <ul class="lab-details">
+                            <li data-i18n="mayaDetailIntegrations">Google integrations דרך Google Calendar ו-OAuth, יחד עם URL tools, weather, maps, voucher, finance ו-daily digest.</li>
+                            <li data-i18n="mayaDetailMemory">זיכרון מבוסס SQLite עם semantic retrieval כדי להחזיר הקשר רלוונטי לשיחה ולמשימות.</li>
+                            <li data-i18n="mayaDetailRuntime">הרצת מודלי GGUF דרך llama.cpp וממשק OpenAI-compatible, לצד RoteMGPT כעמדת בדיקה מקומית.</li>
+                            <li data-i18n="mayaDetailOps">Maya Command OS ו-admin dashboard לניהול מצב, משימות, בריאות שירותים ו-server observability בסביבה ביתית.</li>
+                            <li data-i18n="mayaDetailPlay">Browser Lab ו-Game Lab לניסויי UI, משחקי דפדפן, אוטומציה ובדיקת אינטראקציות.</li>
+                        </ul>
                     </div>
                 </div>
             </section>
@@ -256,7 +263,7 @@
                     <article class="system-tile card" data-reveal><h3>Home Assistant</h3><p data-i18n="systemHome">פאנל בית חכם לטאבלט, מזגן, שואב, מצלמות, תריס ותאורת שרת OpenRGB.</p></article>
                     <article class="system-tile card" data-reveal><h3>RedLab</h3><p data-i18n="systemRedLab">סביבת PT מורשית עם recon, כלים allowlisted, ראיות ודוחות טכניים בעברית.</p></article>
                     <article class="system-tile card" data-reveal><h3>Android Lab</h3><p data-i18n="systemAndroid">שליטה במכשיר Android מעבדה דרך ADB, scrcpy, מסך, הקלדה ופעולות מוגבלות למכשיר מאושר.</p></article>
-                    <article class="system-tile card" data-reveal><h3>Cloudflare Ops</h3><p data-i18n="systemCloudflare">Tunnel, Access, Browser SSH, VNC, systemd וניטור שרת מאחורי שכבת גישה מאובטחת.</p></article>
+                    <article class="system-tile card" data-reveal><h3>Cloudflare Ops</h3><p data-i18n="systemCloudflare">Cloudflare Tunnel ו-Access לתפעול מרחוק מאובטח וניטור שירותים, בלי חשיפת כתובות או מפתחות.</p></article>
                 </div>
             </section>
 

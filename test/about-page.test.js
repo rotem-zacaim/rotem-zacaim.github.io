@@ -211,6 +211,16 @@ test("skip link is first and becomes visible on keyboard focus", () => {
         /\.skip-link:focus-visible\s*{[^}]*transform\s*:\s*translateY\(0\)/s,
         "Expected skip link to become visible on focus."
     );
+    assertMatches(
+        stylesCss,
+        /\.skip-link\s*{[^}]*z-index\s*:\s*(?:9\d|[1-9]\d{2,})/s,
+        "Expected skip link to sit above the boot overlay while focused."
+    );
+    assertMatches(
+        stylesCss,
+        /\.boot-screen\s*{[^}]*z-index\s*:\s*80/s,
+        "Expected the boot overlay z-index contract to stay explicit."
+    );
 });
 
 test("approved sections exist in the page", () => {
@@ -243,6 +253,22 @@ test("Maya lab public-safe content is represented", () => {
         "Android Lab",
         "RedLab",
         "Cloudflare",
+        "Google Calendar",
+        "OAuth",
+        "SQLite",
+        "semantic retrieval",
+        "URL tools",
+        "weather",
+        "maps",
+        "voucher",
+        "finance",
+        "daily digest",
+        "Maya Command OS",
+        "admin dashboard",
+        "GGUF",
+        "Browser Lab",
+        "Game Lab",
+        "server observability",
         "מודלים מקומיים",
         "מעבדה סגורה",
     ];
@@ -288,6 +314,7 @@ test("page avoids publishing secrets or sensitive operational internals", () => 
         ["WhatsApp group ID", /\b120363\d+@g\.us\b/i],
         ["WhatsApp contact ID", /\b972\d+@c\.us\b/i],
         ["PRIVATE KEY", /PRIVATE KEY/i],
+        ["remote admin surface details", /Browser SSH|VNC|systemd/i],
     ];
 
     for (const [label, pattern] of forbiddenPatterns) {
