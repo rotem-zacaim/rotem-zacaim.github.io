@@ -230,6 +230,7 @@ test("approved sections exist in the page", () => {
         "profile",
         "maya-lab",
         "systems",
+        "deep-dive",
         "experience",
         "certifications",
         "contact",
@@ -273,6 +274,11 @@ test("Maya lab public-safe content is represented", () => {
         "GGUF",
         "Browser Lab",
         "Game Lab",
+        "Quake 2 Demo",
+        "Qwasm2",
+        "WebAssembly",
+        "WebGL2",
+        "Home Assistant API",
         "server observability",
         "מודלים מקומיים",
         "מעבדה סגורה",
@@ -281,6 +287,32 @@ test("Maya lab public-safe content is represented", () => {
     for (const phrase of requiredPublicContent) {
         assert.ok(publicContentSource.includes(phrase), `Expected public-safe content phrase: ${phrase}`);
     }
+});
+
+test("technical deep dive cards and game links are present", () => {
+    const deepDiveCards = findTagsByName(indexHtml, "details").filter((tag) =>
+        hasClassToken(tag, "deep-dive-card")
+    );
+
+    assert.ok(deepDiveCards.length >= 6, "Expected at least six expandable technical deep dive cards.");
+    assert.ok(
+        indexHtml.includes('href="https://arena.rotem-dev.org/"'),
+        "Expected a primary link to the private Arena game gateway."
+    );
+    assert.ok(
+        indexHtml.includes('href="https://mon.rotem-dev.org/game/"'),
+        "Expected a secondary link to the protected Quake 2 browser game."
+    );
+    assertMatches(
+        stylesCss,
+        /\.deep-dive-grid\s*{[^}]*grid-template-columns\s*:\s*repeat\(2,\s*minmax\(0,\s*1fr\)\)/s,
+        "Expected desktop deep dive cards to use a two-column grid."
+    );
+    assertMatches(
+        stylesCss,
+        /@media\s*\(\s*max-width\s*:\s*760px\s*\)[\s\S]*\.deep-dive-grid\s*{[\s\S]*grid-template-columns\s*:\s*1fr/s,
+        "Expected deep dive cards to collapse to one column on mobile."
+    );
 });
 
 test("all referenced i18n keys in HTML have Hebrew and English translations", () => {

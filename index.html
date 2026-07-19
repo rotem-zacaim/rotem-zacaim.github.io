@@ -55,8 +55,8 @@
             // Session storage can be unavailable in restricted contexts.
         }
     </script>
-    <link rel="stylesheet" href="styles.css?v=20260719-mobile">
-    <script defer src="script.js?v=20260719-mobile"></script>
+    <link rel="stylesheet" href="styles.css?v=20260719-deep">
+    <script defer src="script.js?v=20260719-deep"></script>
 </head>
 <body>
     <div class="boot-screen" data-boot-screen role="status" aria-live="polite" aria-label="טוען אתר" data-i18n-attr="aria-label:bootScreenLabel">
@@ -109,6 +109,7 @@
                 <a href="#profile" data-i18n="navProfile">יכולות</a>
                 <a href="#maya-lab" data-i18n="navMaya">Maya AI Lab</a>
                 <a href="#systems" data-i18n="navSystems">מערכות</a>
+                <a href="#deep-dive" data-i18n="navDeepDive">פירוט טכני</a>
                 <a href="#experience" data-i18n="navExperience">ניסיון</a>
                 <a href="#contact" data-i18n="navContact">קשר</a>
             </nav>
@@ -298,6 +299,116 @@
                     <article class="system-tile card" data-reveal><h3>RedLab</h3><p data-i18n="systemRedLab">סביבת PT מורשית עם recon, כלים allowlisted, ראיות ודוחות טכניים בעברית.</p></article>
                     <article class="system-tile card" data-reveal><h3>Android Lab</h3><p data-i18n="systemAndroid">שליטה במכשיר Android מעבדה דרך ADB, scrcpy, מסך, הקלדה ופעולות מוגבלות למכשיר מאושר.</p></article>
                     <article class="system-tile card" data-reveal><h3>Cloudflare Ops</h3><p data-i18n="systemCloudflare">Cloudflare Tunnel ו-Access לתפעול מרחוק מאובטח וניטור שירותים, בלי חשיפת כתובות או מפתחות.</p></article>
+                </div>
+            </section>
+
+            <section class="section deep-dive-section" id="deep-dive">
+                <div class="section-heading" data-reveal>
+                    <p class="eyebrow" data-i18n="deepEyebrow">Technical deep dives</p>
+                    <h2 data-i18n="deepTitle">לחיצה אחת, יותר עומק על מה שבנינו</h2>
+                    <p class="section-copy" data-i18n="deepCopy">הדף נשאר נקי מבחוץ, אבל מי שרוצה להבין את העבודה באמת יכול לפתוח פירוט טכני על שכבות ה-AI, ה-API, הבית החכם, המשחקים והניטור.</p>
+                </div>
+
+                <div class="deep-dive-grid">
+                    <details class="deep-dive-card card" data-reveal open>
+                        <summary>
+                            <span class="deep-index">01</span>
+                            <strong data-i18n="deepMayaTitle">Maya: סוכן WhatsApp אופרטיבי</strong>
+                            <span class="deep-toggle" data-i18n="deepToggle">פתח פירוט</span>
+                        </summary>
+                        <div class="deep-dive-body">
+                            <p data-i18n="deepMayaCopy">מאיה מחברת הודעת WhatsApp רגילה לשכבת orchestration: ניתוב הודעות, הרשאות, tool-calling, זיכרון, מודלים וכלי עבודה אמיתיים.</p>
+                            <ul class="deep-points">
+                                <li data-i18n="deepMayaPointOne">Event Bus פנימי לאירועים כמו הודעה נכנסת, כלי שהופעל, זיכרון שעודכן ותזכורת שנשלחה.</li>
+                                <li data-i18n="deepMayaPointTwo">Plugin registry שמאפשר להוסיף דומיינים חדשים כמו Calendar, URL intelligence, vouchers, weather, memory ו-Home Assistant.</li>
+                                <li data-i18n="deepMayaPointThree">זיכרון ארוך טווח מבוסס SQLite ושליפה סמנטית, כך שהמערכת מחזירה הקשר רלוונטי לשיחות ולמשימות.</li>
+                            </ul>
+                        </div>
+                    </details>
+
+                    <details class="deep-dive-card card" data-reveal>
+                        <summary>
+                            <span class="deep-index">02</span>
+                            <strong data-i18n="deepApiTitle">API ושירותים מחוברים</strong>
+                            <span class="deep-toggle" data-i18n="deepToggle">פתח פירוט</span>
+                        </summary>
+                        <div class="deep-dive-body">
+                            <p data-i18n="deepApiCopy">המערכת עובדת מול שירותים חיצוניים ופנימיים בצורה מבוקרת: OAuth, APIs, endpoints מוגנים, headers ייעודיים וולידציה לפני פעולה.</p>
+                            <ul class="deep-points">
+                                <li data-i18n="deepApiPointOne">Google Calendar דרך OAuth: קריאה, יצירה, עדכון, מחיקה, חיפוש חלונות פנויים וייבוא משמרות מתמונה.</li>
+                                <li data-i18n="deepApiPointTwo">כלים ל-URL/DNS/SSL/redirects, מזג אוויר, מפות, שערי מטבע, שוברים וסיכום יומי.</li>
+                                <li data-i18n="deepApiPointThree">שכבות admin כמו overview, logs, memory, docs ו-RoteMGPT יושבות מאחורי גישה מוגנת ולא חושפות secrets בדף הציבורי.</li>
+                            </ul>
+                        </div>
+                    </details>
+
+                    <details class="deep-dive-card card" data-reveal>
+                        <summary>
+                            <span class="deep-index">03</span>
+                            <strong data-i18n="deepHaTitle">Home Assistant ובית חכם</strong>
+                            <span class="deep-toggle" data-i18n="deepToggle">פתח פירוט</span>
+                        </summary>
+                        <div class="deep-dive-body">
+                            <p data-i18n="deepHaCopy">שכבת הבית החכם מחברת את מאיה ופאנל הטאבלט ל-Home Assistant API: קריאת state, הפעלת services ותצוגה חיה של הבית.</p>
+                            <ul class="deep-points">
+                                <li data-i18n="deepHaPointOne">שליטה בישויות כמו שואב, תאורה, מתגים, אקלים, מצלמות, תריסים וסנסורים דרך API מאובטח בצד השרת.</li>
+                                <li data-i18n="deepHaPointTwo">פאנל קיר מותאם לטאבלט עם כרטיסים חיים, מזג אוויר, מצלמות, לוח שנה ואזורי פעולה מהירים.</li>
+                                <li data-i18n="deepHaPointThree">החיבור בנוי כך שמאיה יכולה להפוך שיחה בעברית לפעולה בבית, עם בדיקות זהירות לפני פעולות אקטיביות.</li>
+                            </ul>
+                        </div>
+                    </details>
+
+                    <details class="deep-dive-card card" data-reveal>
+                        <summary>
+                            <span class="deep-index">04</span>
+                            <strong data-i18n="deepGameTitle">Game Lab ומשחקי דפדפן</strong>
+                            <span class="deep-toggle" data-i18n="deepToggle">פתח פירוט</span>
+                        </summary>
+                        <div class="deep-dive-body">
+                            <p data-i18n="deepGameCopy">מעבדת המשחקים התחילה כדרך לבדוק שליטה, latency, קלט משתמש, WebAssembly ו-automation בסביבה גרפית אמיתית.</p>
+                            <ul class="deep-points">
+                                <li data-i18n="deepGamePointOne">Quake 2 Demo רץ בדפדפן דרך Qwasm2, WebAssembly ו-WebGL2, עם טעינת נכסי הדמו ושמירת cache מקומי בדפדפן.</li>
+                                <li data-i18n="deepGamePointTwo">QuakeJS Arena הוא מסלול נפרד למולטיפלייר פרטי, עם gateway שמיועד למשחק בלבד ולא לדשבורד הניהול של מאיה.</li>
+                                <li data-i18n="deepGamePointThree">בנוסף קיימות שכבות Game Lab ל-Android/Clash Royale ול-FortySevenMS, כולל צילום מסך, זיהוי מצב, safety policy ופקדי פעולה מוגבלים.</li>
+                            </ul>
+                            <div class="deep-actions">
+                                <a class="button button-primary" href="https://arena.rotem-dev.org/" target="_blank" rel="noopener noreferrer" data-i18n="deepGamePrimaryCta">פתח את Arena</a>
+                                <a class="button button-secondary" href="https://mon.rotem-dev.org/game/" target="_blank" rel="noopener noreferrer" data-i18n="deepGameSecondaryCta">Quake 2 מוגן</a>
+                            </div>
+                        </div>
+                    </details>
+
+                    <details class="deep-dive-card card" data-reveal>
+                        <summary>
+                            <span class="deep-index">05</span>
+                            <strong data-i18n="deepObsTitle">ניטור, דשבורד ותפעול שרת</strong>
+                            <span class="deep-toggle" data-i18n="deepToggle">פתח פירוט</span>
+                        </summary>
+                        <div class="deep-dive-body">
+                            <p data-i18n="deepObsCopy">מאיה כוללת שכבת observability שמציגה בריאות מערכת, שימוש, לוגים ותמונה תפעולית כדי להבין מהר מה חי ומה דורש טיפול.</p>
+                            <ul class="deep-points">
+                                <li data-i18n="deepObsPointOne">Dashboard עם CPU, RAM, disk, uptime, רשת, שירותי Maya, counters ותזמוני פעולות.</li>
+                                <li data-i18n="deepObsPointTwo">Maya Command OS מרכז overview, memory, logs, RoteMGPT, פעולות מהירות ו-Command Palette למעבר בין מסכים.</li>
+                                <li data-i18n="deepObsPointThree">Cloudflare Tunnel ו-Access נותנים שכבת גישה מרחוק מוגנת בלי לחשוף hosts פנימיים או secrets.</li>
+                            </ul>
+                        </div>
+                    </details>
+
+                    <details class="deep-dive-card card" data-reveal>
+                        <summary>
+                            <span class="deep-index">06</span>
+                            <strong data-i18n="deepAndroidTitle">Android Lab ו-Companion</strong>
+                            <span class="deep-toggle" data-i18n="deepToggle">פתח פירוט</span>
+                        </summary>
+                        <div class="deep-dive-body">
+                            <p data-i18n="deepAndroidCopy">Android Lab מוסיף לגוף של מאיה מכשיר מעבדה נשלט: מסך, קול, מגע, אפליקציות ומשימות real-time מעל ADB ו-scrcpy.</p>
+                            <ul class="deep-points">
+                                <li data-i18n="deepAndroidPointOne">פקדי tap, swipe, typing, home/back, long press ו-sequence מהיר, כולל פקדים יחסיים למסך כדי לעבוד על רזולוציות שונות.</li>
+                                <li data-i18n="deepAndroidPointTwo">Companion app מוסיף microphone, speaker, camera presence ופקודות נראות מהטלפון אל שרת מאיה.</li>
+                                <li data-i18n="deepAndroidPointThree">שימושי במיוחד לבדיקת WhatsApp מעבדה, משחקים, latency ופעולות UI שלא מספיק לתאר בטקסט.</li>
+                            </ul>
+                        </div>
+                    </details>
                 </div>
             </section>
 
