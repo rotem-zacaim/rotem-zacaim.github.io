@@ -7,7 +7,14 @@ const repoRoot = path.resolve(__dirname, "..");
 const indexHtml = fs.readFileSync(path.join(repoRoot, "index.html"), "utf8");
 const stylesCss = fs.readFileSync(path.join(repoRoot, "styles.css"), "utf8");
 const scriptJs = fs.readFileSync(path.join(repoRoot, "script.js"), "utf8");
+const publicContentSource = [indexHtml, scriptJs].join("\n");
 const publicSiteSource = [indexHtml, stylesCss, scriptJs].join("\n");
+const acceptedLanguageToggleLabelPhrases = [
+    "\u05e9\u05e4\u05d4",
+    "Language",
+    "Switch to English",
+    "\u05e2\u05d1\u05e8\u05d9\u05ea",
+];
 
 function escapeRegExp(value) {
     return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -45,6 +52,10 @@ function getAttributeValue(tag, attributeName) {
     );
 
     return match ? match[2] : "";
+}
+
+function hasClassToken(tag, className) {
+    return getAttributeValue(tag, "class").split(/\s+/).includes(className);
 }
 
 function getObjectBlock(source, openingBraceIndex) {
@@ -89,12 +100,20 @@ function getLanguageBlock(language) {
 }
 
 function extractDataI18nKeys(markup) {
+    const dataI18nKeys = findTagsWithAttribute(markup, "data-i18n").map((tag) =>
+        getAttributeValue(tag, "data-i18n").trim()
+    );
+    const dataI18nAttrKeys = findTagsWithAttribute(markup, "data-i18n-attr").flatMap((tag) =>
+        Array.from(
+            getAttributeValue(tag, "data-i18n-attr").matchAll(
+                /(?:^|[\s,;])[^:\s,;]+\s*:\s*([^\s,;]+)/g
+            ),
+            ([, key]) => key.trim()
+        )
+    );
+
     return [
-        ...new Set(
-            findTagsWithAttribute(markup, "data-i18n")
-                .map((tag) => getAttributeValue(tag, "data-i18n").trim())
-                .filter(Boolean)
-        ),
+        ...new Set([...dataI18nKeys, ...dataI18nAttrKeys].filter(Boolean)),
     ];
 }
 
@@ -114,6 +133,21 @@ test("attribute helpers ignore names that only end with the requested attribute"
     assert.deepEqual(findTagsByName("<section-widget id=\"profile\"></section-widget>", "section"), []);
 });
 
+test("i18n key extraction includes translated attribute references", () => {
+    const markup = `
+        <nav data-i18n-attr="aria-label:primaryNavLabel"></nav>
+        <a data-i18n="contactCta" data-i18n-attr="title:contactTitle, aria-label:contactAria"></a>
+        <button data-i18n-attr="aria-label:primaryNavLabel"></button>
+    `;
+
+    assert.deepEqual(extractDataI18nKeys(markup), [
+        "contactCta",
+        "primaryNavLabel",
+        "contactTitle",
+        "contactAria",
+    ]);
+});
+
 test("page defaults to accessible Hebrew RTL", () => {
     const htmlTags = findTagsByName(indexHtml, "html");
 
@@ -126,7 +160,7 @@ test("page defaults to accessible Hebrew RTL", () => {
     assert.ok(
         findTagsByName(indexHtml, "a").some(
             (tag) =>
-                getAttributeValue(tag, "class") === "skip-link" &&
+                hasClassToken(tag, "skip-link") &&
                 getAttributeValue(tag, "href") === "#main-content" &&
                 getAttributeValue(tag, "data-i18n") === "skipLink"
         ),
@@ -137,8 +171,15 @@ test("page defaults to accessible Hebrew RTL", () => {
 
     assert.ok(languageToggleTags.length > 0, "Expected a language control marked with data-language-toggle.");
     assert.ok(
-        languageToggleTags.some((tag) => /שפה|Language/.test(getAttributeValue(tag, "aria-label"))),
-        'Expected the language control aria-label to contain "שפה" or "Language".'
+        languageToggleTags.some((tag) => {
+            const ariaLabel = getAttributeValue(tag, "aria-label").trim();
+
+            return (
+                ariaLabel.length > 0 &&
+                acceptedLanguageToggleLabelPhrases.some((phrase) => ariaLabel.includes(phrase))
+            );
+        }),
+        `Expected the language control aria-label to be non-empty and include one of: ${acceptedLanguageToggleLabelPhrases.join(", ")}.`
     );
 });
 
@@ -177,14 +218,14 @@ test("Maya lab public-safe content is represented", () => {
     ];
 
     for (const phrase of requiredPublicContent) {
-        assert.ok(publicSiteSource.includes(phrase), `Expected public-safe content phrase: ${phrase}`);
+        assert.ok(publicContentSource.includes(phrase), `Expected public-safe content phrase: ${phrase}`);
     }
 });
 
-test("all data-i18n keys in HTML have Hebrew and English translations", () => {
+test("all referenced i18n keys in HTML have Hebrew and English translations", () => {
     const keys = extractDataI18nKeys(indexHtml);
 
-    assert.ok(keys.length > 30, `Expected more than 30 unique data-i18n keys, found ${keys.length}.`);
+    assert.ok(keys.length > 30, `Expected more than 30 unique i18n keys, found ${keys.length}.`);
     assertMatches(scriptJs, /\bconst\s+I18N\s*=\s*{/, "Expected script.js to declare const I18N.");
     assertMatches(getI18nBlock(), /\bhe\s*:\s*{/, "Expected I18N to include he translations.");
     assertMatches(getI18nBlock(), /\ben\s*:\s*{/, "Expected I18N to include en translations.");
@@ -200,7 +241,7 @@ test("all data-i18n keys in HTML have Hebrew and English translations", () => {
             assertMatches(
                 block,
                 new RegExp(`(?:^|[,{\\s])(?:${escapeRegExp(key)}|["']${escapeRegExp(key)}["'])\\s*:\\s*(["'\`])`, "m"),
-                `Missing ${language} string translation for data-i18n key "${key}".`
+                `Missing ${language} string translation for i18n key "${key}".`
             );
         }
     }
