@@ -344,3 +344,26 @@ test("styles include responsive, RTL, and reduced-motion support", () => {
         "Expected assistant widget to hide only on cramped viewports."
     );
 });
+
+test("mobile experience includes a compact hero brief and quick action dock", () => {
+    assertMatches(
+        indexHtml,
+        /class=["'][^"']*\bmobile-command-strip\b[^"']*["'][^>]*data-i18n-attr=["']aria-label:mobileBriefLabel["']/s,
+        "Expected a mobile-only hero brief with an accessible translated label."
+    );
+    assertMatches(
+        indexHtml,
+        /class=["'][^"']*\bmobile-action-dock\b[^"']*["'][^>]*data-i18n-attr=["']aria-label:mobileDockLabel["']/s,
+        "Expected a mobile quick action dock with an accessible translated label."
+    );
+    assertMatches(
+        stylesCss,
+        /@media\s*\(\s*max-width\s*:\s*760px\s*\)[\s\S]*\.mobile-action-dock\s*{[\s\S]*display\s*:\s*grid/s,
+        "Expected the quick action dock to become visible on mobile."
+    );
+    assertMatches(
+        stylesCss,
+        /@media\s*\(\s*max-width\s*:\s*760px\s*\)[\s\S]*\.capability-grid\s*,\s*\.systems-grid\s*{[\s\S]*scroll-snap-type\s*:\s*x\s+mandatory/s,
+        "Expected key mobile card groups to use horizontal snap scrolling."
+    );
+});
