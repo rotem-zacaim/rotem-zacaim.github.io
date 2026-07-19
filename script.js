@@ -40,6 +40,8 @@ const I18N = {
         primaryNavLabel: "ניווט ראשי",
         languageToggleLabel: "Switch to English",
         skipLink: "דלג לתוכן",
+        bootScreenLabel: "טוען אתר",
+        bootSequenceLabel: "רצף טעינה",
         bootKicker: "טעינת מערכת",
         bootLabel: "רותם זכאים / about",
         bootTitle: "מכין פרופיל, מעבדה וקישורי קשר.",
@@ -48,6 +50,15 @@ const I18N = {
         bootStepFonts: "טעינת טיפוגרפיה",
         bootStepAmbient: "כיול רקע",
         bootStepProfile: "פרופיל מוכן",
+        bootPending: "בהמתנה",
+        bootActive: "פעיל",
+        bootReady: "מוכן",
+        bootRuntimeShell: "בודק את תקינות הממשק וגבולות התצוגה.",
+        bootRuntimeFonts: "מסנכרן טיפוגרפיה ותוויות פעולה.",
+        bootRuntimeAmbient: "מכייל את הרקע ואת עומק הממשק.",
+        bootRuntimeProfile: "הפרופיל מוכן. פותח את הדף.",
+        bootRuntimeFallback: "מעבר חלופי הופעל. פותח את הדף.",
+        bootRuntimeComplete: "הדף מוכן.",
         navOverview: "פתיחה",
         navProfile: "יכולות",
         navMaya: "Maya AI Lab",
@@ -95,6 +106,7 @@ const I18N = {
         systemCloudflare: "Tunnel, Access, Browser SSH, VNC, systemd וניטור שרת מאחורי שכבת גישה מאובטחת.",
         experienceEyebrow: "ניסיון",
         experienceTitle: "ניסיון מקצועי ותפעולי",
+        expOneDate: "2023 - היום",
         expOneTitle: "אנליסט אבטחת מידע ותפעול תשתיות / מערך הדיגיטל הלאומי",
         expOneCopy: "SIEM, מוצרי אבטחה, תשתיות, Cloudflare, WAF, SSL, ניטור ותחקור תקלות מקצה לקצה.",
         expTwoTitle: "מרכז שליטה ובקרה / משרד הבריאות",
@@ -116,14 +128,6 @@ const I18N = {
         footerTagline: "אבטחת מידע, תשתיות ו-AI אופרטיבי",
         assistantInitialMessage: "שלום, אני כאן.",
         assistantToggleLabel: "החלפת הערות assistant",
-        bootAdvanceShell: "בודק את תקינות הממשק וגבולות התצוגה.",
-        bootAdvanceFonts: "מסנכרן טיפוגרפיה ותוויות פעולה.",
-        bootAdvanceAmbient: "מכייל את הרקע ואת עומק הממשק.",
-        bootAdvanceProfile: "הפרופיל מוכן. פותח את הדף.",
-        bootFallbackCopy: "מעבר חלופי הופעל. פותח את הדף.",
-        bootReadyCopy: "הדף מוכן.",
-        bootStateActive: "פעיל",
-        bootStateDone: "מוכן",
     },
     en: {
         pageTitle: "Rotem Zacaim | Security, Infrastructure and Operational AI",
@@ -136,6 +140,8 @@ const I18N = {
         primaryNavLabel: "Primary navigation",
         languageToggleLabel: "Switch to Hebrew",
         skipLink: "Skip to content",
+        bootScreenLabel: "Loading site",
+        bootSequenceLabel: "Boot sequence",
         bootKicker: "System loading",
         bootLabel: "Rotem Zacaim / about",
         bootTitle: "Preparing profile, lab and contact paths.",
@@ -144,6 +150,15 @@ const I18N = {
         bootStepFonts: "Type system",
         bootStepAmbient: "Ambient field",
         bootStepProfile: "Profile ready",
+        bootPending: "pending",
+        bootActive: "active",
+        bootReady: "ready",
+        bootRuntimeShell: "Checking shell integrity and interface boundaries.",
+        bootRuntimeFonts: "Syncing the type system and command labels.",
+        bootRuntimeAmbient: "Calibrating the ambient field and interface depth.",
+        bootRuntimeProfile: "Operator profile ready. Opening the page.",
+        bootRuntimeFallback: "Fallback handoff engaged. Opening the page.",
+        bootRuntimeComplete: "Page ready.",
         navOverview: "Overview",
         navProfile: "Capabilities",
         navMaya: "Maya AI Lab",
@@ -191,6 +206,7 @@ const I18N = {
         systemCloudflare: "Tunnel, Access, Browser SSH, VNC, systemd and server monitoring behind a protected access layer.",
         experienceEyebrow: "Experience",
         experienceTitle: "Professional and operational experience",
+        expOneDate: "2023 - Present",
         expOneTitle: "Information Security and Infrastructure Operations Analyst / National Digital Agency",
         expOneCopy: "SIEM, security products, infrastructure, Cloudflare, WAF, SSL, monitoring and end-to-end troubleshooting.",
         expTwoTitle: "Command and Control Center / Ministry of Health",
@@ -212,14 +228,6 @@ const I18N = {
         footerTagline: "Security Operations, Infrastructure and Operational AI",
         assistantInitialMessage: "Hello, I am here.",
         assistantToggleLabel: "Toggle assistant notes",
-        bootAdvanceShell: "Checking interface integrity and viewport bounds.",
-        bootAdvanceFonts: "Syncing typography and action labels.",
-        bootAdvanceAmbient: "Calibrating the background and interface depth.",
-        bootAdvanceProfile: "Profile ready. Opening the page.",
-        bootFallbackCopy: "Fallback transition activated. Opening the page.",
-        bootReadyCopy: "Page ready.",
-        bootStateActive: "Active",
-        bootStateDone: "Ready",
     },
 };
 const LANGUAGE_STORAGE_KEY = "rz-about-language";
@@ -592,21 +600,21 @@ class BootLoader {
 
             await this.advanceStep(
                 "shell",
-                getTranslation("bootAdvanceShell"),
+                getTranslation("bootRuntimeShell"),
                 0.22,
                 this.wait(this.reducedMotion ? 70 : 160)
             );
 
             await this.advanceStep(
                 "fonts",
-                getTranslation("bootAdvanceFonts"),
+                getTranslation("bootRuntimeFonts"),
                 0.5,
                 this.waitForFonts()
             );
 
             await this.advanceStep(
                 "ambient",
-                getTranslation("bootAdvanceAmbient"),
+                getTranslation("bootRuntimeAmbient"),
                 0.78,
                 this.waitForCanvasReady()
             );
@@ -615,12 +623,12 @@ class BootLoader {
 
             await this.advanceStep(
                 "profile",
-                getTranslation("bootAdvanceProfile"),
+                getTranslation("bootRuntimeProfile"),
                 1,
                 this.wait(this.reducedMotion ? 70 : 180)
             );
         } catch (error) {
-            this.setCopy(getTranslation("bootFallbackCopy"));
+            this.setCopy(getTranslation("bootRuntimeFallback"));
             this.setProgress(1);
         }
 
@@ -670,9 +678,9 @@ class BootLoader {
 
     async advanceStep(stepName, copy, progress, task) {
         this.setCopy(copy);
-        this.setStepState(stepName, "active", getTranslation("bootStateActive"));
+        this.setStepState(stepName, "active", getTranslation("bootActive"));
         await task;
-        this.setStepState(stepName, "done", getTranslation("bootStateDone"));
+        this.setStepState(stepName, "done", getTranslation("bootReady"));
         this.setProgress(progress);
     }
 
@@ -744,7 +752,7 @@ class BootLoader {
     }
 
     complete() {
-        this.setCopy(getTranslation("bootReadyCopy"));
+        this.setCopy(getTranslation("bootRuntimeComplete"));
 
         try {
             window.sessionStorage.setItem(this.sessionKey, "1");

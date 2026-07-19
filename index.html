@@ -59,7 +59,7 @@
     <script defer src="script.js"></script>
 </head>
 <body>
-    <div class="boot-screen" data-boot-screen role="status" aria-live="polite" aria-label="טוען אתר">
+    <div class="boot-screen" data-boot-screen role="status" aria-live="polite" aria-label="טוען אתר" data-i18n-attr="aria-label:bootScreenLabel">
         <div class="boot-screen-panel">
             <div class="boot-screen-meta">
                 <p class="boot-screen-kicker" data-i18n="bootKicker">טעינת מערכת</p>
@@ -74,22 +74,22 @@
                 <span class="boot-screen-progress-fill" data-boot-progress></span>
             </div>
 
-            <div class="boot-screen-status" aria-label="רצף טעינה">
+            <div class="boot-screen-status" aria-label="רצף טעינה" data-i18n-attr="aria-label:bootSequenceLabel">
                 <div class="boot-screen-row" data-boot-step="shell">
                     <span data-i18n="bootStepShell">בדיקת ממשק</span>
-                    <strong>בהמתנה</strong>
+                    <strong data-i18n="bootPending">בהמתנה</strong>
                 </div>
                 <div class="boot-screen-row" data-boot-step="fonts">
                     <span data-i18n="bootStepFonts">טעינת טיפוגרפיה</span>
-                    <strong>בהמתנה</strong>
+                    <strong data-i18n="bootPending">בהמתנה</strong>
                 </div>
                 <div class="boot-screen-row" data-boot-step="ambient">
                     <span data-i18n="bootStepAmbient">כיול רקע</span>
-                    <strong>בהמתנה</strong>
+                    <strong data-i18n="bootPending">בהמתנה</strong>
                 </div>
                 <div class="boot-screen-row" data-boot-step="profile">
                     <span data-i18n="bootStepProfile">פרופיל מוכן</span>
-                    <strong>בהמתנה</strong>
+                    <strong data-i18n="bootPending">בהמתנה</strong>
                 </div>
             </div>
         </div>
@@ -267,7 +267,7 @@
                 </div>
                 <div class="experience-layout">
                     <article class="experience-card card" data-reveal>
-                        <div class="timeline-item"><p class="timeline-label">2023 - היום</p><h3 data-i18n="expOneTitle">אנליסט אבטחת מידע ותפעול תשתיות / מערך הדיגיטל הלאומי</h3><p data-i18n="expOneCopy">SIEM, מוצרי אבטחה, תשתיות, Cloudflare, WAF, SSL, ניטור ותחקור תקלות מקצה לקצה.</p></div>
+                        <div class="timeline-item"><p class="timeline-label" data-i18n="expOneDate">2023 - היום</p><h3 data-i18n="expOneTitle">אנליסט אבטחת מידע ותפעול תשתיות / מערך הדיגיטל הלאומי</h3><p data-i18n="expOneCopy">SIEM, מוצרי אבטחה, תשתיות, Cloudflare, WAF, SSL, ניטור ותחקור תקלות מקצה לקצה.</p></div>
                         <div class="timeline-item"><p class="timeline-label">2021 - 2023</p><h3 data-i18n="expTwoTitle">מרכז שליטה ובקרה / משרד הבריאות</h3><p data-i18n="expTwoCopy">תמיכה טכנית ואפליקטיבית, Active Directory, הרשאות, אוטומציות ותמיכה במערכות בריאות.</p></div>
                         <div class="timeline-item"><p class="timeline-label">2014 - 2017</p><h3 data-i18n="expThreeTitle">ERP SAP וניהול מלאי / צה״ל</h3><p data-i18n="expThreeCopy">תפעול SAP, ניהול מלאי ולוגיסטיקה, סיום קורס ניהול מלאי בהצטיינות.</p></div>
                     </article>
