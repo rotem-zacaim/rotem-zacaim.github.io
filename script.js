@@ -178,21 +178,21 @@ class BootLoader {
 
             await this.advanceStep(
                 "shell",
-                "Checking shell integrity and interface boundaries.",
+                "בודק את תקינות הממשק וגבולות התצוגה.",
                 0.22,
                 this.wait(this.reducedMotion ? 70 : 160)
             );
 
             await this.advanceStep(
                 "fonts",
-                "Syncing the type system and command labels.",
+                "מסנכרן טיפוגרפיה ותוויות פעולה.",
                 0.5,
                 this.waitForFonts()
             );
 
             await this.advanceStep(
                 "ambient",
-                "Calibrating the ambient field and interface depth.",
+                "מכייל את הרקע ואת עומק הממשק.",
                 0.78,
                 this.waitForCanvasReady()
             );
@@ -201,12 +201,12 @@ class BootLoader {
 
             await this.advanceStep(
                 "profile",
-                "Operator profile ready. Opening the deck.",
+                "הפרופיל מוכן. פותח את הדף.",
                 1,
                 this.wait(this.reducedMotion ? 70 : 180)
             );
         } catch (error) {
-            this.setCopy("Fallback handoff engaged. Opening the deck.");
+            this.setCopy("מעבר חלופי הופעל. פותח את הדף.");
             this.setProgress(1);
         }
 
@@ -256,9 +256,9 @@ class BootLoader {
 
     async advanceStep(stepName, copy, progress, task) {
         this.setCopy(copy);
-        this.setStepState(stepName, "active", "active");
+        this.setStepState(stepName, "active", "פעיל");
         await task;
-        this.setStepState(stepName, "done", "ready");
+        this.setStepState(stepName, "done", "מוכן");
         this.setProgress(progress);
     }
 
@@ -330,7 +330,7 @@ class BootLoader {
     }
 
     complete() {
-        this.setCopy("Command deck online.");
+        this.setCopy("הדף מוכן.");
 
         try {
             window.sessionStorage.setItem(this.sessionKey, "1");
