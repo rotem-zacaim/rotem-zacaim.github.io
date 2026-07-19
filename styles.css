@@ -11,9 +11,9 @@
     --accent-strong: #ffba54;
     --accent-shadow: rgba(99, 237, 216, 0.22);
     --shadow: 0 30px 70px rgba(1, 5, 16, 0.48);
-    --radius-xl: 28px;
-    --radius-lg: 22px;
-    --radius-md: 16px;
+    --radius-xl: 8px;
+    --radius-lg: 8px;
+    --radius-md: 8px;
     --max-width: 1180px;
 }
 
@@ -1378,6 +1378,25 @@ a {
     direction: ltr;
 }
 
+[dir="rtl"] .console-line,
+[dir="rtl"] .console-output,
+[dir="rtl"] .console-path {
+    direction: ltr;
+    text-align: left;
+}
+
+[dir="rtl"] .section-heading,
+[dir="rtl"] .hero-copy,
+[dir="rtl"] .contact-banner {
+    text-align: right;
+}
+
+[dir="ltr"] .section-heading,
+[dir="ltr"] .hero-copy,
+[dir="ltr"] .contact-banner {
+    text-align: left;
+}
+
 .topnav a {
     display: inline-flex;
     align-items: center;
@@ -2128,6 +2147,61 @@ a {
     grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
+.capability-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.maya-lab-section {
+    position: relative;
+}
+
+.lab-shell {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(18rem, 0.8fr);
+    gap: 1.25rem;
+    align-items: center;
+    padding: 1.25rem;
+}
+
+.lab-map {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.75rem;
+}
+
+.lab-map span,
+.system-tile {
+    min-height: 5.25rem;
+}
+
+.lab-map span {
+    display: grid;
+    place-items: center;
+    padding: 0.85rem;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: rgba(99, 237, 216, 0.08);
+    color: var(--text);
+    text-align: center;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.82rem;
+}
+
+.lab-copy h3,
+.system-tile h3 {
+    margin: 0 0 0.65rem;
+}
+
+.systems-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+.system-tile {
+    padding: 1rem;
+}
+
 .feature-card,
 .tool-card,
 .build-card {
@@ -2238,8 +2312,9 @@ a {
 
 .experience-layout {
     display: grid;
-    grid-template-columns: minmax(0, 1.2fr) minmax(300px, 0.8fr);
+    grid-template-columns: minmax(0, 1.2fr) minmax(18rem, 0.8fr);
     gap: 1rem;
+    align-items: start;
 }
 
 .timeline {
@@ -2685,9 +2760,21 @@ a {
     .topbar {
         position: static;
         flex-wrap: wrap;
+        align-items: stretch;
         justify-content: center;
         border-radius: 24px;
         text-align: center;
+    }
+
+    .topbar-actions {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .language-toggle,
+    .topbar-link {
+        flex: 1 1 auto;
+        justify-content: center;
     }
 
     .topnav {
@@ -2708,6 +2795,17 @@ a {
     .workflow-grid,
     .toolkit-grid {
         grid-template-columns: 1fr;
+    }
+
+    .capability-grid,
+    .systems-grid,
+    .lab-shell,
+    .experience-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .lab-map {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
     .build-header {
