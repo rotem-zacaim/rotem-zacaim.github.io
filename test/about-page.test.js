@@ -17,8 +17,22 @@ function assertMatches(source, pattern, message) {
     assert.ok(pattern.test(source), message);
 }
 
+function findTagsByName(markup, tagName) {
+    return Array.from(
+        markup.matchAll(new RegExp(`<${escapeRegExp(tagName)}(?=\\s|[>/])[^>]*>`, "gi")),
+        ([tag]) => tag
+    );
+}
+
+function getAttributePattern(attributeName) {
+    return new RegExp(
+        `(?:^|\\s)${escapeRegExp(attributeName)}(?=\\s*=|[\\s>/]|$)`,
+        "i"
+    );
+}
+
 function findTagsWithAttribute(markup, attributeName) {
-    const attributePattern = new RegExp(`\\b${escapeRegExp(attributeName)}(?:\\s*=|[\\s>/]|$)`, "i");
+    const attributePattern = getAttributePattern(attributeName);
 
     return Array.from(markup.matchAll(/<[a-z][^>]*>/gi), ([tag]) => tag).filter((tag) =>
         attributePattern.test(tag)
@@ -26,7 +40,9 @@ function findTagsWithAttribute(markup, attributeName) {
 }
 
 function getAttributeValue(tag, attributeName) {
-    const match = tag.match(new RegExp(`\\b${escapeRegExp(attributeName)}\\s*=\\s*(["'])(.*?)\\1`, "is"));
+    const match = tag.match(
+        new RegExp(`(?:^|\\s)${escapeRegExp(attributeName)}\\s*=\\s*(["'])(.*?)\\1`, "is")
+    );
 
     return match ? match[2] : "";
 }
@@ -75,22 +91,45 @@ function getLanguageBlock(language) {
 function extractDataI18nKeys(markup) {
     return [
         ...new Set(
-            Array.from(markup.matchAll(/\bdata-i18n\s*=\s*(["'])(.*?)\1/gi), (match) =>
-                match[2].trim()
-            ).filter(Boolean)
+            findTagsWithAttribute(markup, "data-i18n")
+                .map((tag) => getAttributeValue(tag, "data-i18n").trim())
+                .filter(Boolean)
         ),
     ];
 }
 
+test("attribute helpers ignore names that only end with the requested attribute", () => {
+    const markup = `
+        <html data-lang="he" data-dir="rtl">
+        <button data-aria-label="Language" data-data-language-toggle></button>
+        <section data-id="profile"></section>
+    `;
+
+    assert.deepEqual(findTagsWithAttribute(markup, "lang"), []);
+    assert.deepEqual(findTagsWithAttribute(markup, "dir"), []);
+    assert.deepEqual(findTagsWithAttribute(markup, "aria-label"), []);
+    assert.deepEqual(findTagsWithAttribute(markup, "data-language-toggle"), []);
+    assert.equal(getAttributeValue('<button data-aria-label="Language">', "aria-label"), "");
+    assert.equal(getAttributeValue('<section data-id="profile">', "id"), "");
+    assert.deepEqual(findTagsByName("<section-widget id=\"profile\"></section-widget>", "section"), []);
+});
+
 test("page defaults to accessible Hebrew RTL", () => {
-    assertMatches(
-        indexHtml,
-        /<html\b(?=[^>]*\blang=["']he["'])(?=[^>]*\bdir=["']rtl["'])/i,
+    const htmlTags = findTagsByName(indexHtml, "html");
+
+    assert.ok(
+        htmlTags.some(
+            (tag) => getAttributeValue(tag, "lang") === "he" && getAttributeValue(tag, "dir") === "rtl"
+        ),
         'Expected <html> to include lang="he" and dir="rtl".'
     );
-    assertMatches(
-        indexHtml,
-        /<a\s+class=["']skip-link["']\s+href=["']#main-content["']\s+data-i18n=["']skipLink["'][^>]*>/i,
+    assert.ok(
+        findTagsByName(indexHtml, "a").some(
+            (tag) =>
+                getAttributeValue(tag, "class") === "skip-link" &&
+                getAttributeValue(tag, "href") === "#main-content" &&
+                getAttributeValue(tag, "data-i18n") === "skipLink"
+        ),
         'Expected skip link: <a class="skip-link" href="#main-content" data-i18n="skipLink">.'
     );
 
@@ -115,9 +154,10 @@ test("approved sections exist in the page", () => {
     ];
 
     for (const sectionId of approvedSectionIds) {
-        assertMatches(
-            indexHtml,
-            new RegExp(`<section\\b(?=[^>]*\\bid=["']${escapeRegExp(sectionId)}["'])`, "i"),
+        assert.ok(
+            findTagsByName(indexHtml, "section").some(
+                (tag) => getAttributeValue(tag, "id") === sectionId
+            ),
             `Expected section #${sectionId} to exist.`
         );
     }
