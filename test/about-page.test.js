@@ -7,6 +7,7 @@ const repoRoot = path.resolve(__dirname, "..");
 const indexHtml = fs.readFileSync(path.join(repoRoot, "index.html"), "utf8");
 const stylesCss = fs.readFileSync(path.join(repoRoot, "styles.css"), "utf8");
 const scriptJs = fs.readFileSync(path.join(repoRoot, "script.js"), "utf8");
+const cname = fs.readFileSync(path.join(repoRoot, "CNAME"), "utf8").trim();
 const publicContentSource = [indexHtml, scriptJs].join("\n");
 const publicSiteSource = [indexHtml, stylesCss, scriptJs].join("\n");
 const acceptedLanguageToggleLabelPhrases = [
@@ -242,6 +243,10 @@ test("approved sections exist in the page", () => {
             `Expected section #${sectionId} to exist.`
         );
     }
+});
+
+test("GitHub Pages custom domain is configured for the approved subdomain", () => {
+    assert.equal(cname, "about.rotem-dev.org");
 });
 
 test("Maya lab public-safe content is represented", () => {
