@@ -254,7 +254,7 @@ html.mobile-safe .button-secondary {
 .boot-screen-label,
 .boot-screen-row strong {
     text-transform: uppercase;
-    letter-spacing: 0.12em;
+    letter-spacing: 0;
 }
 
 .boot-screen-kicker,
@@ -291,7 +291,7 @@ html.mobile-safe .button-secondary {
     margin: 0;
     font-size: clamp(2.2rem, 6vw, 3.5rem);
     line-height: 0.95;
-    letter-spacing: -0.045em;
+    letter-spacing: 0;
 }
 
 .boot-screen-copy {
@@ -524,20 +524,23 @@ a {
 
 .assistant-widget {
     position: fixed;
-    right: 1.35rem;
-    bottom: 1.15rem;
+    left: clamp(0.5rem, 1.6vw, 1rem);
+    right: auto;
+    bottom: 0.35rem;
     z-index: 30;
-    display: grid;
-    justify-items: end;
+    display: none;
+    justify-items: start;
     gap: 0.7rem;
     pointer-events: none;
+    transform: scale(0.45);
+    transform-origin: bottom left;
 }
 
 .assistant-bubble {
     position: relative;
-    max-width: 12rem;
+    max-width: 11.5rem;
     padding: 0.82rem 1rem;
-    border-radius: 18px 18px 6px 18px;
+    border-radius: 18px 18px 18px 6px;
     border: 1px solid rgba(255, 255, 255, 0.1);
     background:
         radial-gradient(circle at top left, rgba(99, 237, 216, 0.16), transparent 34%),
@@ -550,7 +553,7 @@ a {
     line-height: 1.45;
     opacity: 0;
     transform: translateY(10px) scale(0.96);
-    transform-origin: bottom right;
+    transform-origin: bottom left;
     transition:
         opacity 420ms ease,
         transform 420ms ease,
@@ -607,11 +610,12 @@ a {
 .assistant-bubble::after {
     content: "";
     position: absolute;
-    right: 1rem;
+    left: 1rem;
+    right: auto;
     bottom: -0.42rem;
     width: 0.9rem;
     height: 0.9rem;
-    border-right: 1px solid rgba(255, 255, 255, 0.1);
+    border-left: 1px solid rgba(255, 255, 255, 0.1);
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     background: rgba(8, 16, 30, 0.84);
     transform: rotate(45deg);
@@ -620,7 +624,8 @@ a {
 .assistant-bubble::before {
     content: "";
     position: absolute;
-    right: 1.35rem;
+    left: 1.35rem;
+    right: auto;
     bottom: -1.65rem;
     width: 1px;
     height: 1.35rem;
@@ -1329,7 +1334,7 @@ a {
 
 .brand {
     font-weight: 600;
-    letter-spacing: 0.03em;
+    letter-spacing: 0;
 }
 
 .topnav {
@@ -1440,7 +1445,7 @@ a {
     grid-template-columns: minmax(0, 1.2fr) minmax(320px, 0.85fr);
     gap: 2rem;
     align-items: start;
-    padding-top: 4.4rem;
+    padding-top: 2.25rem;
 }
 
 .hero-copy h1,
@@ -1452,13 +1457,18 @@ a {
 .tool-card h3,
 .feature-card h3 {
     line-height: 1.05;
-    letter-spacing: -0.04em;
+    letter-spacing: 0;
     margin: 0;
 }
 
 .hero-copy h1 {
-    max-width: 11ch;
-    font-size: clamp(3.6rem, 7vw, 6rem);
+    max-width: 13.5ch;
+    font-size: clamp(2.75rem, 4.8vw, 3.7rem);
+}
+
+[dir="ltr"] .hero-copy h1 {
+    max-width: 21ch;
+    font-size: clamp(2.55rem, 3.7vw, 3.25rem);
 }
 
 .lead,
@@ -1473,15 +1483,20 @@ a {
 
 .lead {
     max-width: 60ch;
-    margin: 1.6rem 0 0;
-    font-size: 1.12rem;
+    margin: 1rem 0 0;
+    font-size: 1.06rem;
+}
+
+[dir="ltr"] .lead {
+    font-size: 0.98rem;
+    line-height: 1.5;
 }
 
 .eyebrow {
     margin: 0 0 1rem;
     color: var(--accent);
     text-transform: uppercase;
-    letter-spacing: 0.12em;
+    letter-spacing: 0;
     font-size: 0.78rem;
 }
 
@@ -1490,7 +1505,7 @@ a {
     display: flex;
     flex-wrap: wrap;
     gap: 0.9rem;
-    margin-top: 2rem;
+    margin-top: 1.25rem;
 }
 
 .button {
@@ -1782,7 +1797,7 @@ a {
     margin: 0;
     color: var(--accent-strong);
     font-size: 0.84rem;
-    letter-spacing: 0.08em;
+    letter-spacing: 0;
 }
 
 .hero-stat-copy {
@@ -1929,7 +1944,7 @@ a {
     margin: 0;
     font-size: 0.76rem;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
+    letter-spacing: 0;
     color: var(--accent);
 }
 
@@ -1937,7 +1952,7 @@ a {
     margin: 0.45rem 0 0;
     font-size: 1.25rem;
     line-height: 1.12;
-    letter-spacing: -0.03em;
+    letter-spacing: 0;
 }
 
 .visual-text {
@@ -2045,7 +2060,7 @@ a {
     font-family: "IBM Plex Mono", monospace;
     font-size: 0.82rem;
     text-transform: uppercase;
-    letter-spacing: 0.06em;
+    letter-spacing: 0;
 }
 
 .feature-index,
@@ -2092,7 +2107,7 @@ a {
     color: var(--accent);
     font-size: 0.76rem;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
+    letter-spacing: 0;
 }
 
 .workflow-summary h3 {
@@ -2120,7 +2135,7 @@ a {
     margin: 0;
     color: var(--accent-strong);
     font-size: 0.82rem;
-    letter-spacing: 0.08em;
+    letter-spacing: 0;
 }
 
 .workflow-step h4 {
@@ -2241,14 +2256,14 @@ a {
     color: var(--accent);
     font-family: "IBM Plex Mono", monospace;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
+    letter-spacing: 0;
     font-size: 0.76rem;
 }
 
 .build-header h3 {
     font-size: 1.45rem;
     line-height: 1.08;
-    letter-spacing: -0.03em;
+    letter-spacing: 0;
     margin: 0;
 }
 
@@ -2357,7 +2372,7 @@ a {
     margin: 0 0 0.4rem;
     color: var(--accent);
     text-transform: uppercase;
-    letter-spacing: 0.08em;
+    letter-spacing: 0;
     font-size: 0.76rem;
 }
 
@@ -2762,12 +2777,21 @@ a {
         flex-wrap: wrap;
         align-items: stretch;
         justify-content: center;
-        border-radius: 24px;
+        gap: 0.55rem;
+        padding: 0.75rem;
+        margin-bottom: 1rem;
+        border-radius: 18px;
         text-align: center;
+    }
+
+    .brand {
+        width: 100%;
+        font-size: 0.9rem;
     }
 
     .topbar-actions {
         width: 100%;
+        gap: 0.5rem;
         justify-content: space-between;
     }
 
@@ -2775,19 +2799,31 @@ a {
     .topbar-link {
         flex: 1 1 auto;
         justify-content: center;
+        min-height: 2.15rem;
+        padding: 0 0.55rem;
+        font-size: 0.76rem;
     }
 
     .topnav {
+        width: 100%;
         justify-content: center;
         flex-wrap: wrap;
+        gap: 0.35rem 0.45rem;
+        font-size: 0.78rem;
+    }
+
+    .topnav a {
+        min-height: 2rem;
+        padding: 0.28rem 0.45rem;
     }
 
     .hero {
-        padding-top: 2rem;
+        gap: 1.2rem;
+        padding-top: 0.85rem;
     }
 
     .section {
-        padding: 2.7rem 0;
+        padding: 2rem 0;
     }
 
     .build-grid,
@@ -2817,7 +2853,66 @@ a {
     }
 
     .hero-copy h1 {
-        font-size: clamp(2.7rem, 14vw, 4rem);
+        font-size: clamp(2.15rem, 10.5vw, 2.85rem);
+        line-height: 1.06;
+    }
+
+    [dir="ltr"] .hero-copy h1 {
+        font-size: clamp(1.85rem, 8vw, 2.15rem);
+        line-height: 1.08;
+    }
+
+    .lead {
+        margin-top: 0.8rem;
+        font-size: 0.96rem;
+        line-height: 1.5;
+    }
+
+    [dir="ltr"] .lead {
+        font-size: 0.9rem;
+        line-height: 1.43;
+    }
+
+    .hero-proof {
+        gap: 0.45rem;
+        margin-top: 1rem;
+    }
+
+    .hero-proof li {
+        min-height: 1.9rem;
+        padding: 0.35rem 0.55rem;
+        font-size: 0.78rem;
+    }
+
+    [dir="ltr"] .hero-proof {
+        gap: 0.35rem;
+    }
+
+    [dir="ltr"] .hero-proof li {
+        padding: 0.3rem 0.45rem;
+        font-size: 0.72rem;
+    }
+
+    .hero-actions {
+        gap: 0.55rem;
+        margin-top: 1rem;
+    }
+
+    .hero-actions .button {
+        width: 100%;
+        min-height: 2.75rem;
+        padding: 0.65rem 0.8rem;
+        border-radius: 8px;
+    }
+
+    .hero-tags {
+        gap: 0.45rem;
+        margin-top: 1rem;
+    }
+
+    .hero-tags li {
+        padding: 0.36rem 0.55rem;
+        font-size: 0.78rem;
     }
 
     .signal-group span {

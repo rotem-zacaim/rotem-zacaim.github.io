@@ -183,6 +183,25 @@ test("page defaults to accessible Hebrew RTL", () => {
     );
 });
 
+test("skip link is first and becomes visible on keyboard focus", () => {
+    const skipLinkIndex = indexHtml.indexOf('class="skip-link"');
+    const shellIndex = indexHtml.indexOf('class="site-shell"');
+
+    assert.ok(skipLinkIndex >= 0, "Expected a skip link in the document.");
+    assert.ok(shellIndex >= 0, "Expected the page shell after the skip link.");
+    assert.ok(skipLinkIndex < shellIndex, "Expected skip link before the main page shell.");
+    assertMatches(
+        stylesCss,
+        /\.skip-link\s*{[^}]*transform\s*:\s*translateY\(-140%\)/s,
+        "Expected skip link to start off-screen."
+    );
+    assertMatches(
+        stylesCss,
+        /\.skip-link:focus-visible\s*{[^}]*transform\s*:\s*translateY\(0\)/s,
+        "Expected skip link to become visible on focus."
+    );
+});
+
 test("approved sections exist in the page", () => {
     const approvedSectionIds = [
         "overview",
