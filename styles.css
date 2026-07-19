@@ -528,12 +528,18 @@ a {
     right: auto;
     bottom: 0.35rem;
     z-index: 30;
-    display: none;
+    display: grid;
     justify-items: start;
     gap: 0.7rem;
     pointer-events: none;
     transform: scale(0.45);
     transform-origin: bottom left;
+}
+
+@media (max-width: 1320px), (max-height: 780px) {
+    .assistant-widget {
+        display: none;
+    }
 }
 
 .assistant-bubble {

@@ -31,6 +31,13 @@ function findTagsByName(markup, tagName) {
     );
 }
 
+function findTagEntriesByName(markup, tagName) {
+    return Array.from(
+        markup.matchAll(new RegExp(`<${escapeRegExp(tagName)}(?=\\s|[>/])[^>]*>`, "gi")),
+        (match) => ({ tag: match[0], index: match.index })
+    );
+}
+
 function getAttributePattern(attributeName) {
     return new RegExp(
         `(?:^|\\s)${escapeRegExp(attributeName)}(?=\\s*=|[\\s>/]|$)`,
@@ -184,12 +191,16 @@ test("page defaults to accessible Hebrew RTL", () => {
 });
 
 test("skip link is first and becomes visible on keyboard focus", () => {
-    const skipLinkIndex = indexHtml.indexOf('class="skip-link"');
-    const shellIndex = indexHtml.indexOf('class="site-shell"');
+    const skipLink = findTagEntriesByName(indexHtml, "a").find(
+        ({ tag }) => hasClassToken(tag, "skip-link")
+    );
+    const shell = findTagEntriesByName(indexHtml, "div").find(
+        ({ tag }) => hasClassToken(tag, "site-shell")
+    );
 
-    assert.ok(skipLinkIndex >= 0, "Expected a skip link in the document.");
-    assert.ok(shellIndex >= 0, "Expected the page shell after the skip link.");
-    assert.ok(skipLinkIndex < shellIndex, "Expected skip link before the main page shell.");
+    assert.ok(skipLink, "Expected a skip link in the document.");
+    assert.ok(shell, "Expected the page shell after the skip link.");
+    assert.ok(skipLink.index < shell.index, "Expected skip link before the main page shell.");
     assertMatches(
         stylesCss,
         /\.skip-link\s*{[^}]*transform\s*:\s*translateY\(-140%\)/s,
@@ -290,4 +301,14 @@ test("styles include responsive, RTL, and reduced-motion support", () => {
     assertMatches(stylesCss, /@media\s*\(\s*max-width\s*:\s*760px\s*\)/, "Expected mobile breakpoint at 760px.");
     assertMatches(stylesCss, /prefers-reduced-motion/, "Expected reduced-motion support.");
     assertMatches(stylesCss, /\.language-toggle\b/, "Expected .language-toggle styles.");
+    assertMatches(
+        stylesCss,
+        /\.assistant-widget\s*{[^}]*display\s*:\s*grid/s,
+        "Expected assistant widget to remain visible by default on roomy screens."
+    );
+    assertMatches(
+        stylesCss,
+        /@media\s*\(\s*max-width\s*:\s*1320px\s*\)\s*,\s*\(\s*max-height\s*:\s*780px\s*\)\s*{[^}]*\.assistant-widget\s*{[^}]*display\s*:\s*none/s,
+        "Expected assistant widget to hide only on cramped viewports."
+    );
 });
