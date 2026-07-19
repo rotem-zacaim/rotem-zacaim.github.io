@@ -1340,6 +1340,44 @@ a {
     font-size: 0.95rem;
 }
 
+.topbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.language-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    min-height: 2.5rem;
+    padding: 0 0.85rem;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: rgba(11, 21, 33, 0.76);
+    color: var(--text);
+    font: inherit;
+    font-size: 0.82rem;
+    cursor: pointer;
+}
+
+.language-toggle:hover,
+.language-toggle:focus-visible {
+    border-color: var(--accent);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(99, 237, 216, 0.14);
+}
+
+[dir="rtl"] .topnav,
+[dir="rtl"] .topbar-actions {
+    direction: rtl;
+}
+
+[dir="ltr"] .topnav,
+[dir="ltr"] .topbar-actions {
+    direction: ltr;
+}
+
 .topnav a {
     display: inline-flex;
     align-items: center;

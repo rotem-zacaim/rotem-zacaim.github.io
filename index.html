@@ -103,17 +103,29 @@
 
     <div class="site-shell">
         <header class="topbar" id="home">
-            <a class="brand" href="#home">Rotem Zacaim</a>
-            <nav class="topnav" aria-label="Primary">
-                <a href="#overview">Overview</a>
-                <a href="#expertise">Expertise</a>
-                <a href="#workflow">Workflow</a>
-                <a href="#builds">Builds</a>
-                <a href="#experience">Experience</a>
-                <a href="#toolkit">Toolkit</a>
-                <a href="#contact">Contact</a>
+            <a class="brand" href="#home" data-i18n="brand">רותם זכאים</a>
+            <nav class="topnav" aria-label="ניווט ראשי" data-i18n-attr="aria-label:primaryNavLabel">
+                <a href="#overview" data-i18n="navOverview">פתיחה</a>
+                <a href="#profile" data-i18n="navProfile">יכולות</a>
+                <a href="#maya-lab" data-i18n="navMaya">Maya AI Lab</a>
+                <a href="#systems" data-i18n="navSystems">מערכות</a>
+                <a href="#experience" data-i18n="navExperience">ניסיון</a>
+                <a href="#contact" data-i18n="navContact">קשר</a>
             </nav>
-            <a class="topbar-link" href="mailto:rotemvnkll@gmail.com">Let's connect</a>
+            <div class="topbar-actions">
+                <button
+                    class="language-toggle"
+                    type="button"
+                    data-language-toggle
+                    aria-label="Switch to English"
+                    data-i18n-attr="aria-label:languageToggleLabel"
+                >
+                    <span data-language-current>עברית</span>
+                    <span aria-hidden="true">/</span>
+                    <span data-language-next>English</span>
+                </button>
+                <a class="topbar-link" href="mailto:Rotemvnkll@gmail.com" data-i18n="topbarContact">יצירת קשר</a>
+            </div>
         </header>
 
         <main id="main-content">
