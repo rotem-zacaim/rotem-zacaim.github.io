@@ -1,2273 +1,314 @@
-const revealItems = Array.from(document.querySelectorAll("[data-reveal]"));
-const yearNode = document.querySelector("[data-year]");
-const languageToggle = document.querySelector("[data-language-toggle]");
-const languageCurrent = document.querySelector("[data-language-current]");
-const languageNext = document.querySelector("[data-language-next]");
-const translatedNodes = Array.from(document.querySelectorAll("[data-i18n]"));
-const translatedAttributeNodes = Array.from(document.querySelectorAll("[data-i18n-attr]"));
-const cards = Array.from(document.querySelectorAll(".card"));
-const ambientCanvas = document.querySelector(".ambient-canvas");
-const bootScreenElement = document.querySelector("[data-boot-screen]");
-const bootCopyElement = document.querySelector("[data-boot-copy]");
-const bootStampElement = document.querySelector("[data-boot-stamp]");
-const bootSteps = Array.from(document.querySelectorAll("[data-boot-step]"));
-const assistantBotElement = document.querySelector("[data-assistant-bot]");
-const assistantBubble = document.querySelector("[data-assistant-bubble]");
-const assistantMessage = document.querySelector("[data-assistant-message]");
-const assistantPupils = Array.from(document.querySelectorAll("[data-pupil]"));
-const messageSections = Array.from(document.querySelectorAll("main section[id]"));
-const navLinks = Array.from(document.querySelectorAll(".topnav a[href^='#']"));
-const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-const mobileViewportQuery = window.matchMedia("(max-width: 760px)");
-const coarsePointerQuery = window.matchMedia("(pointer: coarse)");
-const liteExperienceMode =
-    document.documentElement.classList.contains("mobile-safe") ||
-    mobileViewportQuery.matches ||
-    coarsePointerQuery.matches;
-const sectionLinkMap = new Map(
-    navLinks.map((link) => [link.getAttribute("href").slice(1), link])
-);
-
 const I18N = {
-    he: {
-        navDeepDive: "פירוט טכני",
-        deepEyebrow: "פירוט טכני",
-        deepTitle: "לחיצה אחת, יותר עומק על מה שבנינו",
-        deepCopy: "הדף נשאר נקי מבחוץ, אבל מי שרוצה להבין את העבודה באמת יכול לפתוח פירוט טכני על שכבות ה-AI, ה-API, הבית החכם, המשחקים והניטור.",
-        deepToggle: "פתח פירוט",
-        deepMayaTitle: "Maya: סוכן WhatsApp אופרטיבי",
-        deepMayaCopy: "מאיה מחברת הודעת WhatsApp רגילה לשכבת orchestration: ניתוב הודעות, הרשאות, tool-calling, זיכרון, מודלים וכלי עבודה אמיתיים.",
-        deepMayaPointOne: "Event Bus פנימי לאירועים כמו הודעה נכנסת, כלי שהופעל, זיכרון שעודכן ותזכורת שנשלחה.",
-        deepMayaPointTwo: "Plugin registry שמאפשר להוסיף דומיינים חדשים כמו Calendar, URL intelligence, vouchers, weather, memory ו-Home Assistant.",
-        deepMayaPointThree: "זיכרון ארוך טווח מבוסס SQLite ושליפה סמנטית, כך שהמערכת מחזירה הקשר רלוונטי לשיחות ולמשימות.",
-        deepApiTitle: "API ושירותים מחוברים",
-        deepApiCopy: "המערכת עובדת מול שירותים חיצוניים ופנימיים בצורה מבוקרת: OAuth, APIs, endpoints מוגנים, headers ייעודיים וולידציה לפני פעולה.",
-        deepApiPointOne: "Google Calendar דרך OAuth: קריאה, יצירה, עדכון, מחיקה, חיפוש חלונות פנויים וייבוא משמרות מתמונה.",
-        deepApiPointTwo: "כלים ל-URL/DNS/SSL/redirects, מזג אוויר, מפות, שערי מטבע, שוברים וסיכום יומי.",
-        deepApiPointThree: "שכבות admin כמו overview, logs, memory, docs ו-RoteMGPT יושבות מאחורי גישה מוגנת ולא חושפות secrets בדף הציבורי.",
-        deepHaTitle: "Home Assistant ובית חכם",
-        deepHaCopy: "שכבת הבית החכם מחברת את מאיה ופאנל הטאבלט ל-Home Assistant API: קריאת state, הפעלת services ותצוגה חיה של הבית.",
-        deepHaPointOne: "שליטה בישויות כמו שואב, תאורה, מתגים, אקלים, מצלמות, תריסים וסנסורים דרך API מאובטח בצד השרת.",
-        deepHaPointTwo: "פאנל קיר מותאם לטאבלט עם כרטיסים חיים, מזג אוויר, מצלמות, לוח שנה ואזורי פעולה מהירים.",
-        deepHaPointThree: "החיבור בנוי כך שמאיה יכולה להפוך שיחה בעברית לפעולה בבית, עם בדיקות זהירות לפני פעולות אקטיביות.",
-        deepGameTitle: "Game Lab ומשחקי דפדפן",
-        deepGameCopy: "מעבדת המשחקים התחילה כדרך לבדוק שליטה, latency, קלט משתמש, WebAssembly ו-automation בסביבה גרפית אמיתית.",
-        deepGamePointOne: "Quake 2 Demo רץ בדפדפן דרך Qwasm2, WebAssembly ו-WebGL2, עם טעינת נכסי הדמו ושמירת cache מקומי בדפדפן.",
-        deepGamePointTwo: "QuakeJS Arena הוא מסלול נפרד למולטיפלייר פרטי, עם gateway שמיועד למשחק בלבד ולא לדשבורד הניהול של מאיה.",
-        deepGamePointThree: "בנוסף קיימות שכבות Game Lab ל-Android/Clash Royale ול-FortySevenMS, כולל צילום מסך, זיהוי מצב, safety policy ופקדי פעולה מוגבלים.",
-        deepGamePrimaryCta: "פתח את Arena",
-        deepGameSecondaryCta: "Quake 2 מוגן",
-        deepObsTitle: "ניטור, דשבורד ותפעול שרת",
-        deepObsCopy: "מאיה כוללת שכבת observability שמציגה בריאות מערכת, שימוש, לוגים ותמונה תפעולית כדי להבין מהר מה חי ומה דורש טיפול.",
-        deepObsPointOne: "Dashboard עם CPU, RAM, disk, uptime, רשת, שירותי Maya, counters ותזמוני פעולות.",
-        deepObsPointTwo: "Maya Command OS מרכז overview, memory, logs, RoteMGPT, פעולות מהירות ו-Command Palette למעבר בין מסכים.",
-        deepObsPointThree: "Cloudflare Tunnel ו-Access נותנים שכבת גישה מרחוק מוגנת בלי לחשוף hosts פנימיים או secrets.",
-        deepAndroidTitle: "Android Lab ו-Companion",
-        deepAndroidCopy: "Android Lab מוסיף לגוף של מאיה מכשיר מעבדה נשלט: מסך, קול, מגע, אפליקציות ומשימות real-time מעל ADB ו-scrcpy.",
-        deepAndroidPointOne: "פקדי tap, swipe, typing, home/back, long press ו-sequence מהיר, כולל פקדים יחסיים למסך כדי לעבוד על רזולוציות שונות.",
-        deepAndroidPointTwo: "Companion app מוסיף microphone, speaker, camera presence ופקודות נראות מהטלפון אל שרת מאיה.",
-        deepAndroidPointThree: "שימושי במיוחד לבדיקת WhatsApp מעבדה, משחקים, latency ופעולות UI שלא מספיק לתאר בטקסט.",
-        pageTitle: "רותם זכאים | אבטחת מידע, תשתיות ו-AI אופרטיבי",
-        metaDescription: "רותם זכאים הוא אנליסט אבטחת מידע ותשתיות שבונה כלי AI אופרטיביים, כולל מעבדת Maya המחברת WhatsApp, מודלים מקומיים, ניטור, בית חכם ו-Cloudflare.",
-        ogTitle: "רותם זכאים | אבטחת מידע, תשתיות ו-AI אופרטיבי",
-        ogDescription: "פרופיל מקצועי בעברית: Security Operations, תשתיות, SIEM, Cloudflare, ומעבדת AI אישית בשם Maya.",
-        twitterTitle: "רותם זכאים | אבטחת מידע, תשתיות ו-AI אופרטיבי",
-        twitterDescription: "אנליסט אבטחת מידע ותשתיות שבונה כלי AI אופרטיביים.",
-        brand: "רותם זכאים",
-        primaryNavLabel: "ניווט ראשי",
-        languageToggleLabel: "Switch to English",
-        skipLink: "דלג לתוכן",
-        bootScreenLabel: "טוען אתר",
-        bootSequenceLabel: "רצף טעינה",
-        bootKicker: "טעינת מערכת",
-        bootLabel: "רותם זכאים / about",
-        bootTitle: "מכין פרופיל, מעבדה וקישורי קשר.",
-        bootCopy: "מסדר את תמונת המצב לפני פתיחה.",
-        bootStepShell: "בדיקת ממשק",
-        bootStepFonts: "טעינת טיפוגרפיה",
-        bootStepAmbient: "כיול רקע",
-        bootStepProfile: "פרופיל מוכן",
-        bootPending: "בהמתנה",
-        bootActive: "פעיל",
-        bootReady: "מוכן",
-        bootRuntimeShell: "בודק את תקינות הממשק וגבולות התצוגה.",
-        bootRuntimeFonts: "מסנכרן טיפוגרפיה ותוויות פעולה.",
-        bootRuntimeAmbient: "מכייל את הרקע ואת עומק הממשק.",
-        bootRuntimeProfile: "הפרופיל מוכן. פותח את הדף.",
-        bootRuntimeFallback: "מעבר חלופי הופעל. פותח את הדף.",
-        bootRuntimeComplete: "הדף מוכן.",
-        navOverview: "פתיחה",
-        navProfile: "יכולות",
-        navMaya: "Maya AI Lab",
-        navSystems: "מערכות",
-        navExperience: "ניסיון",
-        navContact: "קשר",
-        topbarContact: "יצירת קשר",
-        heroEyebrow: "Security Operations + AI Lab",
-        heroTitle: "אנליסט אבטחת מידע ותשתיות שבונה כלי AI אופרטיביים",
-        heroLead: "אני רותם זכאים, עובד בעולמות אבטחת מידע, תפעול תשתיות וחקירת תקלות בארגונים גדולים, ובמקביל בונה מעבדת AI אישית שמחברת WhatsApp, מודלים מקומיים, ניטור, בית חכם ו-Cloudflare למערכת אחת.",
-        mobileBriefLabel: "תקציר מובייל",
-        mobileBriefTitle: "מעבדת AI שמחוברת לעולם אמיתי",
-        mobileMetricOneLabel: "מודלים",
-        mobileMetricOneValue: "Local GGUF",
-        mobileMetricTwoLabel: "גישה",
-        mobileMetricTwoValue: "Closed lab",
-        mobileMetricThreeLabel: "פעולה",
-        mobileMetricThreeValue: "Monitor + Automate",
-        heroProofLabel: "מוקדי התמחות",
-        heroProofSecurity: "Security Operations",
-        heroProofInfra: "תשתיות, WAF, SSL ו-Cloudflare",
-        heroProofAi: "AI agents ומודלים מקומיים",
-        heroPrimaryCta: "לראות את מעבדת מאיה",
-        heroSecondaryCta: "LinkedIn / יצירת קשר",
-        heroTagsLabel: "טכנולוגיות מרכזיות",
-        heroPanelStatus: "פרופיל תפעולי",
-        consoleLabel: "תמונת פרופיל",
-        consoleOne: "אבטחת מידע, תשתיות, ניטור ותגובה בסביבות אמיתיות.",
-        consoleTwo: "Maya: סוכן WhatsApp עם כלים, זיכרון, מודלים מקומיים ושליטה בתשתיות.",
-        consoleThree: "observe / validate / automate / report",
-        signalLabel: "זרם יכולות מרכזי",
-        profileEyebrow: "פרופיל מרכזי",
-        profileTitle: "מה אני יודע לפתור בפועל",
-        profileCopy: "החוזקה שלי יושבת בחיבור בין אבטחת מידע, תשתיות, ניטור, לוגים, תעבורה וכלים שמקצרים עבודה.",
-        capabilityOneTitle: "חקירת אירועים ולוגים",
-        capabilityOneCopy: "עבודה יומיומית עם Splunk, ניתוח לוגים, תעבורת רשת, תקלות שירות וזיהוי חריגות.",
-        capabilityTwoTitle: "Edge security ותשתיות",
-        capabilityTwoCopy: "ניסיון עם WAF, Proxy, Load Balancer, Check Point, Imperva, F5, CyberArk, FireGlass ו-Cloudflare.",
-        capabilityThreeTitle: "SSL, Gateway ושרתים",
-        capabilityThreeCopy: "תחקור תקלות ב-Windows/Linux, תעודות SSL, IIS, API Gateway, IBM DataPower וזמינות אתרים.",
-        mayaEyebrow: "Maya AI Lab",
-        mayaTitle: "מעבדת AI אישית שמחברת מודלים, WhatsApp ותשתיות",
-        mayaCopy: "מאיה היא סוכן אישי בעברית שמחבר שיחה טבעית לכלים אמיתיים: זיכרון, יומן, קול, תמונות, בית חכם, ניטור, Cloudflare ומודלים מקומיים.",
-        mayaClosedLabTitle: "מודלים מקומיים במסגרת מעבדה סגורה",
-        mayaClosedLabCopy: "הרצת מודלים מקומיים בסביבת מעבדה סגורה, ללא תלות בסינון של ספק חיצוני, לצורכי מחקר, בדיקה והבנת סיכוני AI.",
-        mayaDetailIntegrations: "Google integrations דרך Google Calendar ו-OAuth, יחד עם URL tools, weather, maps, voucher, finance ו-daily digest.",
-        mayaDetailMemory: "זיכרון מבוסס SQLite עם semantic retrieval כדי להחזיר הקשר רלוונטי לשיחה ולמשימות.",
-        mayaDetailRuntime: "הרצת מודלי GGUF דרך llama.cpp וממשק OpenAI-compatible, לצד RoteMGPT כעמדת בדיקה מקומית.",
-        mayaDetailOps: "Maya Command OS ו-admin dashboard לניהול מצב, משימות, בריאות שירותים ו-server observability בסביבה ביתית.",
-        mayaDetailPlay: "Browser Lab ו-Game Lab לניסויי UI, משחקי דפדפן, אוטומציה ובדיקת אינטראקציות.",
-        systemsEyebrow: "מערכות נבחרות",
-        systemsTitle: "פרויקטים שמראים בנייה מקצה לקצה",
-        systemWhatsapp: "שיחה בעברית, tool-calling, זיכרון ארוך טווח, קול, תמונות ותזכורות פרואקטיביות.",
-        systemRoteMgpt: "ממשק שיחה מול מודל מקומי OpenAI-compatible עם Markdown, העתקה ו-session חי.",
-        systemHome: "פאנל בית חכם לטאבלט, מזגן, שואב, מצלמות, תריס ותאורת שרת OpenRGB.",
-        systemRedLab: "סביבת PT מורשית עם recon, כלים allowlisted, ראיות ודוחות טכניים בעברית.",
-        systemAndroid: "שליטה במכשיר Android במעבדה דרך ADB, scrcpy, מסך, הקלדה ופעולות מוגבלות למכשיר מאושר.",
-        systemCloudflare: "Cloudflare Tunnel ו-Access לתפעול מרחוק מאובטח וניטור שירותים, בלי חשיפת כתובות או מפתחות.",
-        experienceEyebrow: "ניסיון",
-        experienceTitle: "ניסיון מקצועי ותפעולי",
-        expOneDate: "2023 - היום",
-        expOneTitle: "אנליסט אבטחת מידע ותפעול תשתיות / מערך הדיגיטל הלאומי",
-        expOneCopy: "SIEM, מוצרי אבטחה, תשתיות, Cloudflare, WAF, SSL, ניטור ותחקור תקלות מקצה לקצה.",
-        expTwoTitle: "מרכז שליטה ובקרה / משרד הבריאות",
-        expTwoCopy: "תמיכה טכנית ואפליקטיבית, Active Directory, הרשאות, אוטומציות ותמיכה במערכות בריאות.",
-        expThreeTitle: "ERP SAP וניהול מלאי / צה״ל",
-        expThreeCopy: "תפעול SAP, ניהול מלאי ולוגיסטיקה; סיום קורס ניהול מלאי בהצטיינות.",
-        certEyebrow: "הסמכות",
-        certTitle: "הכשרות והסמכות",
-        certOne: "קורס מגן סייבר / ג׳ון ברייס, 650 שעות",
-        certTwo: "QA תוכנה / טכניון",
-        certThree: "Cisco CCNA 200-301 Packet Tracer Labs",
-        certFour: "Applied Ethical Hacking and Rules of Engagement",
-        certFive: "Jr Penetration Tester Certificate / TryHackMe",
-        contactEyebrow: "קשר",
-        contactTitle: "מחפשים אדם שמבין אבטחה, תשתיות ו-AI מעשי?",
-        contactCopy: "אפשר לפנות אליי לשיחות על Security Operations, תשתיות, אוטומציה, AI tooling ומעבדות מחקר סגורות.",
-        contactEmail: "אימייל",
-        footerName: "רותם זכאים",
-        footerTagline: "אבטחת מידע, תשתיות ו-AI אופרטיבי",
-        mobileDockLabel: "פעולות מהירות",
-        mobileDockMaya: "Maya Lab",
-        mobileDockProjects: "פרויקטים",
-        mobileDockContact: "קשר",
-        assistantInitialMessage: "שלום, אני כאן.",
-        assistantToggleLabel: "החלפת הערות assistant",
-    },
-    en: {
-        navDeepDive: "Deep dives",
-        deepEyebrow: "Technical deep dives",
-        deepTitle: "Click once to see more of what was built",
-        deepCopy: "The page stays clean at first glance, while deeper readers can open technical notes about the AI layer, APIs, smart home, games and monitoring.",
-        deepToggle: "Expand",
-        deepMayaTitle: "Maya: an operational WhatsApp agent",
-        deepMayaCopy: "Maya turns a normal WhatsApp message into an orchestration flow: routing, permissions, tool calling, memory, models and real operational tools.",
-        deepMayaPointOne: "An internal Event Bus for events such as incoming messages, executed tools, memory updates and proactive reminders.",
-        deepMayaPointTwo: "A plugin registry for adding domains such as Calendar, URL intelligence, vouchers, weather, memory and Home Assistant.",
-        deepMayaPointThree: "Long-term memory backed by SQLite and semantic retrieval, so relevant context can return to conversations and tasks.",
-        deepApiTitle: "APIs and connected services",
-        deepApiCopy: "The system works with external and internal services in a controlled way: OAuth, APIs, protected endpoints, dedicated headers and validation before action.",
-        deepApiPointOne: "Google Calendar through OAuth: read, create, update, delete, find free slots and import shifts from images.",
-        deepApiPointTwo: "Tools for URL/DNS/SSL/redirects, weather, maps, currency rates, vouchers and daily digest flows.",
-        deepApiPointThree: "Admin layers such as overview, logs, memory, docs and RoteMGPT stay behind protected access and do not expose secrets on the public page.",
-        deepHaTitle: "Home Assistant and smart home",
-        deepHaCopy: "The smart-home layer connects Maya and the tablet wall panel to the Home Assistant API: reading state, calling services and showing live home data.",
-        deepHaPointOne: "Control of entities such as vacuum, lights, switches, climate, cameras, shutters and sensors through a secure server-side API.",
-        deepHaPointTwo: "A tablet wall panel with live cards, weather, cameras, calendar and fast action zones.",
-        deepHaPointThree: "The connection lets Maya turn Hebrew conversation into home actions, with caution checks before active operations.",
-        deepGameTitle: "Game Lab and browser games",
-        deepGameCopy: "The game lab started as a way to test control, latency, input handling, WebAssembly and automation in a real graphical environment.",
-        deepGamePointOne: "Quake 2 Demo runs in the browser through Qwasm2, WebAssembly and WebGL2, loading demo assets and caching them locally in the browser.",
-        deepGamePointTwo: "QuakeJS Arena is a separate private multiplayer path, with a game-only gateway rather than the Maya admin dashboard.",
-        deepGamePointThree: "Additional Game Lab layers cover Android/Clash Royale and FortySevenMS, with screenshots, state detection, safety policy and limited action controls.",
-        deepGamePrimaryCta: "Open Arena",
-        deepGameSecondaryCta: "Protected Quake 2",
-        deepObsTitle: "Monitoring, dashboard and server operations",
-        deepObsCopy: "Maya includes an observability layer for system health, usage, logs and an operational picture of what is alive and what needs attention.",
-        deepObsPointOne: "Dashboard views for CPU, RAM, disk, uptime, network, Maya services, counters and action timings.",
-        deepObsPointTwo: "Maya Command OS centralizes overview, memory, logs, RoteMGPT, quick actions and a Command Palette for navigation.",
-        deepObsPointThree: "Cloudflare Tunnel and Access provide protected remote access without exposing internal hosts or secrets.",
-        deepAndroidTitle: "Android Lab and Companion",
-        deepAndroidCopy: "Android Lab adds a controllable lab device to Maya: screen, voice, touch, apps and real-time tasks over ADB and scrcpy.",
-        deepAndroidPointOne: "tap, swipe, typing, home/back, long press and fast sequences, including screen-relative controls for different resolutions.",
-        deepAndroidPointTwo: "The Companion app adds microphone, speaker, camera presence and visible phone-side commands to the Maya server.",
-        deepAndroidPointThree: "Useful for testing lab WhatsApp, games, latency and UI actions that cannot be represented well as text alone.",
-        pageTitle: "Rotem Zacaim | Security, Infrastructure and Operational AI",
-        metaDescription: "Rotem Zacaim is a security and infrastructure analyst building operational AI tooling, including the Maya lab across WhatsApp, local models, monitoring, smart home systems and Cloudflare.",
-        ogTitle: "Rotem Zacaim | Security, Infrastructure and Operational AI",
-        ogDescription: "A professional profile covering Security Operations, infrastructure, SIEM, Cloudflare and the Maya personal AI lab.",
-        twitterTitle: "Rotem Zacaim | Security, Infrastructure and Operational AI",
-        twitterDescription: "A security and infrastructure analyst building operational AI tooling.",
-        brand: "Rotem Zacaim",
-        primaryNavLabel: "Primary navigation",
-        languageToggleLabel: "Switch to Hebrew",
-        skipLink: "Skip to content",
-        bootScreenLabel: "Loading site",
-        bootSequenceLabel: "Boot sequence",
-        bootKicker: "System loading",
-        bootLabel: "Rotem Zacaim / about",
-        bootTitle: "Preparing profile, lab and contact paths.",
-        bootCopy: "Staging the profile before first contact.",
-        bootStepShell: "Interface check",
-        bootStepFonts: "Type system",
-        bootStepAmbient: "Ambient field",
-        bootStepProfile: "Profile ready",
-        bootPending: "pending",
-        bootActive: "active",
-        bootReady: "ready",
-        bootRuntimeShell: "Checking shell integrity and interface boundaries.",
-        bootRuntimeFonts: "Syncing the type system and command labels.",
-        bootRuntimeAmbient: "Calibrating the ambient field and interface depth.",
-        bootRuntimeProfile: "Operator profile ready. Opening the page.",
-        bootRuntimeFallback: "Fallback handoff engaged. Opening the page.",
-        bootRuntimeComplete: "Page ready.",
-        navOverview: "Overview",
-        navProfile: "Capabilities",
-        navMaya: "Maya AI Lab",
-        navSystems: "Systems",
-        navExperience: "Experience",
-        navContact: "Contact",
-        topbarContact: "Contact",
-        heroEyebrow: "Security Operations + AI Lab",
-        heroTitle: "Security and infrastructure analyst building operational AI tooling",
-        heroLead: "I am Rotem Zacaim, working across information security, infrastructure operations and real-world troubleshooting, while building a personal AI lab that connects WhatsApp, local models, monitoring, smart home systems and Cloudflare into one operating layer.",
-        mobileBriefLabel: "Mobile profile summary",
-        mobileBriefTitle: "An AI lab connected to real-world operations",
-        mobileMetricOneLabel: "Models",
-        mobileMetricOneValue: "Local GGUF",
-        mobileMetricTwoLabel: "Access",
-        mobileMetricTwoValue: "Closed lab",
-        mobileMetricThreeLabel: "Mode",
-        mobileMetricThreeValue: "Monitor + Automate",
-        heroProofLabel: "Focus areas",
-        heroProofSecurity: "Security Operations",
-        heroProofInfra: "Infrastructure, WAF, SSL and Cloudflare",
-        heroProofAi: "AI agents and local models",
-        heroPrimaryCta: "Explore Maya AI Lab",
-        heroSecondaryCta: "LinkedIn / Contact",
-        heroTagsLabel: "Core technologies",
-        heroPanelStatus: "Operator profile",
-        consoleLabel: "Profile snapshot",
-        consoleOne: "Security, infrastructure, monitoring and response in real environments.",
-        consoleTwo: "Maya: a WhatsApp agent with tools, memory, local models and infrastructure control.",
-        consoleThree: "observe / validate / automate / report",
-        signalLabel: "Core capability stream",
-        profileEyebrow: "Core profile",
-        profileTitle: "What I solve in practice",
-        profileCopy: "My strength sits where security operations, infrastructure, monitoring, logs, traffic and practical tooling meet.",
-        capabilityOneTitle: "Event and log investigation",
-        capabilityOneCopy: "Daily work with Splunk, log analysis, network traffic, service issues and anomaly discovery.",
-        capabilityTwoTitle: "Edge security and infrastructure",
-        capabilityTwoCopy: "Hands-on experience with WAF, Proxy, Load Balancer, Check Point, Imperva, F5, CyberArk, FireGlass and Cloudflare.",
-        capabilityThreeTitle: "SSL, gateways and servers",
-        capabilityThreeCopy: "Troubleshooting Windows/Linux, SSL certificates, IIS, API Gateway, IBM DataPower and website availability.",
-        mayaEyebrow: "Maya AI Lab",
-        mayaTitle: "A personal AI lab connecting models, WhatsApp and infrastructure",
-        mayaCopy: "Maya is a Hebrew-first personal agent that connects natural conversation to real tools: memory, calendar, voice, images, smart home, monitoring, Cloudflare and local models.",
-        mayaClosedLabTitle: "Local models inside a closed lab",
-        mayaClosedLabCopy: "Running local models inside a closed lab environment, without dependency on external provider filtering, for research, testing and AI risk understanding.",
-        mayaDetailIntegrations: "Google integrations through Google Calendar and OAuth, plus URL tools, weather, maps, voucher, finance and daily digest flows.",
-        mayaDetailMemory: "SQLite-backed memory with semantic retrieval to bring relevant context back into conversations and tasks.",
-        mayaDetailRuntime: "GGUF model runs through llama.cpp and an OpenAI-compatible interface, with RoteMGPT as the local testing surface.",
-        mayaDetailOps: "Maya Command OS and an admin dashboard for state, tasks, service health and server observability in a home lab.",
-        mayaDetailPlay: "Browser Lab and Game Lab for UI experiments, browser games, automation and interaction testing.",
-        systemsEyebrow: "Selected systems",
-        systemsTitle: "Projects that prove end-to-end building",
-        systemWhatsapp: "Hebrew conversation, tool calling, long-term memory, voice, images and proactive reminders.",
-        systemRoteMgpt: "A chat interface for a local OpenAI-compatible model with Markdown, copy actions and live sessions.",
-        systemHome: "A smart home tablet panel for AC, vacuum, cameras, shutter control and OpenRGB server lighting.",
-        systemRedLab: "An authorized PT workspace with recon, allowlisted tools, evidence and Hebrew technical reports.",
-        systemAndroid: "Android lab control through ADB, scrcpy, screen actions, typing and serial allowlisting.",
-        systemCloudflare: "Cloudflare Tunnel and Access for secure remote operations and service monitoring, without exposing hosts or keys.",
-        experienceEyebrow: "Experience",
-        experienceTitle: "Professional and operational experience",
-        expOneDate: "2023 - Present",
-        expOneTitle: "Information Security and Infrastructure Operations Analyst / National Digital Agency",
-        expOneCopy: "SIEM, security products, infrastructure, Cloudflare, WAF, SSL, monitoring and end-to-end troubleshooting.",
-        expTwoTitle: "Command and Control Center / Ministry of Health",
-        expTwoCopy: "Technical and application support, Active Directory, permissions, automation and health-system support.",
-        expThreeTitle: "ERP SAP and inventory operations / IDF",
-        expThreeCopy: "SAP operations, inventory and logistics; completed inventory management training with excellence.",
-        certEyebrow: "Certifications",
-        certTitle: "Training and certifications",
-        certOne: "Cyber Defender course / John Bryce, 650 hours",
-        certTwo: "Software QA / Technion",
-        certThree: "Cisco CCNA 200-301 Packet Tracer Labs",
-        certFour: "Applied Ethical Hacking and Rules of Engagement",
-        certFive: "Jr Penetration Tester Certificate / TryHackMe",
-        contactEyebrow: "Contact",
-        contactTitle: "Looking for someone who understands security, infrastructure and practical AI?",
-        contactCopy: "Reach out for conversations about Security Operations, infrastructure, automation, AI tooling and closed research labs.",
-        contactEmail: "Email",
-        footerName: "Rotem Zacaim",
-        footerTagline: "Security Operations, Infrastructure and Operational AI",
-        mobileDockLabel: "Quick actions",
-        mobileDockMaya: "Maya Lab",
-        mobileDockProjects: "Projects",
-        mobileDockContact: "Contact",
-        assistantInitialMessage: "Hello, I am here.",
-        assistantToggleLabel: "Toggle assistant notes",
-    },
+  he: {
+    pageTitle: "Maya Agent | רותם זכאים",
+    metaDescription: "Maya Agent היא מעבדת ה-AI האישית של רותם זכאים: WhatsApp, זיכרון, יומן, קול, תמונות ואוטומציות אמיתיות.",
+    brandAria: "Maya Agent - מעבר לפתיחת העמוד",
+    brandName: "Maya Agent",
+    mainNavLabel: "ניווט ראשי",
+    skipLink: "דלג לתוכן המרכזי",
+    navStory: "הסיפור",
+    navAbilities: "יכולות",
+    navProjects: "מעבדה",
+    navContact: "דברו איתי",
+    languageToggle: "EN",
+    languageToggleAria: "Switch to English",
+    heroTitle: "Maya Agent",
+    heroLead: "AI אישי שמנהל שיחה, זיכרון, יומן, קול, תמונות ואוטומציות סביב החיים האמיתיים.",
+    heroPrimaryCta: "לגלות את מאיה",
+    heroSecondaryCta: "לדבר עם רותם",
+    heroPanelsLabel: "יכולות מרכזיות של Maya Agent",
+    panelWhatsAppTitle: "WhatsApp AI Agent",
+    panelWhatsAppText: "שיחה טבעית שמחברת שאלות, משימות, מדיה וקונטקסט במקום אחד.",
+    panelMemoryTitle: "Memory + Calendar",
+    panelMemoryText: "זיכרון מתמשך, תזכורות ויומן שמבינים את היום שלך.",
+    panelVoiceTitle: "Voice, Vision, Automation",
+    panelVoiceText: "קול, תמונות וכלי אוטומציה שעובדים יחד כחוויה אחת.",
+    characterAlt: "MAYA AGENT character with sunglasses and a black shirt",
+    storyNumber: "01",
+    storyTitle: "מאיה היא AI אישי שמחובר לכלים אמיתיים",
+    storyLead: "מאיה התחילה כניסוי אישי והפכה למערכת עבודה יומיומית: סוכן WhatsApp שמבין שפה חופשית, זוכר הקשרים, קורא תמונות וקול, ומפעיל פעולות סביב החיים עצמם.",
+    storyBody: "האתר הזה מציג את שכבת המוצר הציבורית: איך החוויה מרגישה, אילו יכולות קיימות, ואיפה המעבדה של רותם מחברת בין AI, תשתיות וכלים אמיתיים.",
+    abilitiesNumber: "02",
+    abilitiesTitle: "מה מאיה יודעת לעשות",
+    abilitiesLead: "החוויה בנויה סביב פעולות קצרות, זיכרון שימושי וחיבורים שמאפשרים לסוכן לעבור מדיבור לביצוע.",
+    abilityChatTitle: "WhatsApp AI Agent",
+    abilityChatText: "ממשק שיחה טבעי שמחזיק משימות, שאלות, מדיה ותשובות בזמן אמת.",
+    abilityMemoryTitle: "Memory + Calendar",
+    abilityMemoryText: "זיכרון סמנטי, אירועים ותזכורות שמאפשרים למאיה להבין רצף ולא רק הודעה אחת.",
+    abilityVoiceTitle: "Voice, Vision, Automation",
+    abilityVoiceText: "תמלול, הבנת תמונות, יצירת פעולות וכלי עזר שחוזרים לתוך השיחה.",
+    abilityHomeTitle: "Home Assistant",
+    abilityHomeText: "חיבור לבית חכם ולסנסורים, כדי שסוכן AI יוכל לפעול בסביבה פיזית.",
+    projectsNumber: "03",
+    projectsTitle: "הוכחות מהמעבדה",
+    projectsLead: "Maya Agent היא חלק ממעבדה רחבה יותר של מוצרים, תשתיות וניסויים שרצים סביב העולם של רותם.",
+    projectOneLabel: "AI Interface",
+    projectOneTitle: "RoteMGPT",
+    projectOneText: "ממשק AI אישי לניסויים, פרומפטים, כלים ותהליכי עבודה מהירים.",
+    projectTwoLabel: "Automation Stack",
+    projectTwoTitle: "Home Assistant",
+    projectTwoText: "חיבור בין AI, בית חכם, פעולות וסביבת בדיקות אמיתית.",
+    projectThreeLabel: "Device Lab",
+    projectThreeTitle: "Android Lab",
+    projectThreeText: "בדיקות מובייל, אוטומציה וחיבור בין סוכן AI לבין מכשירים.",
+    projectFourLabel: "Security Lab",
+    projectFourTitle: "RedLab",
+    projectFourText: "סביבת מחקר להגנה, ניטור, בדיקות וחשיבה התקפית אחראית.",
+    projectFiveLabel: "Edge Platform",
+    projectFiveTitle: "Cloudflare",
+    projectFiveText: "פריסה מהירה, דומיינים, APIs וכלים שמאפשרים לאתר ולסוכנים להישאר זמינים.",
+    contactNumber: "04",
+    contactTitle: "רוצה לדבר על Maya, AI או תשתיות?",
+    contactLead: "זה המקום להתחיל שיחה על סוכנים אישיים, אוטומציה, אתרים חיים, חוויות מובייל או חיבור בין מוצר ותשתית.",
+    contactPrimaryCta: "האתר של רותם",
+    contactSecondaryCta: "GitHub",
+  },
+  en: {
+    pageTitle: "Maya Agent | Rotem Zaccaim",
+    metaDescription: "Maya Agent is Rotem Zaccaim's personal AI lab for WhatsApp automation, memory, calendar, voice, vision, and real-world agent workflows.",
+    brandAria: "Maya Agent - go to page start",
+    brandName: "Maya Agent",
+    mainNavLabel: "Primary navigation",
+    skipLink: "Skip to main content",
+    navStory: "Story",
+    navAbilities: "Abilities",
+    navProjects: "Lab",
+    navContact: "Contact",
+    languageToggle: "HE",
+    languageToggleAria: "Switch to Hebrew",
+    heroTitle: "Maya Agent",
+    heroLead: "A personal AI that manages conversation, memory, calendar, voice, images, and automation around real life.",
+    heroPrimaryCta: "Explore Maya",
+    heroSecondaryCta: "Contact Rotem",
+    heroPanelsLabel: "Maya Agent core abilities",
+    panelWhatsAppTitle: "WhatsApp AI Agent",
+    panelWhatsAppText: "Natural conversation that connects questions, tasks, media, and context in one place.",
+    panelMemoryTitle: "Memory + Calendar",
+    panelMemoryText: "Persistent memory, reminders, and calendar context that understand your day.",
+    panelVoiceTitle: "Voice, Vision, Automation",
+    panelVoiceText: "Voice, images, and automation tools working together as one experience.",
+    characterAlt: "MAYA AGENT character with sunglasses and a black shirt",
+    storyNumber: "01",
+    storyTitle: "Maya is a personal AI connected to real tools",
+    storyLead: "Maya started as a personal experiment and became a daily working system: a WhatsApp agent that understands natural language, remembers context, reads images and voice, and activates actions around real life.",
+    storyBody: "This site shows the public product layer: how the experience feels, which abilities already exist, and where Rotem's lab connects AI, infrastructure, and real tools.",
+    abilitiesNumber: "02",
+    abilitiesTitle: "What Maya can do",
+    abilitiesLead: "The experience is built around short actions, useful memory, and integrations that let the agent move from conversation to execution.",
+    abilityChatTitle: "WhatsApp AI Agent",
+    abilityChatText: "A natural chat interface that holds tasks, questions, media, and real-time answers.",
+    abilityMemoryTitle: "Memory + Calendar",
+    abilityMemoryText: "Semantic memory, events, and reminders that help Maya understand continuity beyond a single message.",
+    abilityVoiceTitle: "Voice, Vision, Automation",
+    abilityVoiceText: "Transcription, image understanding, action creation, and helper tools that return into the conversation.",
+    abilityHomeTitle: "Home Assistant",
+    abilityHomeText: "A smart-home and sensor connection so an AI agent can act in a physical environment.",
+    projectsNumber: "03",
+    projectsTitle: "Proof from the lab",
+    projectsLead: "Maya Agent is part of a broader lab of products, infrastructure, and experiments around Rotem's work.",
+    projectOneLabel: "AI Interface",
+    projectOneTitle: "RoteMGPT",
+    projectOneText: "A personal AI interface for experiments, prompts, tools, and fast workflows.",
+    projectTwoLabel: "Automation Stack",
+    projectTwoTitle: "Home Assistant",
+    projectTwoText: "A bridge between AI, smart home, actions, and a real testing environment.",
+    projectThreeLabel: "Device Lab",
+    projectThreeTitle: "Android Lab",
+    projectThreeText: "Mobile testing, automation, and links between an AI agent and devices.",
+    projectFourLabel: "Security Lab",
+    projectFourTitle: "RedLab",
+    projectFourText: "A research environment for defense, monitoring, testing, and responsible security thinking.",
+    projectFiveLabel: "Edge Platform",
+    projectFiveTitle: "Cloudflare",
+    projectFiveText: "Fast deployment, domains, APIs, and tools that keep the site and agents available.",
+    contactNumber: "04",
+    contactTitle: "Want to talk about Maya, AI, or infrastructure?",
+    contactLead: "Start a conversation about personal agents, automation, living websites, mobile experiences, or the connection between product and infrastructure.",
+    contactPrimaryCta: "Rotem's site",
+    contactSecondaryCta: "GitHub",
+  },
 };
-const LANGUAGE_STORAGE_KEY = "rz-about-language";
-let currentLanguage = "he";
-let assistantBot = null;
 
-function normalizeLanguage(language) {
-    const code = String(language || "").trim().toLowerCase();
+const LANGUAGE_STORAGE_KEY = "maya-agent-language";
+const DEFAULT_LANGUAGE = "he";
 
-    return code === "en" || code.startsWith("en-") ? "en" : "he";
+function getStoredLanguage() {
+  try {
+    return localStorage.getItem(LANGUAGE_STORAGE_KEY);
+  } catch {
+    return null;
+  }
 }
 
-function getTranslation(key, language = currentLanguage) {
-    const normalized = normalizeLanguage(language);
-    const languagePack = I18N[normalized] || I18N.he;
-
-    return languagePack[key] || I18N.he[key] || "";
+function storeLanguage(language) {
+  try {
+    localStorage.setItem(LANGUAGE_STORAGE_KEY, language);
+  } catch {
+    // Local storage is optional for the static page.
+  }
 }
 
-function resolveInitialLanguage() {
-    try {
-        const storedLanguage = window.localStorage.getItem(LANGUAGE_STORAGE_KEY);
-
-        if (storedLanguage === "he" || storedLanguage === "en") {
-            return storedLanguage;
-        }
-    } catch (error) {
-        // Local storage can be unavailable in restricted contexts.
-    }
-
-    return normalizeLanguage(document.documentElement.lang);
+function updateMeta(name, value) {
+  const element = document.querySelector(`meta[name="${name}"]`);
+  if (element) element.setAttribute("content", value);
 }
 
-function setMetaContent(selector, value) {
-    document.querySelectorAll(selector).forEach((node) => {
-        node.setAttribute("content", value);
-    });
-}
-
-function setTranslatedAttributes(languagePack) {
-    translatedAttributeNodes.forEach((node) => {
-        const pairs = (node.dataset.i18nAttr || "")
-            .split(/[;,]/)
-            .map((pair) => pair.trim())
-            .filter(Boolean);
-
-        pairs.forEach((pair) => {
-            const separatorIndex = pair.indexOf(":");
-
-            if (separatorIndex === -1) {
-                return;
-            }
-
-            const attributeName = pair.slice(0, separatorIndex).trim();
-            const key = pair.slice(separatorIndex + 1).trim();
-
-            if (!attributeName || !Object.prototype.hasOwnProperty.call(languagePack, key)) {
-                return;
-            }
-
-            node.setAttribute(attributeName, languagePack[key]);
-        });
-    });
+function updateProperty(property, value) {
+  const element = document.querySelector(`meta[property="${property}"]`);
+  if (element) element.setAttribute("content", value);
 }
 
 function applyLanguage(language) {
-    const normalized = normalizeLanguage(language);
-    const languagePack = I18N[normalized] || I18N.he;
+  const activeLanguage = I18N[language] ? language : DEFAULT_LANGUAGE;
+  const dictionary = I18N[activeLanguage];
+  const isHebrew = activeLanguage === "he";
 
-    currentLanguage = normalized;
-    document.documentElement.lang = normalized;
-    document.documentElement.dir = normalized === "he" ? "rtl" : "ltr";
-    document.title = languagePack.pageTitle;
+  document.documentElement.lang = activeLanguage;
+  document.documentElement.dir = isHebrew ? "rtl" : "ltr";
+  document.title = dictionary.pageTitle;
+  updateMeta("description", dictionary.metaDescription);
+  updateProperty("og:title", dictionary.pageTitle);
+  updateProperty("og:description", dictionary.metaDescription);
 
-    document.querySelectorAll("[data-page-title]").forEach((node) => {
-        node.textContent = languagePack.pageTitle;
+  document.querySelectorAll("[data-i18n]").forEach((node) => {
+    const key = node.getAttribute("data-i18n");
+    if (key && Object.prototype.hasOwnProperty.call(dictionary, key)) {
+      node.textContent = dictionary[key];
+    }
+  });
+
+  document.querySelectorAll("[data-i18n-attr]").forEach((node) => {
+    const pairs = node.getAttribute("data-i18n-attr").split(/[\s,;]+/).filter(Boolean);
+    pairs.forEach((pair) => {
+      const [attribute, key] = pair.split(":");
+      if (attribute && key && Object.prototype.hasOwnProperty.call(dictionary, key)) {
+        node.setAttribute(attribute, dictionary[key]);
+      }
     });
-    setMetaContent("[data-meta-description]", languagePack.metaDescription);
-    setMetaContent("[data-og-title]", languagePack.ogTitle || languagePack.pageTitle);
-    setMetaContent("[data-og-description]", languagePack.ogDescription || languagePack.metaDescription);
-    setMetaContent("[data-twitter-title]", languagePack.twitterTitle || languagePack.pageTitle);
-    setMetaContent("[data-twitter-description]", languagePack.twitterDescription || languagePack.metaDescription);
+  });
 
-    translatedNodes.forEach((node) => {
-        const key = node.dataset.i18n;
+  const toggle = document.querySelector("[data-language-toggle]");
+  if (toggle) {
+    toggle.setAttribute("aria-pressed", String(!isHebrew));
+  }
 
-        if (Object.prototype.hasOwnProperty.call(languagePack, key)) {
-            node.textContent = languagePack[key];
-        }
-    });
-
-    setTranslatedAttributes(languagePack);
-
-    if (languageToggle) {
-        languageToggle.dataset.language = normalized;
-    }
-
-    if (languageCurrent) {
-        languageCurrent.textContent = normalized === "he" ? "עברית" : "English";
-    }
-
-    if (languageNext) {
-        languageNext.textContent = normalized === "he" ? "English" : "עברית";
-    }
-
-    try {
-        window.localStorage.setItem(LANGUAGE_STORAGE_KEY, normalized);
-    } catch (error) {
-        // Keep the page usable when local storage writes are blocked.
-    }
-
-    if (assistantBot) {
-        assistantBot.refreshMessage();
-    }
+  storeLanguage(activeLanguage);
 }
 
-function getAssistantMessageSets(language) {
-    const normalized = normalizeLanguage(language);
-    const messages = {
-        he: {
-            overview: [
-                "זה מבט מהיר על החיבור בין אבטחה, תשתיות ו-AI מעשי.",
-                "כאן מתחיל הפרופיל: עבודה יציבה, אות ברור וכלים שמחזיקים מציאות.",
-                "אפשר להתחיל ממעבדת Maya כדי לראות את הבנייה בפועל."
-            ],
-            profile: [
-                "זה הלב התפעולי: לוגים, תעבורה, תקלות ושכבות הגנה.",
-                "הכוח כאן הוא בחיבור בין חקירה טכנית לבין תשתיות חיות.",
-                "פחות סיסמאות, יותר עבודה יומיומית שמחזיקה מערכות."
-            ],
-            "maya-lab": [
-                "Maya מחברת שיחה טבעית לכלים אמיתיים, זיכרון ומודלים מקומיים.",
-                "זו מעבדה אישית בעברית, בנויה סביב שימוש מעשי ולא דמו בלבד.",
-                "המיקוד הוא שליטה, בדיקה והבנה של מערכות AI בסביבה סגורה."
-            ],
-            systems: [
-                "המערכות כאן הן הוכחות בנייה מקצה לקצה.",
-                "כל פרויקט מחבר ממשק, אוטומציה ותפעול אמיתי.",
-                "הקו המשותף: להפוך תהליך מורכב לפעולה ברורה."
-            ],
-            experience: [
-                "הניסיון מגיע מסביבות ייצור שבהן יציבות וזמינות חשובות באמת.",
-                "אבטחה טובה מתחזקת כשגם תחקור תקלות נשאר מדויק ורגוע.",
-                "זה הרקע שמזין את כלי ה-AI והאוטומציה."
-            ],
-            certifications: [
-                "ההכשרות משלימות את העבודה המעשית בשטח.",
-                "יש כאן בסיס מסודר באבטחה, בדיקות, רשתות ו-PT מורשה.",
-                "ידע טוב נשאר שימושי כשהוא מחובר לתרגול אמיתי."
-            ],
-            contact: [
-                "אם צריך אדם שמבין גם אבטחה וגם תשתיות, זה מקום טוב להתחיל.",
-                "אפשר לדבר על תפעול אבטחה, אוטומציה, תשתיות וכלי AI.",
-                "תודה שקפצת לפרופיל."
-            ],
-            fallback: [
-                "נשארים סקרנים.",
-                "ממשיכים לחקור.",
-                "מערכות יציבות מתחילות מחשיבה יציבה."
-            ],
-        },
-        en: {
-            overview: [
-                "This is the quick read on security, infrastructure and practical AI.",
-                "The profile starts here: stable operations, clear signal and tools that hold up.",
-                "Start with the Maya lab to see the build work in motion."
-            ],
-            profile: [
-                "This is the operational core: logs, traffic, service issues and protective layers.",
-                "The strength is where technical investigation meets live infrastructure.",
-                "Less slogan, more day-to-day work that keeps systems steady."
-            ],
-            "maya-lab": [
-                "Maya connects natural conversation to real tools, memory and local models.",
-                "It is a Hebrew-first personal lab built for practical use, not just demos.",
-                "The focus is control, testing and understanding AI systems in a closed environment."
-            ],
-            systems: [
-                "These systems are the end-to-end proof points.",
-                "Each project connects interface, automation and real operational flow.",
-                "The shared line: turn complex processes into clear action."
-            ],
-            experience: [
-                "The experience comes from production settings where stability and availability matter.",
-                "Security gets stronger when troubleshooting stays precise and calm.",
-                "This is the background behind the AI and automation tooling."
-            ],
-            certifications: [
-                "The training rounds out the practical work.",
-                "There is structured grounding here in security, QA, networking and authorized PT.",
-                "Good knowledge stays useful when it is tied to real practice."
-            ],
-            contact: [
-                "If you need someone who understands security and infrastructure, this is a good place to start.",
-                "Happy to talk about security operations, automation, infrastructure and AI tooling.",
-                "Thanks for visiting the profile."
-            ],
-            fallback: [
-                "Stay curious.",
-                "Keep exploring.",
-                "Steady systems come from steady thinking."
-            ],
-        },
+class MayaCharacterMotion {
+  constructor(hero, character) {
+    this.hero = hero;
+    this.character = character;
+    this.reducedMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    this.pointerFineQuery = window.matchMedia("(pointer: fine)");
+    this.hovered = false;
+    this.scrollShifted = false;
+    this.pointer = { x: 0, y: 0 };
+    this.rafId = 0;
+
+    this.handleScroll = this.handleScroll.bind(this);
+    this.handlePointerEnter = this.handlePointerEnter.bind(this);
+    this.handlePointerLeave = this.handlePointerLeave.bind(this);
+    this.handlePointerMove = this.handlePointerMove.bind(this);
+    this.handleMotionChange = this.handleMotionChange.bind(this);
+    this.requestUpdate = this.requestUpdate.bind(this);
+    this.update = this.update.bind(this);
+  }
+
+  init() {
+    if (!this.hero || !this.character) return;
+
+    this.handleScroll();
+    window.addEventListener("scroll", this.handleScroll, { passive: true });
+    window.addEventListener("resize", this.handleScroll, { passive: true });
+    this.hero.addEventListener("pointerenter", this.handlePointerEnter);
+    this.hero.addEventListener("pointerleave", this.handlePointerLeave);
+    this.hero.addEventListener("pointermove", this.handlePointerMove, { passive: true });
+
+    if (this.reducedMotionQuery.addEventListener) {
+      this.reducedMotionQuery.addEventListener("change", this.handleMotionChange);
+    } else if (this.reducedMotionQuery.addListener) {
+      this.reducedMotionQuery.addListener(this.handleMotionChange);
+    }
+  }
+
+  handleScroll() {
+    const heroHeight = Math.max(this.hero.offsetHeight, 1);
+    const threshold = Math.min(heroHeight * 0.16, 150);
+    this.scrollShifted = window.scrollY > threshold;
+    this.requestUpdate();
+  }
+
+  handlePointerEnter() {
+    if (!this.pointerFineQuery.matches) return;
+    this.hovered = true;
+    this.requestUpdate();
+  }
+
+  handlePointerLeave() {
+    this.hovered = false;
+    this.pointer = { x: 0, y: 0 };
+    this.requestUpdate();
+  }
+
+  handlePointerMove(event) {
+    if (!this.pointerFineQuery.matches || this.reducedMotionQuery.matches) return;
+
+    const rect = this.hero.getBoundingClientRect();
+    const x = ((event.clientX - rect.left) / Math.max(rect.width, 1) - 0.5) * 2;
+    const y = ((event.clientY - rect.top) / Math.max(rect.height, 1) - 0.5) * 2;
+    this.pointer = {
+      x: Math.max(-1, Math.min(1, x)),
+      y: Math.max(-1, Math.min(1, y)),
     };
+    this.requestUpdate();
+  }
 
-    return messages[normalized] || messages.he;
+  handleMotionChange() {
+    this.pointer = { x: 0, y: 0 };
+    this.requestUpdate();
+  }
+
+  requestUpdate() {
+    if (this.rafId) return;
+    this.rafId = requestAnimationFrame(this.update);
+  }
+
+  update() {
+    this.rafId = 0;
+    const reduced = this.reducedMotionQuery.matches;
+    const x = reduced ? 0 : this.pointer.x;
+    const y = reduced ? 0 : this.pointer.y;
+
+    this.hero.style.setProperty("--hero-pointer-x", x.toFixed(3));
+    this.hero.style.setProperty("--hero-pointer-y", y.toFixed(3));
+    this.hero.classList.toggle("is-character-shifted", this.scrollShifted || this.hovered);
+  }
 }
 
-const initialLanguage = resolveInitialLanguage();
-applyLanguage(initialLanguage);
+function initLanguage() {
+  const savedLanguage = getStoredLanguage();
+  const initialLanguage = I18N[savedLanguage] ? savedLanguage : DEFAULT_LANGUAGE;
+  const toggle = document.querySelector("[data-language-toggle]");
 
-if (languageToggle) {
-    languageToggle.addEventListener("click", () => {
-        applyLanguage(currentLanguage === "he" ? "en" : "he");
+  applyLanguage(initialLanguage);
+
+  if (toggle) {
+    toggle.addEventListener("click", () => {
+      const nextLanguage = document.documentElement.lang === "he" ? "en" : "he";
+      applyLanguage(nextLanguage);
     });
+  }
 }
 
-if (yearNode) {
-    yearNode.textContent = new Date().getFullYear();
+function initCharacterMotion() {
+  const hero = document.querySelector("[data-character-hero]");
+  const character = document.querySelector("[data-maya-character]");
+  const motion = new MayaCharacterMotion(hero, character);
+  motion.init();
 }
 
-if (revealItems.length > 0) {
-    revealItems.forEach((item) => item.classList.add("reveal-ready"));
-
-    if (prefersReducedMotion.matches || liteExperienceMode || !("IntersectionObserver" in window)) {
-        revealItems.forEach((item) => item.classList.add("is-visible"));
-    } else {
-        const observer = new IntersectionObserver(
-            (entries, activeObserver) => {
-                entries.forEach((entry) => {
-                    if (!entry.isIntersecting) {
-                        return;
-                    }
-
-                    entry.target.classList.add("is-visible");
-                    activeObserver.unobserve(entry.target);
-                });
-            },
-            {
-                threshold: 0.18,
-                rootMargin: "0px 0px -32px 0px",
-            }
-        );
-
-        revealItems.forEach((item) => observer.observe(item));
-    }
-}
-
-if (navLinks.length > 0) {
-    const setActiveNavLink = (sectionId) => {
-        navLinks.forEach((link) => {
-            const isActive = link.getAttribute("href") === `#${sectionId}`;
-            link.classList.toggle("is-active", isActive);
-
-            if (isActive) {
-                link.setAttribute("aria-current", "location");
-            } else {
-                link.removeAttribute("aria-current");
-            }
-        });
-    };
-
-    const initialSection = window.location.hash.slice(1) || "overview";
-
-    if (sectionLinkMap.has(initialSection)) {
-        setActiveNavLink(initialSection);
-    }
-
-    window.addEventListener("hashchange", () => {
-        const hashSection = window.location.hash.slice(1);
-
-        if (sectionLinkMap.has(hashSection)) {
-            setActiveNavLink(hashSection);
-        }
-    });
-
-    const observedNavSections = messageSections.filter((section) => sectionLinkMap.has(section.id));
-
-    if (observedNavSections.length > 0 && "IntersectionObserver" in window) {
-        const visibleSections = new Map();
-        const navObserver = new IntersectionObserver(
-            (entries) => {
-                entries.forEach((entry) => {
-                    if (entry.isIntersecting) {
-                        visibleSections.set(entry.target.id, entry.intersectionRatio);
-                    } else {
-                        visibleSections.delete(entry.target.id);
-                    }
-                });
-
-                let nextSection = initialSection;
-                let bestRatio = -1;
-
-                visibleSections.forEach((ratio, id) => {
-                    if (ratio > bestRatio) {
-                        bestRatio = ratio;
-                        nextSection = id;
-                    }
-                });
-
-                if (sectionLinkMap.has(nextSection)) {
-                    setActiveNavLink(nextSection);
-                }
-            },
-            {
-                threshold: [0.18, 0.4, 0.65],
-                rootMargin: "-16% 0px -58% 0px",
-            }
-        );
-
-        observedNavSections.forEach((section) => navObserver.observe(section));
-    }
-}
-
-if (!prefersReducedMotion.matches && !liteExperienceMode && cards.length > 0) {
-    cards.forEach((card) => {
-        const resetSpotlight = () => {
-            card.classList.remove("is-active");
-        };
-
-        card.addEventListener("pointermove", (event) => {
-            const bounds = card.getBoundingClientRect();
-            const x = event.clientX - bounds.left;
-            const y = event.clientY - bounds.top;
-
-            card.style.setProperty("--pointer-x", `${x}px`);
-            card.style.setProperty("--pointer-y", `${y}px`);
-            card.classList.add("is-active");
-        });
-
-        card.addEventListener("pointerleave", resetSpotlight);
-        card.addEventListener("pointercancel", resetSpotlight);
-    });
-}
-
-class BootLoader {
-    constructor(screen, copyNode, stampNode, steps, canvas, reducedMotion, liteMode) {
-        this.screen = screen;
-        this.copyNode = copyNode;
-        this.stampNode = stampNode;
-        this.steps = steps;
-        this.canvas = canvas;
-        this.reducedMotion = reducedMotion;
-        this.liteMode = liteMode;
-        this.stepMap = new Map(
-            steps.map((step) => [step.dataset.bootStep, step])
-        );
-        this.sessionKey = "rz-loader-seen";
-        this.minDuration = reducedMotion ? 180 : liteMode ? 1800 : 3500;
-        this.isSkipped = document.documentElement.classList.contains("loader-skip");
-        this.hasAnnouncedReady = false;
-    }
-
-    async start() {
-        if (!this.screen) {
-            return;
-        }
-
-        if (this.isSkipped) {
-            this.teardown({ immediate: true });
-            return;
-        }
-
-        document.body.classList.add("is-booting");
-        this.updateStamp();
-        this.setProgress(0.04);
-
-        try {
-            const minDelay = this.wait(this.minDuration);
-
-            await this.advanceStep(
-                "shell",
-                getTranslation("bootRuntimeShell"),
-                0.22,
-                this.wait(this.reducedMotion ? 70 : 160)
-            );
-
-            await this.advanceStep(
-                "fonts",
-                getTranslation("bootRuntimeFonts"),
-                0.5,
-                this.waitForFonts()
-            );
-
-            await this.advanceStep(
-                "ambient",
-                getTranslation("bootRuntimeAmbient"),
-                0.78,
-                this.waitForCanvasReady()
-            );
-
-            await Promise.all([minDelay, this.waitForStableFrame()]);
-
-            await this.advanceStep(
-                "profile",
-                getTranslation("bootRuntimeProfile"),
-                1,
-                this.wait(this.reducedMotion ? 70 : 180)
-            );
-        } catch (error) {
-            this.setCopy(getTranslation("bootRuntimeFallback"));
-            this.setProgress(1);
-        }
-
-        this.complete();
-    }
-
-    setProgress(value) {
-        const clamped = Math.max(0, Math.min(1, value));
-        this.screen.style.setProperty("--boot-progress", clamped.toFixed(3));
-    }
-
-    setCopy(text) {
-        if (this.copyNode) {
-            this.copyNode.textContent = text;
-        }
-    }
-
-    updateStamp() {
-        if (!this.stampNode) {
-            return;
-        }
-
-        const stamp = new Date().toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit",
-            hour12: false,
-        });
-
-        this.stampNode.textContent = stamp;
-    }
-
-    setStepState(stepName, state, label) {
-        const row = this.stepMap.get(stepName);
-
-        if (!row) {
-            return;
-        }
-
-        row.dataset.state = state;
-
-        const labelNode = row.querySelector("strong");
-
-        if (labelNode) {
-            labelNode.textContent = label;
-        }
-    }
-
-    async advanceStep(stepName, copy, progress, task) {
-        this.setCopy(copy);
-        this.setStepState(stepName, "active", getTranslation("bootActive"));
-        await task;
-        this.setStepState(stepName, "done", getTranslation("bootReady"));
-        this.setProgress(progress);
-    }
-
-    waitForFonts() {
-        if (!("fonts" in document) || !document.fonts.ready) {
-            return this.wait(120);
-        }
-
-        return Promise.race([
-            document.fonts.ready.catch(() => undefined),
-            this.wait(this.reducedMotion ? 220 : 1400),
-        ]);
-    }
-
-    waitForCanvasReady() {
-        if (!this.canvas) {
-            return this.wait(120);
-        }
-
-        if (this.canvas.classList.contains("is-ready")) {
-            return Promise.resolve();
-        }
-
-        return new Promise((resolve) => {
-            let resolved = false;
-            let fallbackId = 0;
-
-            const finish = () => {
-                if (resolved) {
-                    return;
-                }
-
-                resolved = true;
-                observer.disconnect();
-                window.clearTimeout(fallbackId);
-                resolve();
-            };
-
-            const observer = new MutationObserver(() => {
-                if (this.canvas.classList.contains("is-ready")) {
-                    finish();
-                }
-            });
-
-            observer.observe(this.canvas, {
-                attributes: true,
-                attributeFilter: ["class"],
-            });
-
-            fallbackId = window.setTimeout(
-                finish,
-                this.reducedMotion ? 220 : this.liteMode ? 900 : 1800
-            );
-        });
-    }
-
-    waitForStableFrame() {
-        return new Promise((resolve) => {
-            window.requestAnimationFrame(() => {
-                window.requestAnimationFrame(resolve);
-            });
-        });
-    }
-
-    wait(duration) {
-        return new Promise((resolve) => {
-            window.setTimeout(resolve, duration);
-        });
-    }
-
-    complete() {
-        this.setCopy(getTranslation("bootRuntimeComplete"));
-
-        try {
-            window.sessionStorage.setItem(this.sessionKey, "1");
-        } catch (error) {
-            // Session storage can be unavailable in restricted contexts.
-        }
-
-        this.teardown();
-    }
-
-    announceReady() {
-        if (this.hasAnnouncedReady) {
-            return;
-        }
-
-        this.hasAnnouncedReady = true;
-        window.dispatchEvent(
-            new CustomEvent("bootloader:complete", {
-                detail: { liteMode: this.liteMode }
-            })
-        );
-    }
-
-    teardown({ immediate = false } = {}) {
-        document.body.classList.remove("is-booting");
-        this.screen.setAttribute("aria-hidden", "true");
-
-        if (immediate) {
-            this.screen.hidden = true;
-            this.announceReady();
-            return;
-        }
-
-        this.screen.classList.add("is-ready");
-
-        window.setTimeout(() => {
-            this.screen.hidden = true;
-            this.announceReady();
-        }, this.reducedMotion ? 40 : 680);
-    }
-}
-
-class AmbientBackground {
-    constructor(canvas, sections, reducedMotion, liteMode) {
-        this.canvas = canvas;
-        this.ctx = canvas.getContext("2d", { alpha: true });
-        this.sections = sections;
-        this.reducedMotion = reducedMotion;
-        this.liteMode = liteMode;
-        this.width = 0;
-        this.height = 0;
-        this.dpr = 1;
-        this.time = 0;
-        this.visibleSections = new Map();
-        this.sectionObserver = null;
-        this.currentProfileId = "overview";
-        this.sectionProfiles = {
-            overview: {
-                hue: 220,
-                spread: 280,
-                arms: 4,
-                spiralTwist: 2.8,
-                flatness: 0.34,
-                coreConcentration: 0.56,
-                cloudSize: 190,
-                cloudOpacity: 0.035,
-                depth: 0.14
-            },
-            profile: {
-                hue: 188,
-                spread: 250,
-                arms: 4,
-                spiralTwist: 3.3,
-                flatness: 0.4,
-                coreConcentration: 0.6,
-                cloudSize: 170,
-                cloudOpacity: 0.03,
-                depth: 0.2
-            },
-            "maya-lab": {
-                hue: 258,
-                spread: 326,
-                arms: 7,
-                spiralTwist: 0.7,
-                flatness: 0.88,
-                coreConcentration: 0.42,
-                cloudSize: 250,
-                cloudOpacity: 0.05,
-                depth: 0.4
-            },
-            systems: {
-                hue: 204,
-                spread: 312,
-                arms: 5,
-                spiralTwist: 4.1,
-                flatness: 0.24,
-                coreConcentration: 0.52,
-                cloudSize: 205,
-                cloudOpacity: 0.028,
-                depth: 0.54
-            },
-            experience: {
-                hue: 228,
-                spread: 266,
-                arms: 3,
-                spiralTwist: 1.9,
-                flatness: 0.46,
-                coreConcentration: 0.66,
-                cloudSize: 170,
-                cloudOpacity: 0.028,
-                depth: 0.3
-            },
-            certifications: {
-                hue: 176,
-                spread: 336,
-                arms: 6,
-                spiralTwist: 1.7,
-                flatness: 0.64,
-                coreConcentration: 0.48,
-                cloudSize: 220,
-                cloudOpacity: 0.04,
-                depth: 0.24
-            },
-            contact: {
-                hue: 284,
-                spread: 236,
-                arms: 2,
-                spiralTwist: 0.28,
-                flatness: 1.45,
-                coreConcentration: 0.78,
-                cloudSize: 155,
-                cloudOpacity: 0.024,
-                depth: 0.48
-            }
-        };
-        this.currentProfile = this.sectionProfiles.overview;
-        this.targetHue = this.currentProfile.hue;
-        this.currentHue = this.currentProfile.hue;
-        this.targetDepth = this.currentProfile.depth;
-        this.currentDepth = this.currentProfile.depth;
-        this.maxFocal = 470;
-        this.minFocal = 120;
-        this.focalLength = this.maxFocal;
-        this.frameInterval = liteMode ? 1000 / 30 : 1000 / 60;
-        this.lastFrameTime = 0;
-        this.pointer = {
-            x: 0.5,
-            y: 0.42,
-            targetX: 0.5,
-            targetY: 0.42
-        };
-        this.camera = {
-            rotX: 0.22,
-            rotY: 0
-        };
-        this.morphProgress = 1;
-        this.morphSpeed = 0.017;
-        this.starCount = liteMode ? 120 : 520;
-        this.nebulaCount = liteMode ? 180 : 920;
-        this.glowCount = liteMode ? 14 : 42;
-        this.maxSparks = liteMode ? 24 : 140;
-        this.stars = Array.from({ length: this.starCount }, () => this.createStar());
-        this.nebula = Array.from({ length: this.nebulaCount }, () =>
-            this.createNebulaParticle(this.currentProfile)
-        );
-        this.glowClouds = Array.from({ length: this.glowCount }, () =>
-            this.createGlowCloud(this.currentProfile)
-        );
-        this.sparks = [];
-        this.rafId = null;
-        this.resize = this.resize.bind(this);
-        this.loop = this.loop.bind(this);
-        this.onPointerMove = this.onPointerMove.bind(this);
-        this.resetPointer = this.resetPointer.bind(this);
-        this.onSectionIntersect = this.onSectionIntersect.bind(this);
-    }
-
-    createStar() {
-        return {
-            x: Math.random() * 2 - 0.5,
-            y: Math.random() * 2 - 0.5,
-            z: Math.random(),
-            size: Math.random() * 1.7 + 0.25,
-            twinkleSpeed: Math.random() * 2 + 0.8,
-            twinkleOffset: Math.random() * Math.PI * 2
-        };
-    }
-
-    createNebulaParticle(profile) {
-        const target = this.generateNebulaTarget(profile);
-
-        return {
-            x: target.x,
-            y: target.y,
-            z: target.z,
-            tx: target.x,
-            ty: target.y,
-            tz: target.z,
-            size: target.size,
-            targetSize: target.size,
-            opacity: target.opacity,
-            targetOpacity: target.opacity,
-            hueShift: Math.random() * 58 - 29,
-            saturation: Math.random() * 30 + 52,
-            lightness: Math.random() * 28 + 40,
-            rotSpeed: (Math.random() - 0.5) * 0.28,
-            wobbleAmp: Math.random() * 16 + 4,
-            wobbleSpeed: Math.random() * 1.3 + 0.55,
-            wobbleOffset: Math.random() * Math.PI * 2,
-            pulseSpeed: Math.random() * 2 + 0.5,
-            pulseOffset: Math.random() * Math.PI * 2
-        };
-    }
-
-    generateNebulaTarget(profile) {
-        const theta = Math.random() * Math.PI * 2;
-        const phi = Math.acos(2 * Math.random() - 1);
-        const armAngle =
-            Math.floor(Math.random() * profile.arms) * ((Math.PI * 2) / Math.max(profile.arms, 1));
-        const radius = Math.pow(Math.random(), profile.coreConcentration) * profile.spread;
-        const spiralOffset = radius * profile.spiralTwist * 0.01;
-
-        return {
-            x: Math.cos(theta + armAngle + spiralOffset) * radius * Math.sin(phi),
-            y: (Math.random() - 0.5) * radius * profile.flatness,
-            z: Math.sin(theta + armAngle + spiralOffset) * radius * Math.sin(phi),
-            size: Math.random() * 3.2 + 0.45,
-            opacity: Math.random() * 0.58 + 0.12
-        };
-    }
-
-    createGlowCloud(profile) {
-        const target = this.generateGlowTarget(profile);
-
-        return {
-            x: target.x,
-            y: target.y,
-            z: target.z,
-            tx: target.x,
-            ty: target.y,
-            tz: target.z,
-            size: target.size,
-            targetSize: target.size,
-            opacity: target.opacity,
-            targetOpacity: target.opacity,
-            hueShift: Math.random() * 46 - 23,
-            rotSpeed: (Math.random() - 0.5) * 0.08
-        };
-    }
-
-    generateGlowTarget(profile) {
-        const theta = Math.random() * Math.PI * 2;
-        const radius = Math.pow(Math.random(), 0.52) * profile.spread;
-
-        return {
-            x: Math.cos(theta) * radius,
-            y: (Math.random() - 0.5) * radius * profile.flatness,
-            z: Math.sin(theta) * radius,
-            size: Math.random() * profile.cloudSize + 80,
-            opacity: Math.random() * profile.cloudOpacity + 0.01
-        };
-    }
-
-    start() {
-        if (!this.ctx) {
-            return;
-        }
-
-        this.resize();
-        this.setupSectionTracking();
-        window.addEventListener("resize", this.resize);
-
-        if (!this.reducedMotion) {
-            if (!this.liteMode) {
-                window.addEventListener("pointermove", this.onPointerMove, { passive: true });
-                window.addEventListener("blur", this.resetPointer);
-                document.addEventListener("mouseleave", this.resetPointer);
-            }
-            this.rafId = window.requestAnimationFrame(this.loop);
-        } else {
-            this.render(0);
-        }
-    }
-
-    resize() {
-        this.width = window.innerWidth;
-        this.height = window.innerHeight;
-        this.dpr = Math.min(window.devicePixelRatio || 1, this.liteMode ? 1 : 1.75);
-
-        this.canvas.width = Math.round(this.width * this.dpr);
-        this.canvas.height = Math.round(this.height * this.dpr);
-        this.canvas.style.width = `${this.width}px`;
-        this.canvas.style.height = `${this.height}px`;
-        this.ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
-
-        if (this.reducedMotion) {
-            this.render(0);
-        }
-    }
-
-    setupSectionTracking() {
-        if (this.sections.length === 0 || !("IntersectionObserver" in window)) {
-            return;
-        }
-
-        this.sectionObserver = new IntersectionObserver(this.onSectionIntersect, {
-            threshold: [0.22, 0.45, 0.72],
-            rootMargin: "-10% 0px -34% 0px"
-        });
-
-        this.sections.forEach((section) => this.sectionObserver.observe(section));
-    }
-
-    onSectionIntersect(entries) {
-        entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-                this.visibleSections.set(entry.target.id, entry.intersectionRatio);
-            } else {
-                this.visibleSections.delete(entry.target.id);
-            }
-        });
-
-        let nextSection = this.currentProfileId;
-        let bestRatio = -1;
-
-        this.visibleSections.forEach((ratio, id) => {
-            if (ratio > bestRatio) {
-                bestRatio = ratio;
-                nextSection = id;
-            }
-        });
-
-        this.setProfile(nextSection);
-    }
-
-    setProfile(id) {
-        const profile = this.sectionProfiles[id] || this.sectionProfiles.overview;
-
-        if (id === this.currentProfileId) {
-            return;
-        }
-
-        this.currentProfileId = id;
-        this.currentProfile = profile;
-        this.targetHue = profile.hue;
-        this.targetDepth = profile.depth;
-        this.assignNebulaTargets(profile, this.reducedMotion);
-        this.assignGlowTargets(profile, this.reducedMotion);
-
-        if (!this.reducedMotion) {
-            this.emitSparks(this.liteMode ? 8 : 24);
-        } else {
-            this.currentHue = profile.hue;
-            this.currentDepth = profile.depth;
-            this.render(this.time);
-        }
-    }
-
-    assignNebulaTargets(profile, immediate) {
-        this.nebula.forEach((particle) => {
-            const target = this.generateNebulaTarget(profile);
-            particle.tx = target.x;
-            particle.ty = target.y;
-            particle.tz = target.z;
-            particle.targetSize = target.size;
-            particle.targetOpacity = target.opacity;
-
-            if (immediate) {
-                particle.x = target.x;
-                particle.y = target.y;
-                particle.z = target.z;
-                particle.size = target.size;
-                particle.opacity = target.opacity;
-            }
-        });
-
-        this.morphProgress = immediate ? 1 : 0;
-    }
-
-    assignGlowTargets(profile, immediate) {
-        this.glowClouds.forEach((cloud) => {
-            const target = this.generateGlowTarget(profile);
-            cloud.tx = target.x;
-            cloud.ty = target.y;
-            cloud.tz = target.z;
-            cloud.targetSize = target.size;
-            cloud.targetOpacity = target.opacity;
-
-            if (immediate) {
-                cloud.x = target.x;
-                cloud.y = target.y;
-                cloud.z = target.z;
-                cloud.size = target.size;
-                cloud.opacity = target.opacity;
-            }
-        });
-    }
-
-    emitSparks(count) {
-        for (let index = 0; index < count; index += 1) {
-            const angle = Math.random() * Math.PI * 2;
-            const phi = Math.acos(2 * Math.random() - 1);
-            const speed = Math.random() * 6 + 2.6;
-
-            this.sparks.push({
-                x: 0,
-                y: 0,
-                z: 0,
-                vx: Math.cos(angle) * Math.sin(phi) * speed,
-                vy: (Math.random() - 0.5) * speed * 0.8,
-                vz: Math.sin(angle) * Math.sin(phi) * speed,
-                life: 1,
-                decay: Math.random() * 0.014 + 0.008,
-                size: Math.random() * 2.4 + 1.3,
-                hueShift: Math.random() * 80 - 40,
-                trail: []
-            });
-        }
-
-        while (this.sparks.length > this.maxSparks) {
-            this.sparks.shift();
-        }
-    }
-
-    onPointerMove(event) {
-        if (this.width === 0 || this.height === 0) {
-            return;
-        }
-
-        this.pointer.targetX = event.clientX / this.width;
-        this.pointer.targetY = event.clientY / this.height;
-    }
-
-    resetPointer() {
-        this.pointer.targetX = 0.5;
-        this.pointer.targetY = 0.42;
-    }
-
-    loop(timestamp) {
-        if (this.lastFrameTime && timestamp - this.lastFrameTime < this.frameInterval) {
-            this.rafId = window.requestAnimationFrame(this.loop);
-            return;
-        }
-
-        this.lastFrameTime = timestamp;
-        this.time = timestamp * 0.001;
-        this.render(this.time);
-        this.rafId = window.requestAnimationFrame(this.loop);
-    }
-
-    render(time) {
-        const ctx = this.ctx;
-
-        if (!ctx) {
-            return;
-        }
-
-        this.pointer.x += (this.pointer.targetX - this.pointer.x) * 0.04;
-        this.pointer.y += (this.pointer.targetY - this.pointer.y) * 0.04;
-        this.currentHue += (this.targetHue - this.currentHue) * 0.02;
-        this.currentDepth += (this.targetDepth - this.currentDepth) * 0.03;
-        this.focalLength =
-            this.maxFocal - (this.maxFocal - this.minFocal) * this.currentDepth;
-
-        if (this.morphProgress < 1) {
-            this.morphProgress = Math.min(1, this.morphProgress + this.morphSpeed);
-        }
-
-        ctx.clearRect(0, 0, this.width, this.height);
-        this.drawBackdrop(time);
-        this.drawStars(time);
-        this.drawNebula(time);
-        this.drawSparks(time);
-        this.canvas.classList.add("is-ready");
-    }
-
-    drawBackdrop(time) {
-        const ctx = this.ctx;
-        const centerX = this.width * (0.48 + (this.pointer.x - 0.5) * 0.06);
-        const centerY = this.height * (0.5 + (this.pointer.y - 0.5) * 0.04);
-        const radius = Math.max(this.width, this.height) * (0.42 + this.currentDepth * 0.25);
-        const hue = this.currentHue;
-
-        const core = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, radius);
-        core.addColorStop(0, `hsla(${hue + 20}, 72%, 76%, 0.13)`);
-        core.addColorStop(0.2, `hsla(${hue}, 64%, 48%, 0.08)`);
-        core.addColorStop(0.6, `hsla(${hue - 24}, 52%, 22%, 0.03)`);
-        core.addColorStop(1, "transparent");
-        ctx.fillStyle = core;
-        ctx.fillRect(0, 0, this.width, this.height);
-
-        const sideGlow = ctx.createRadialGradient(
-            this.width * 0.78,
-            this.height * 0.18,
-            0,
-            this.width * 0.78,
-            this.height * 0.18,
-            this.width * 0.3
-        );
-        sideGlow.addColorStop(0, `hsla(${hue + 44}, 80%, 72%, 0.06)`);
-        sideGlow.addColorStop(1, "transparent");
-        ctx.fillStyle = sideGlow;
-        ctx.fillRect(0, 0, this.width, this.height);
-
-        const bloom = ctx.createLinearGradient(0, 0, this.width, this.height);
-        bloom.addColorStop(0, "rgba(255, 255, 255, 0)");
-        bloom.addColorStop(0.5, `hsla(${hue + 8}, 70%, 70%, ${0.015 + this.currentDepth * 0.03})`);
-        bloom.addColorStop(1, "rgba(255, 255, 255, 0)");
-        ctx.fillStyle = bloom;
-        ctx.fillRect(0, 0, this.width, this.height);
-
-        const pulseRadius = 50 + ((time * 56) % 100);
-
-        const ringCount = this.liteMode ? 1 : 3;
-
-        for (let ring = 0; ring < ringCount; ring += 1) {
-            const radiusStep = pulseRadius + ring * 44;
-            const alpha = Math.max(0, 0.16 - ring * 0.035 - (pulseRadius % 100) / 680);
-            ctx.beginPath();
-            ctx.arc(this.width * 0.82, this.height * 0.18, radiusStep, 0, Math.PI * 2);
-            ctx.strokeStyle = `hsla(${hue + 18}, 78%, 72%, ${alpha})`;
-            ctx.lineWidth = 1;
-            ctx.stroke();
-        }
-    }
-
-    drawStars(time) {
-        const ctx = this.ctx;
-        const parallaxX = (this.pointer.x - 0.5) * 120;
-        const parallaxY = (this.pointer.y - 0.5) * 120;
-
-        this.stars.forEach((star) => {
-            const px = star.x * this.width + parallaxX * star.z;
-            const py = star.y * this.height + parallaxY * star.z;
-
-            if (px < -20 || px > this.width + 20 || py < -20 || py > this.height + 20) {
-                return;
-            }
-
-            const twinkle =
-                0.35 + 0.65 * Math.abs(Math.sin(time * star.twinkleSpeed + star.twinkleOffset));
-            const alpha = twinkle * (0.24 + star.z * 0.7);
-            const size = star.size * (0.45 + star.z * 0.55);
-
-            ctx.beginPath();
-            ctx.arc(px, py, size, 0, Math.PI * 2);
-            ctx.fillStyle = `rgba(222, 232, 255, ${alpha})`;
-            ctx.fill();
-
-            if (size > 1.1 && twinkle > 0.72) {
-                ctx.beginPath();
-                ctx.arc(px, py, size * 3.2, 0, Math.PI * 2);
-                ctx.fillStyle = `hsla(${this.currentHue + 24}, 54%, 78%, ${alpha * 0.08})`;
-                ctx.fill();
-            }
-        });
-    }
-
-    drawNebula(time) {
-        const ctx = this.ctx;
-        const centerX = this.width * 0.5;
-        const centerY = this.height * 0.52;
-        const lookSensitivity = 1.1 + this.currentDepth * 1.4;
-
-        this.camera.rotY +=
-            ((this.pointer.x - 0.5) * lookSensitivity - this.camera.rotY) * 0.028;
-        this.camera.rotX +=
-            ((this.pointer.y - 0.5) * lookSensitivity * 0.45 + 0.14 - this.camera.rotX) * 0.028;
-
-        const autoRotation = time * (0.08 * (1 - this.currentDepth * 0.55));
-
-        this.drawGlowClouds(time, autoRotation, centerX, centerY);
-
-        const projected = [];
-
-        this.nebula.forEach((particle) => {
-            const ease = this.morphProgress * this.morphProgress * (3 - 2 * this.morphProgress);
-            particle.x += (particle.tx - particle.x) * ease * 0.06;
-            particle.y += (particle.ty - particle.y) * ease * 0.06;
-            particle.z += (particle.tz - particle.z) * ease * 0.06;
-            particle.size += (particle.targetSize - particle.size) * ease * 0.06;
-            particle.opacity += (particle.targetOpacity - particle.opacity) * ease * 0.06;
-
-            const wobbleX =
-                Math.sin(time * particle.wobbleSpeed + particle.wobbleOffset) * particle.wobbleAmp;
-            const wobbleY =
-                Math.cos(time * particle.wobbleSpeed * 0.7 + particle.wobbleOffset) *
-                particle.wobbleAmp *
-                0.52;
-            const wobbleZ =
-                Math.sin(time * particle.wobbleSpeed * 0.45 + particle.wobbleOffset + 1.4) *
-                particle.wobbleAmp *
-                0.82;
-
-            let point = this.rotateY(
-                particle.x + wobbleX,
-                particle.y + wobbleY,
-                particle.z + wobbleZ,
-                autoRotation + this.camera.rotY + particle.rotSpeed * time * 0.1
-            );
-            point = this.rotateX(point.x, point.y, point.z, this.camera.rotX);
-
-            const projection = this.project3D(point.x, point.y, point.z, centerX, centerY);
-
-            if (projection.scale <= 0.045) {
-                return;
-            }
-
-            const pulse =
-                0.72 + 0.28 * Math.sin(time * particle.pulseSpeed + particle.pulseOffset);
-
-            projected.push({
-                sx: projection.sx,
-                sy: projection.sy,
-                scale: projection.scale,
-                z: point.z,
-                size: particle.size,
-                opacity: particle.opacity * pulse,
-                hueShift: particle.hueShift,
-                saturation: particle.saturation,
-                lightness: particle.lightness
-            });
-        });
-
-        projected.sort((a, b) => b.z - a.z);
-
-        projected.forEach((point) => {
-            const screenSize = point.size * point.scale;
-            const hue = this.currentHue + point.hueShift;
-            const alpha = point.opacity * Math.min(1, point.scale * 1.5);
-
-            if (alpha < 0.008) {
-                return;
-            }
-
-            if (screenSize > 2.4) {
-                const glow = ctx.createRadialGradient(
-                    point.sx,
-                    point.sy,
-                    0,
-                    point.sx,
-                    point.sy,
-                    screenSize * 2.8
-                );
-                glow.addColorStop(
-                    0,
-                    `hsla(${hue}, ${point.saturation}%, ${point.lightness + 22}%, ${alpha * 0.86})`
-                );
-                glow.addColorStop(
-                    0.34,
-                    `hsla(${hue + 16}, ${point.saturation - 12}%, ${point.lightness}%, ${
-                        alpha * 0.34
-                    })`
-                );
-                glow.addColorStop(1, "transparent");
-                ctx.fillStyle = glow;
-                ctx.fillRect(
-                    point.sx - screenSize * 2.8,
-                    point.sy - screenSize * 2.8,
-                    screenSize * 5.6,
-                    screenSize * 5.6
-                );
-            }
-
-            ctx.beginPath();
-            ctx.arc(point.sx, point.sy, Math.max(0.28, screenSize * 0.52), 0, Math.PI * 2);
-            ctx.fillStyle = `hsla(${hue + 22}, ${point.saturation + 14}%, ${Math.min(
-                96,
-                point.lightness + 34
-            )}%, ${Math.min(1, alpha * 1.75)})`;
-            ctx.fill();
-        });
-    }
-
-    drawGlowClouds(time, autoRotation, centerX, centerY) {
-        const ctx = this.ctx;
-
-        this.glowClouds.forEach((cloud, index) => {
-            const ease = this.morphProgress * this.morphProgress * (3 - 2 * this.morphProgress);
-            cloud.x += (cloud.tx - cloud.x) * ease * 0.055;
-            cloud.y += (cloud.ty - cloud.y) * ease * 0.055;
-            cloud.z += (cloud.tz - cloud.z) * ease * 0.055;
-            cloud.size += (cloud.targetSize - cloud.size) * ease * 0.055;
-            cloud.opacity += (cloud.targetOpacity - cloud.opacity) * ease * 0.055;
-
-            let point = this.rotateY(
-                cloud.x,
-                cloud.y,
-                cloud.z,
-                autoRotation + this.camera.rotY + cloud.rotSpeed * time
-            );
-            point = this.rotateX(point.x, point.y, point.z, this.camera.rotX);
-
-            const projection = this.project3D(point.x, point.y, point.z, centerX, centerY);
-
-            if (projection.scale <= 0.04) {
-                return;
-            }
-
-            const size = cloud.size * projection.scale;
-            const hue = this.currentHue + cloud.hueShift;
-            const alpha =
-                cloud.opacity * projection.scale * (0.72 + 0.28 * Math.sin(time * 0.45 + index));
-            const gradient = ctx.createRadialGradient(
-                projection.sx,
-                projection.sy,
-                0,
-                projection.sx,
-                projection.sy,
-                size
-            );
-
-            gradient.addColorStop(0, `hsla(${hue}, 68%, 56%, ${alpha})`);
-            gradient.addColorStop(0.45, `hsla(${hue + 18}, 54%, 42%, ${alpha * 0.45})`);
-            gradient.addColorStop(1, "transparent");
-            ctx.fillStyle = gradient;
-            ctx.fillRect(projection.sx - size, projection.sy - size, size * 2, size * 2);
-        });
-    }
-
-    drawSparks(time) {
-        const ctx = this.ctx;
-        const centerX = this.width * 0.5;
-        const centerY = this.height * 0.52;
-        const autoRotation = time * (0.08 * (1 - this.currentDepth * 0.55));
-
-        for (let index = this.sparks.length - 1; index >= 0; index -= 1) {
-            const spark = this.sparks[index];
-
-            spark.x += spark.vx;
-            spark.y += spark.vy;
-            spark.z += spark.vz;
-            spark.vx *= 0.97;
-            spark.vy *= 0.97;
-            spark.vz *= 0.97;
-            spark.life -= spark.decay;
-            spark.trail.push({ x: spark.x, y: spark.y, z: spark.z });
-
-            if (spark.trail.length > 6) {
-                spark.trail.shift();
-            }
-
-            if (spark.life <= 0) {
-                this.sparks.splice(index, 1);
-                continue;
-            }
-
-            let point = this.rotateY(
-                spark.x,
-                spark.y,
-                spark.z,
-                autoRotation + this.camera.rotY
-            );
-            point = this.rotateX(point.x, point.y, point.z, this.camera.rotX);
-
-            const projection = this.project3D(point.x, point.y, point.z, centerX, centerY);
-
-            if (projection.scale <= 0.045) {
-                continue;
-            }
-
-            const hue = this.currentHue + spark.hueShift + 34;
-            const alpha = spark.life * spark.life;
-            const size = spark.size * projection.scale * spark.life;
-            const glow = ctx.createRadialGradient(
-                projection.sx,
-                projection.sy,
-                0,
-                projection.sx,
-                projection.sy,
-                size * 4
-            );
-
-            glow.addColorStop(0, `hsla(${hue}, 86%, 88%, ${alpha * 0.56})`);
-            glow.addColorStop(0.35, `hsla(${hue + 10}, 74%, 70%, ${alpha * 0.2})`);
-            glow.addColorStop(1, "transparent");
-            ctx.fillStyle = glow;
-            ctx.fillRect(
-                projection.sx - size * 4,
-                projection.sy - size * 4,
-                size * 8,
-                size * 8
-            );
-
-            ctx.beginPath();
-            ctx.arc(projection.sx, projection.sy, Math.max(0.38, size * 0.62), 0, Math.PI * 2);
-            ctx.fillStyle = `hsla(${hue + 30}, 94%, 96%, ${alpha})`;
-            ctx.fill();
-
-            if (spark.trail.length > 1) {
-                ctx.beginPath();
-
-                spark.trail.forEach((trailPoint, trailIndex) => {
-                    let rotated = this.rotateY(
-                        trailPoint.x,
-                        trailPoint.y,
-                        trailPoint.z,
-                        autoRotation + this.camera.rotY
-                    );
-                    rotated = this.rotateX(rotated.x, rotated.y, rotated.z, this.camera.rotX);
-                    const trailProjection = this.project3D(
-                        rotated.x,
-                        rotated.y,
-                        rotated.z,
-                        centerX,
-                        centerY
-                    );
-
-                    if (trailIndex === 0) {
-                        ctx.moveTo(trailProjection.sx, trailProjection.sy);
-                    } else {
-                        ctx.lineTo(trailProjection.sx, trailProjection.sy);
-                    }
-                });
-
-                ctx.strokeStyle = `hsla(${hue}, 76%, 82%, ${alpha * 0.26})`;
-                ctx.lineWidth = size * 0.4;
-                ctx.stroke();
-            }
-        }
-    }
-
-    project3D(x, y, z, centerX, centerY) {
-        const perspective = Math.max(56, this.focalLength + z);
-        const scale = this.focalLength / perspective;
-
-        return {
-            sx: centerX + x * scale,
-            sy: centerY + y * scale,
-            scale
-        };
-    }
-
-    rotateY(x, y, z, angle) {
-        const cosine = Math.cos(angle);
-        const sine = Math.sin(angle);
-
-        return {
-            x: x * cosine - z * sine,
-            y,
-            z: x * sine + z * cosine
-        };
-    }
-
-    rotateX(x, y, z, angle) {
-        const cosine = Math.cos(angle);
-        const sine = Math.sin(angle);
-
-        return {
-            x,
-            y: y * cosine - z * sine,
-            z: y * sine + z * cosine
-        };
-    }
-}
-
-if (ambientCanvas && !liteExperienceMode) {
-    const background = new AmbientBackground(
-        ambientCanvas,
-        messageSections,
-        prefersReducedMotion.matches,
-        liteExperienceMode
-    );
-    background.start();
-} else if (ambientCanvas) {
-    ambientCanvas.hidden = true;
-}
-
-const bootLoader = bootScreenElement
-    ? new BootLoader(
-          bootScreenElement,
-          bootCopyElement,
-          bootStampElement,
-          bootSteps,
-          liteExperienceMode ? null : ambientCanvas,
-          prefersReducedMotion.matches,
-          liteExperienceMode
-      )
-    : null;
-
-class AssistantBot {
-    constructor(bot, pupils, bubble, messageNode, sections, reducedMotion) {
-        this.bot = bot;
-        this.pupils = pupils;
-        this.bubble = bubble;
-        this.messageNode = messageNode;
-        this.sections = sections;
-        this.reducedMotion = reducedMotion;
-        this.widget = bot.closest("[data-assistant-widget]");
-        this.stage = bot.closest("[data-assistant-stage]");
-        this.mouth = bot.querySelector("[data-assistant-mouth]");
-        this.mouthShadow = bot.querySelector("[data-assistant-mouth-shadow]");
-        this.compactQuery = window.matchMedia("(max-width: 760px)");
-        this.sectionStates = {
-            overview: "greet",
-            profile: "focus",
-            "maya-lab": "explain",
-            systems: "build",
-            experience: "steady",
-            certifications: "scan",
-            contact: "cta",
-        };
-        this.expressions = {
-            greet: {
-                mouth: "M102 99C106 103.5 115 103.5 118 99",
-                shadow: "M100 98C105 103.2 116 103.2 120 98",
-                mouthTransform: "translateY(-0.25px) scaleY(1.04)",
-                shadowTransform: "translateY(-0.2px) scaleY(1.02)",
-            },
-            focus: {
-                mouth: "M103 99.5C107 101.2 113 101.2 117 99.5",
-                shadow: "M101 99C106 101.2 114 101.2 119 99",
-                mouthTransform: "translateY(0.45px) scaleY(0.84)",
-                shadowTransform: "translateY(0.4px) scaleY(0.82)",
-            },
-            explain: {
-                mouth: "M102 99C106 101.8 114 101.8 118 99",
-                shadow: "M100 98.2C105 101.8 115 101.8 120 98.2",
-                mouthTransform: "translateY(0.05px) scaleY(1)",
-                shadowTransform: "translateY(0.1px) scaleY(1)",
-            },
-            build: {
-                mouth: "M102 98.5C107 104 114 104 118 98.5",
-                shadow: "M100 97.8C106 103.7 116 103.7 120 97.8",
-                mouthTransform: "translateY(-0.35px) scaleY(1.12)",
-                shadowTransform: "translateY(-0.3px) scaleY(1.08)",
-            },
-            steady: {
-                mouth: "M103 99C106 102 114 102 117 99",
-                shadow: "M101 98.2C105 102.6 115 102.6 119 98.2",
-                mouthTransform: "translateY(0.15px)",
-                shadowTransform: "translateY(0.1px)",
-            },
-            scan: {
-                mouth: "M102 100.5C107 98.8 113 98.8 118 100.5",
-                shadow: "M100 100C106 98.2 114 98.2 120 100",
-                mouthTransform: "translateY(0.2px) scaleY(0.9)",
-                shadowTransform: "translateY(0.15px) scaleY(0.88)",
-            },
-            cta: {
-                mouth: "M102 98.8C107 103.2 114 103.2 118 98.8",
-                shadow: "M100 98.1C105.5 103 115.5 103 120 98.1",
-                mouthTransform: "translateY(-0.22px) scaleY(1.06)",
-                shadowTransform: "translateY(-0.15px) scaleY(1.04)",
-            },
-        };
-        this.messageIndexes = new Map();
-        this.currentSection = "overview";
-        this.currentState = "greet";
-        this.isCompact = false;
-        this.isExpanded = true;
-        this.visibleSections = new Map();
-        this.messageTimer = null;
-        this.swapTimer = null;
-        this.autoCollapseTimer = null;
-        this.sectionObserver = null;
-        this.pointer = { x: window.innerWidth * 0.7, y: window.innerHeight * 0.65 };
-        this.viewBox = { width: 220, height: 220 };
-        this.motionOffsets = {
-            headX: 0,
-            headY: 0,
-            faceX: 0,
-            faceY: 0,
-        };
-        this.eyeCenters = {
-            left: { x: 95, y: 80 },
-            right: { x: 123, y: 80 },
-        };
-        this.maxOffset = 4.1;
-        this.persistentBubbleMode = liteExperienceMode;
-        this.bootPending =
-            !!bootScreenElement &&
-            !bootScreenElement.hidden &&
-            !document.documentElement.classList.contains("loader-skip");
-        this.onStageActivate = this.onStageActivate.bind(this);
-        this.onStageKeyDown = this.onStageKeyDown.bind(this);
-        this.onCompactModeChange = this.onCompactModeChange.bind(this);
-        this.onPointerMove = this.onPointerMove.bind(this);
-        this.resetEyes = this.resetEyes.bind(this);
-        this.onSectionIntersect = this.onSectionIntersect.bind(this);
-        this.onBootReady = this.onBootReady.bind(this);
-    }
-
-    start() {
-        if (!this.bot) {
-            return;
-        }
-
-        this.applyState(this.getStateForSection(this.currentSection));
-        this.syncCompactMode({ initial: true });
-
-        if (this.messageNode) {
-            this.messageNode.textContent = this.getNextMessage(this.currentSection);
-        }
-
-        if (this.bubble) {
-            const bubbleDelay = this.persistentBubbleMode ? 40 : 420;
-
-            window.setTimeout(() => {
-                this.bubble.classList.add("is-visible");
-            }, bubbleDelay);
-            this.startMessageLoop();
-        }
-
-        if (this.stage) {
-            this.stage.addEventListener("click", this.onStageActivate);
-            this.stage.addEventListener("keydown", this.onStageKeyDown);
-        }
-
-        if (typeof this.compactQuery.addEventListener === "function") {
-            this.compactQuery.addEventListener("change", this.onCompactModeChange);
-        } else if (typeof this.compactQuery.addListener === "function") {
-            this.compactQuery.addListener(this.onCompactModeChange);
-        }
-
-        window.addEventListener("bootloader:complete", this.onBootReady);
-
-        this.setupSectionTracking();
-
-        this.updateEyes();
-
-        if (!liteExperienceMode) {
-            window.addEventListener("pointermove", this.onPointerMove, { passive: true });
-            window.addEventListener("blur", this.resetEyes);
-            document.addEventListener("mouseleave", this.resetEyes);
-        }
-    }
-
-    getStateForSection(sectionId) {
-        return this.sectionStates[sectionId] || "steady";
-    }
-
-    applyState(state) {
-        const nextState = state || "steady";
-        this.currentState = nextState;
-        this.bot.dataset.state = nextState;
-
-        if (this.stage) {
-            this.stage.dataset.state = nextState;
-        }
-
-        if (this.widget) {
-            this.widget.dataset.state = nextState;
-        }
-
-        this.updateExpression(nextState);
-    }
-
-    updateExpression(state) {
-        const expression = this.expressions[state] || this.expressions.steady;
-
-        if (this.mouth) {
-            this.mouth.setAttribute("d", expression.mouth);
-            this.mouth.style.transform = expression.mouthTransform || "";
-        }
-
-        if (this.mouthShadow) {
-            this.mouthShadow.setAttribute("d", expression.shadow);
-            this.mouthShadow.style.transform = expression.shadowTransform || "";
-        }
-    }
-
-    syncCompactMode({ initial = false } = {}) {
-        if (this.persistentBubbleMode) {
-            this.isCompact = false;
-
-            if (this.widget) {
-                this.widget.dataset.compact = "false";
-            }
-
-            this.setExpanded(true, { scheduleCollapse: false });
-            return;
-        }
-
-        this.isCompact = this.compactQuery.matches;
-
-        if (this.widget) {
-            this.widget.dataset.compact = this.isCompact ? "true" : "false";
-        }
-
-        if (this.isCompact) {
-            if (initial) {
-                this.setExpanded(true, { scheduleCollapse: false });
-
-                if (!this.bootPending) {
-                    this.scheduleAutoCollapse(6200);
-                }
-            } else {
-                this.setExpanded(false, { scheduleCollapse: false });
-            }
-        } else {
-            this.setExpanded(true, { scheduleCollapse: false });
-        }
-    }
-
-    setExpanded(expanded, { scheduleCollapse = true } = {}) {
-        this.isExpanded = expanded;
-        window.clearTimeout(this.autoCollapseTimer);
-
-        if (this.widget) {
-            this.widget.dataset.expanded = expanded ? "true" : "false";
-        }
-
-        if (this.stage) {
-            this.stage.setAttribute("aria-expanded", String(expanded));
-        }
-
-        if (expanded && scheduleCollapse && this.isCompact) {
-            this.scheduleAutoCollapse();
-        }
-    }
-
-    scheduleAutoCollapse(delay = 4200) {
-        window.clearTimeout(this.autoCollapseTimer);
-
-        if (!this.isCompact) {
-            return;
-        }
-
-        this.autoCollapseTimer = window.setTimeout(() => {
-            this.setExpanded(false, { scheduleCollapse: false });
-        }, delay);
-    }
-
-    startMessageLoop() {
-        if (!this.bubble || !this.messageNode) {
-            return;
-        }
-
-        if (this.persistentBubbleMode) {
-            return;
-        }
-
-        const runSwap = (delay) => {
-            this.messageTimer = window.setTimeout(() => {
-                this.swapMessage(this.getNextMessage());
-                runSwap(5000);
-            }, delay);
-        };
-
-        runSwap(4200);
-    }
-
-    setupSectionTracking() {
-        if (this.sections.length === 0 || !("IntersectionObserver" in window)) {
-            return;
-        }
-
-        this.sectionObserver = new IntersectionObserver(this.onSectionIntersect, {
-            threshold: [0.25, 0.45, 0.7],
-            rootMargin: "-12% 0px -40% 0px"
-        });
-
-        this.sections.forEach((section) => this.sectionObserver.observe(section));
-    }
-
-    onSectionIntersect(entries) {
-        entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-                this.visibleSections.set(entry.target.id, entry.intersectionRatio);
-            } else {
-                this.visibleSections.delete(entry.target.id);
-            }
-        });
-
-        let nextSection = this.currentSection;
-        let bestRatio = -1;
-
-        this.visibleSections.forEach((ratio, id) => {
-            if (ratio > bestRatio) {
-                bestRatio = ratio;
-                nextSection = id;
-            }
-        });
-
-        if (nextSection === this.currentSection) {
-            return;
-        }
-
-        this.currentSection = nextSection;
-        this.applyState(this.getStateForSection(nextSection));
-
-        if (this.messageNode && this.bubble) {
-            this.swapMessage(this.getNextMessage(nextSection));
-        }
-
-    }
-
-    getNextMessage(sectionId = this.currentSection) {
-        const messageSets = getAssistantMessageSets(currentLanguage);
-        const set = messageSets[sectionId] || messageSets.fallback;
-        const indexKey = `${currentLanguage}:${sectionId}`;
-        const currentIndex = this.messageIndexes.get(indexKey) ?? -1;
-        const nextIndex = (currentIndex + 1) % set.length;
-        this.messageIndexes.set(indexKey, nextIndex);
-        return set[nextIndex];
-    }
-
-    refreshMessage() {
-        if (!this.messageNode) {
-            return;
-        }
-
-        const indexKey = `${currentLanguage}:${this.currentSection}`;
-        this.messageIndexes.delete(indexKey);
-        const nextMessage = this.getNextMessage(this.currentSection);
-
-        if (this.bubble) {
-            this.swapMessage(nextMessage);
-            return;
-        }
-
-        this.messageNode.textContent = nextMessage;
-    }
-
-    swapMessage(nextMessage) {
-        if (!this.bubble || !this.messageNode) {
-            return;
-        }
-
-        if (this.persistentBubbleMode) {
-            this.messageNode.textContent = nextMessage;
-            return;
-        }
-
-        this.bubble.classList.add("is-swapping");
-        window.clearTimeout(this.swapTimer);
-
-        this.swapTimer = window.setTimeout(() => {
-            this.messageNode.textContent = nextMessage;
-            this.bubble.classList.remove("is-swapping");
-        }, 220);
-    }
-
-    onStageActivate() {
-        if (this.isCompact) {
-            const shouldExpand = !this.isExpanded;
-
-            if (shouldExpand && this.messageNode) {
-                this.swapMessage(this.getNextMessage(this.currentSection));
-            }
-
-            this.setExpanded(shouldExpand);
-        } else if (this.messageNode) {
-            this.swapMessage(this.getNextMessage(this.currentSection));
-        }
-
-    }
-
-    onStageKeyDown(event) {
-        if (event.key !== "Enter" && event.key !== " ") {
-            return;
-        }
-
-        event.preventDefault();
-        this.onStageActivate();
-    }
-
-    onCompactModeChange() {
-        this.syncCompactMode();
-    }
-
-    onBootReady() {
-        this.bootPending = false;
-
-        if (!this.messageNode) {
-            return;
-        }
-
-        if (this.isCompact) {
-            this.setExpanded(true, { scheduleCollapse: false });
-            this.swapMessage(this.getNextMessage(this.currentSection));
-            this.scheduleAutoCollapse(6400);
-            return;
-        }
-
-        this.swapMessage(this.getNextMessage(this.currentSection));
-    }
-
-    onPointerMove(event) {
-        this.pointer.x = event.clientX;
-        this.pointer.y = event.clientY;
-        this.bot.dataset.looking = "active";
-        if (this.stage) {
-            this.stage.dataset.looking = "active";
-        }
-        this.updateEyes();
-    }
-
-    resetEyes() {
-        this.pointer.x = window.innerWidth * 0.7;
-        this.pointer.y = window.innerHeight * 0.65;
-        delete this.bot.dataset.looking;
-        if (this.stage) {
-            delete this.stage.dataset.looking;
-        }
-        this.updateEyes();
-    }
-
-    updateMotion(bounds) {
-        const centerX = bounds.left + bounds.width / 2;
-        const centerY = bounds.top + bounds.height * 0.58;
-        const normalizedX = Math.max(
-            -1,
-            Math.min(1, (this.pointer.x - centerX) / Math.max(window.innerWidth * 0.32, 1))
-        );
-        const normalizedY = Math.max(
-            -1,
-            Math.min(1, (this.pointer.y - centerY) / Math.max(window.innerHeight * 0.28, 1))
-        );
-        const tiltScale = this.reducedMotion ? 0.45 : 1;
-        const shiftScale = this.reducedMotion ? 0.5 : 1;
-
-        this.bot.style.setProperty(
-            "--assistant-tilt-x",
-            `${(-normalizedY * 5.8 * tiltScale).toFixed(2)}deg`
-        );
-        this.bot.style.setProperty(
-            "--assistant-tilt-y",
-            `${(normalizedX * 7.2 * tiltScale).toFixed(2)}deg`
-        );
-        this.bot.style.setProperty(
-            "--assistant-shift-x",
-            `${(normalizedX * 7 * shiftScale).toFixed(2)}px`
-        );
-        this.bot.style.setProperty(
-            "--assistant-shift-y",
-            `${(normalizedY * 5 * shiftScale).toFixed(2)}px`
-        );
-
-        const headX = normalizedX * 2.4 * shiftScale;
-        const headY = normalizedY * 1.8 * shiftScale;
-        const faceX = normalizedX * 3.6 * shiftScale;
-        const faceY = normalizedY * 2.7 * shiftScale;
-        const bodyY = normalizedY * 1.4 * shiftScale;
-
-        this.motionOffsets.headX = headX;
-        this.motionOffsets.headY = headY;
-        this.motionOffsets.faceX = faceX;
-        this.motionOffsets.faceY = faceY;
-
-        this.bot.style.setProperty("--assistant-head-x", `${headX.toFixed(2)}px`);
-        this.bot.style.setProperty("--assistant-head-y", `${headY.toFixed(2)}px`);
-        this.bot.style.setProperty("--assistant-face-x", `${faceX.toFixed(2)}px`);
-        this.bot.style.setProperty("--assistant-face-y", `${faceY.toFixed(2)}px`);
-        this.bot.style.setProperty("--assistant-body-y", `${bodyY.toFixed(2)}px`);
-
-        if (this.stage) {
-            this.stage.style.setProperty(
-                "--assistant-stage-x",
-                `${(normalizedX * 10 * shiftScale).toFixed(2)}px`
-            );
-            this.stage.style.setProperty(
-                "--assistant-stage-y",
-                `${(normalizedY * 8 * shiftScale).toFixed(2)}px`
-            );
-        }
-    }
-
-    updateEyes() {
-        const bounds = this.bot.getBoundingClientRect();
-
-        this.updateMotion(bounds);
-
-        this.pupils.forEach((pupil) => {
-            const side = pupil.dataset.pupil;
-            const eye = this.eyeCenters[side];
-
-            if (!eye) {
-                return;
-            }
-
-            const eyeX =
-                bounds.left +
-                (eye.x / this.viewBox.width) * bounds.width +
-                this.motionOffsets.headX +
-                this.motionOffsets.faceX;
-            const eyeY =
-                bounds.top +
-                (eye.y / this.viewBox.height) * bounds.height +
-                this.motionOffsets.headY +
-                this.motionOffsets.faceY;
-            const dx = this.pointer.x - eyeX;
-            const dy = this.pointer.y - eyeY;
-            const distance = Math.hypot(dx, dy) || 1;
-            const force = this.reducedMotion ? this.maxOffset * 0.45 : this.maxOffset;
-            const offset = Math.min(force, distance / 32);
-            const translateX = (dx / distance) * offset;
-            const translateY = (dy / distance) * offset;
-
-            pupil.setAttribute("transform", `translate(${translateX.toFixed(2)} ${translateY.toFixed(2)})`);
-        });
-    }
-}
-
-if (assistantBotElement) {
-    assistantBot = new AssistantBot(
-        assistantBotElement,
-        assistantPupils,
-        assistantBubble,
-        assistantMessage,
-        messageSections,
-        prefersReducedMotion.matches
-    );
-    assistantBot.start();
-}
-
-if (bootLoader) {
-    bootLoader.start();
-}
+document.addEventListener("DOMContentLoaded", () => {
+  initLanguage();
+  initCharacterMotion();
+});
