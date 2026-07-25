@@ -1,209 +1,664 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="he" dir="rtl">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Maya Agent | Rotem Zaccaim</title>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta
-      name="description"
-      content="Maya Agent is Rotem Zaccaim's personal AI lab for WhatsApp automation, memory, calendar, voice, vision, and real-world agent workflows."
-    />
-    <meta name="theme-color" content="#f70757" />
-    <meta property="og:title" content="Maya Agent | Rotem Zaccaim" />
+        name="description"
+        content="רותם זכאים הוא אנליסט אבטחת מידע ותשתיות שבונה כלי AI אופרטיביים, כולל מעבדת Maya המחברת WhatsApp, מודלים מקומיים, ניטור, בית חכם ו-Cloudflare."
+        data-meta-description
+    >
+    <meta name="robots" content="index, follow">
+    <meta name="theme-color" content="#07101d">
+    <meta name="color-scheme" content="dark">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://about.rotem-dev.org/">
+    <meta property="og:title" content="רותם זכאים | אבטחת מידע, תשתיות ו-AI אופרטיבי" data-og-title>
     <meta
-      property="og:description"
-      content="A character-led look at Maya Agent, the personal AI system connecting WhatsApp, memory, calendar, voice, vision, automation, RoteMGPT, Home Assistant, Android Lab, RedLab, and Cloudflare."
-    />
-    <meta property="og:type" content="website" />
-    <meta property="og:image" content="assets/maya-agent-source.png" />
-    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
-    <link rel="preload" href="assets/maya-agent-cutout.webp" as="image" type="image/webp" />
-    <link rel="stylesheet" href="styles.css?v=20260725-maya-agent" />
-  </head>
-  <body>
-    <a class="skip-link" href="#main-content" data-i18n="skipLink">דלג לתוכן המרכזי</a>
+        property="og:description"
+        content="פרופיל מקצועי בעברית: Security Operations, תשתיות, SIEM, Cloudflare, ומעבדת AI אישית בשם Maya."
+        data-og-description
+    >
+    <meta property="og:site_name" content="Rotem Zacaim">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="רותם זכאים | אבטחת מידע, תשתיות ו-AI אופרטיבי" data-twitter-title>
+    <meta
+        name="twitter:description"
+        content="אנליסט אבטחת מידע ותשתיות שבונה כלי AI אופרטיביים."
+        data-twitter-description
+    >
+    <title data-page-title>רותם זכאים | אבטחת מידע, תשתיות ו-AI אופרטיבי</title>
+    <link rel="canonical" href="https://about.rotem-dev.org/">
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Space+Grotesk:wght@400;500;700&display=swap"
+        rel="stylesheet"
+    >
+    <script>
+        document.documentElement.classList.add("js");
 
-    <div class="site-shell">
-      <header class="site-header" data-site-header>
-        <a class="brand-link" href="#home" data-i18n-attr="aria-label:brandAria">
-          <span class="brand-mark" aria-hidden="true"></span>
-          <span class="brand-copy" data-i18n="brandName">Maya Agent</span>
-        </a>
+        const mobileSafeMode =
+            window.matchMedia("(pointer: coarse)").matches ||
+            window.matchMedia("(max-width: 760px)").matches;
 
-        <nav class="main-nav" data-i18n-attr="aria-label:mainNavLabel">
-          <a href="#story" data-i18n="navStory">הסיפור</a>
-          <a href="#abilities" data-i18n="navAbilities">יכולות</a>
-          <a href="#projects" data-i18n="navProjects">מעבדה</a>
-          <a href="#contact" data-i18n="navContact">דברו איתי</a>
-        </nav>
+        if (mobileSafeMode) {
+            document.documentElement.classList.add("mobile-safe", "loader-skip");
+        }
 
-        <button
-          class="language-toggle"
-          type="button"
-          data-language-toggle
-          aria-label="Switch to English"
-          data-i18n="languageToggle"
-          data-i18n-attr="aria-label:languageToggleAria"
-        >
-          EN
-        </button>
-      </header>
-
-      <main id="main-content">
-        <section class="hero-stage" id="home" data-character-hero aria-labelledby="hero-title">
-          <div class="hero-texture" aria-hidden="true"></div>
-
-          <div class="hero-copy">
-            <h1 id="hero-title" data-i18n="heroTitle">Maya Agent</h1>
-            <p class="hero-lead" data-i18n="heroLead">
-              AI אישי שמנהל שיחה, זיכרון, יומן, קול, תמונות ואוטומציות סביב החיים האמיתיים.
-            </p>
-            <div class="hero-actions">
-              <a class="button button-primary" href="#abilities" data-i18n="heroPrimaryCta">לגלות את מאיה</a>
-              <a class="button button-secondary" href="#contact" data-i18n="heroSecondaryCta">לדבר עם רותם</a>
+        try {
+            if (window.sessionStorage.getItem("rz-loader-seen") === "1") {
+                document.documentElement.classList.add("loader-skip");
+            }
+        } catch (error) {
+            // Session storage can be unavailable in restricted contexts.
+        }
+    </script>
+    <link rel="stylesheet" href="styles.css?v=20260719-deep">
+    <script defer src="script.js?v=20260719-deep"></script>
+</head>
+<body>
+    <div class="boot-screen" data-boot-screen role="status" aria-live="polite" aria-label="טוען אתר" data-i18n-attr="aria-label:bootScreenLabel">
+        <div class="boot-screen-panel">
+            <div class="boot-screen-meta">
+                <p class="boot-screen-kicker" data-i18n="bootKicker">טעינת מערכת</p>
+                <p class="boot-screen-stamp" data-boot-stamp>INIT</p>
             </div>
-          </div>
+            <p class="boot-screen-label" data-i18n="bootLabel">רותם זכאים / about</p>
+            <h2 data-i18n="bootTitle">מכין פרופיל, מעבדה וקישורי קשר.</h2>
+            <p class="boot-screen-copy" data-boot-copy data-i18n="bootCopy">מסדר את תמונת המצב לפני פתיחה.</p>
 
-          <div class="hero-panels" data-i18n-attr="aria-label:heroPanelsLabel">
-            <article class="hero-panel hero-panel-one">
-              <h2 data-i18n="panelWhatsAppTitle">WhatsApp AI Agent</h2>
-              <p data-i18n="panelWhatsAppText">שיחה טבעית שמחברת שאלות, משימות, מדיה וקונטקסט במקום אחד.</p>
-            </article>
-            <article class="hero-panel hero-panel-two">
-              <h2 data-i18n="panelMemoryTitle">Memory + Calendar</h2>
-              <p data-i18n="panelMemoryText">זיכרון מתמשך, תזכורות ויומן שמבינים את היום שלך.</p>
-            </article>
-            <article class="hero-panel hero-panel-three">
-              <h2 data-i18n="panelVoiceTitle">Voice, Vision, Automation</h2>
-              <p data-i18n="panelVoiceText">קול, תמונות וכלי אוטומציה שעובדים יחד כחוויה אחת.</p>
-            </article>
-          </div>
-
-          <div class="character-anchor" data-maya-character aria-hidden="true">
-            <picture class="agent-picture">
-              <source srcset="assets/maya-agent-cutout.webp" type="image/webp" />
-              <img
-                src="assets/maya-agent-cutout.png"
-                width="1016"
-                height="1530"
-                alt="MAYA AGENT character"
-                data-i18n-attr="alt:characterAlt"
-                fetchpriority="high"
-              />
-            </picture>
-          </div>
-
-          <div class="hero-floor" aria-hidden="true"></div>
-        </section>
-
-        <section class="story-section page-band" id="story" aria-labelledby="story-title">
-          <div class="section-inner story-grid">
-            <div class="section-heading">
-              <p class="section-number" data-i18n="storyNumber">01</p>
-              <h2 id="story-title" data-i18n="storyTitle">מאיה היא AI אישי שמחובר לכלים אמיתיים</h2>
-            </div>
-            <div class="story-copy">
-              <p data-i18n="storyLead">
-                מאיה התחילה כניסוי אישי והפכה למערכת עבודה יומיומית: סוכן WhatsApp שמבין שפה חופשית, זוכר הקשרים, קורא תמונות וקול, ומפעיל פעולות סביב החיים עצמם.
-              </p>
-              <p data-i18n="storyBody">
-                האתר הזה מציג את שכבת המוצר הציבורית: איך החוויה מרגישה, אילו יכולות קיימות, ואיפה המעבדה של רותם מחברת בין AI, תשתיות וכלים אמיתיים.
-              </p>
-            </div>
-          </div>
-        </section>
-
-        <section class="abilities-section page-band" id="abilities" aria-labelledby="abilities-title">
-          <div class="section-inner">
-            <div class="section-heading section-heading-wide">
-              <p class="section-number" data-i18n="abilitiesNumber">02</p>
-              <h2 id="abilities-title" data-i18n="abilitiesTitle">מה מאיה יודעת לעשות</h2>
-              <p data-i18n="abilitiesLead">
-                החוויה בנויה סביב פעולות קצרות, זיכרון שימושי וחיבורים שמאפשרים לסוכן לעבור מדיבור לביצוע.
-              </p>
+            <div class="boot-screen-progress" aria-hidden="true">
+                <span class="boot-screen-progress-line"></span>
+                <span class="boot-screen-progress-fill" data-boot-progress></span>
             </div>
 
-            <div class="ability-grid">
-              <article class="ability-card">
-                <h3 data-i18n="abilityChatTitle">WhatsApp AI Agent</h3>
-                <p data-i18n="abilityChatText">ממשק שיחה טבעי שמחזיק משימות, שאלות, מדיה ותשובות בזמן אמת.</p>
-              </article>
-              <article class="ability-card">
-                <h3 data-i18n="abilityMemoryTitle">Memory + Calendar</h3>
-                <p data-i18n="abilityMemoryText">זיכרון סמנטי, אירועים ותזכורות שמאפשרים למאיה להבין רצף ולא רק הודעה אחת.</p>
-              </article>
-              <article class="ability-card">
-                <h3 data-i18n="abilityVoiceTitle">Voice, Vision, Automation</h3>
-                <p data-i18n="abilityVoiceText">תמלול, הבנת תמונות, יצירת פעולות וכלי עזר שחוזרים לתוך השיחה.</p>
-              </article>
-              <article class="ability-card">
-                <h3 data-i18n="abilityHomeTitle">Home Assistant</h3>
-                <p data-i18n="abilityHomeText">חיבור לבית חכם ולסנסורים, כדי שסוכן AI יוכל לפעול בסביבה פיזית.</p>
-              </article>
+            <div class="boot-screen-status" aria-label="רצף טעינה" data-i18n-attr="aria-label:bootSequenceLabel">
+                <div class="boot-screen-row" data-boot-step="shell">
+                    <span data-i18n="bootStepShell">בדיקת ממשק</span>
+                    <strong data-i18n="bootPending">בהמתנה</strong>
+                </div>
+                <div class="boot-screen-row" data-boot-step="fonts">
+                    <span data-i18n="bootStepFonts">טעינת טיפוגרפיה</span>
+                    <strong data-i18n="bootPending">בהמתנה</strong>
+                </div>
+                <div class="boot-screen-row" data-boot-step="ambient">
+                    <span data-i18n="bootStepAmbient">כיול רקע</span>
+                    <strong data-i18n="bootPending">בהמתנה</strong>
+                </div>
+                <div class="boot-screen-row" data-boot-step="profile">
+                    <span data-i18n="bootStepProfile">פרופיל מוכן</span>
+                    <strong data-i18n="bootPending">בהמתנה</strong>
+                </div>
             </div>
-          </div>
-        </section>
-
-        <section class="projects-section page-band" id="projects" aria-labelledby="projects-title">
-          <div class="section-inner">
-            <div class="section-heading section-heading-wide">
-              <p class="section-number" data-i18n="projectsNumber">03</p>
-              <h2 id="projects-title" data-i18n="projectsTitle">הוכחות מהמעבדה</h2>
-              <p data-i18n="projectsLead">
-                Maya Agent היא חלק ממעבדה רחבה יותר של מוצרים, תשתיות וניסויים שרצים סביב העולם של רותם.
-              </p>
-            </div>
-
-            <div class="project-track">
-              <article class="project-card">
-                <span data-i18n="projectOneLabel">AI Interface</span>
-                <h3 data-i18n="projectOneTitle">RoteMGPT</h3>
-                <p data-i18n="projectOneText">ממשק AI אישי לניסויים, פרומפטים, כלים ותהליכי עבודה מהירים.</p>
-              </article>
-              <article class="project-card">
-                <span data-i18n="projectTwoLabel">Automation Stack</span>
-                <h3 data-i18n="projectTwoTitle">Home Assistant</h3>
-                <p data-i18n="projectTwoText">חיבור בין AI, בית חכם, פעולות וסביבת בדיקות אמיתית.</p>
-              </article>
-              <article class="project-card">
-                <span data-i18n="projectThreeLabel">Device Lab</span>
-                <h3 data-i18n="projectThreeTitle">Android Lab</h3>
-                <p data-i18n="projectThreeText">בדיקות מובייל, אוטומציה וחיבור בין סוכן AI לבין מכשירים.</p>
-              </article>
-              <article class="project-card">
-                <span data-i18n="projectFourLabel">Security Lab</span>
-                <h3 data-i18n="projectFourTitle">RedLab</h3>
-                <p data-i18n="projectFourText">סביבת מחקר להגנה, ניטור, בדיקות וחשיבה התקפית אחראית.</p>
-              </article>
-              <article class="project-card">
-                <span data-i18n="projectFiveLabel">Edge Platform</span>
-                <h3 data-i18n="projectFiveTitle">Cloudflare</h3>
-                <p data-i18n="projectFiveText">פריסה מהירה, דומיינים, APIs וכלים שמאפשרים לאתר ולסוכנים להישאר זמינים.</p>
-              </article>
-            </div>
-          </div>
-        </section>
-
-        <section class="contact-section page-band" id="contact" aria-labelledby="contact-title">
-          <div class="section-inner contact-grid">
-            <div>
-              <p class="section-number" data-i18n="contactNumber">04</p>
-              <h2 id="contact-title" data-i18n="contactTitle">רוצה לדבר על Maya, AI או תשתיות?</h2>
-            </div>
-            <div class="contact-copy">
-              <p data-i18n="contactLead">
-                זה המקום להתחיל שיחה על סוכנים אישיים, אוטומציה, אתרים חיים, חוויות מובייל או חיבור בין מוצר ותשתית.
-              </p>
-              <div class="contact-actions">
-                <a class="button button-primary" href="https://rotem-dev.org/" data-i18n="contactPrimaryCta">האתר של רותם</a>
-                <a class="button button-secondary" href="https://github.com/rotem-zacaim" data-i18n="contactSecondaryCta">GitHub</a>
-              </div>
-            </div>
-          </div>
-        </section>
-      </main>
+        </div>
     </div>
 
-    <script src="script.js?v=20260725-maya-agent" defer></script>
-  </body>
+    <a class="skip-link" href="#main-content" data-i18n="skipLink">דלג לתוכן</a>
+    <div class="background-glow background-glow-left" aria-hidden="true"></div>
+    <div class="background-glow background-glow-right" aria-hidden="true"></div>
+    <div class="scanline-layer" aria-hidden="true"></div>
+    <canvas class="ambient-canvas" aria-hidden="true"></canvas>
+
+    <div class="site-shell">
+        <header class="topbar" id="home">
+            <a class="brand" href="#home" data-i18n="brand">רותם זכאים</a>
+            <nav class="topnav" aria-label="ניווט ראשי" data-i18n-attr="aria-label:primaryNavLabel">
+                <a href="#overview" data-i18n="navOverview">פתיחה</a>
+                <a href="#profile" data-i18n="navProfile">יכולות</a>
+                <a href="#maya-lab" data-i18n="navMaya">Maya AI Lab</a>
+                <a href="#systems" data-i18n="navSystems">מערכות</a>
+                <a href="#deep-dive" data-i18n="navDeepDive">פירוט טכני</a>
+                <a href="#experience" data-i18n="navExperience">ניסיון</a>
+                <a href="#contact" data-i18n="navContact">קשר</a>
+            </nav>
+            <div class="topbar-actions">
+                <button
+                    class="language-toggle"
+                    type="button"
+                    data-language-toggle
+                    aria-label="Switch to English"
+                    data-i18n-attr="aria-label:languageToggleLabel"
+                >
+                    <span data-language-current>עברית</span>
+                    <span aria-hidden="true">/</span>
+                    <span data-language-next>English</span>
+                </button>
+                <a class="topbar-link" href="mailto:Rotemvnkll@gmail.com" data-i18n="topbarContact">יצירת קשר</a>
+            </div>
+        </header>
+
+        <main id="main-content">
+            <section class="hero section" id="overview">
+                <div class="hero-copy" data-reveal>
+                    <p class="eyebrow" data-i18n="heroEyebrow">Security Operations + AI Lab</p>
+                    <h1 data-i18n="heroTitle">אנליסט אבטחת מידע ותשתיות שבונה כלי AI אופרטיביים</h1>
+                    <p class="lead" data-i18n="heroLead">
+                        אני רותם זכאים, עובד בעולמות אבטחת מידע, תפעול תשתיות וחקירת תקלות בארגונים גדולים, ובמקביל בונה מעבדת AI אישית שמחברת WhatsApp, מודלים מקומיים, ניטור, בית חכם ו-Cloudflare למערכת אחת.
+                    </p>
+
+                    <div
+                        class="mobile-command-strip"
+                        aria-label="תקציר מובייל"
+                        data-i18n-attr="aria-label:mobileBriefLabel"
+                    >
+                        <div class="mobile-command-head">
+                            <span>Maya Core</span>
+                            <strong data-i18n="mobileBriefTitle">מעבדת AI שמחוברת לעולם אמיתי</strong>
+                        </div>
+                        <div class="mobile-flow" aria-hidden="true">
+                            <span>WhatsApp</span>
+                            <i></i>
+                            <span>Maya</span>
+                            <i></i>
+                            <span>Tools</span>
+                            <i></i>
+                            <span>Infra</span>
+                        </div>
+                        <div class="mobile-metric-grid">
+                            <p>
+                                <span data-i18n="mobileMetricOneLabel">מודלים</span>
+                                <strong data-i18n="mobileMetricOneValue">Local GGUF</strong>
+                            </p>
+                            <p>
+                                <span data-i18n="mobileMetricTwoLabel">גישה</span>
+                                <strong data-i18n="mobileMetricTwoValue">Closed lab</strong>
+                            </p>
+                            <p>
+                                <span data-i18n="mobileMetricThreeLabel">פעולה</span>
+                                <strong data-i18n="mobileMetricThreeValue">Monitor + Automate</strong>
+                            </p>
+                        </div>
+                    </div>
+
+                    <ul class="hero-proof" aria-label="מוקדי התמחות" data-i18n-attr="aria-label:heroProofLabel">
+                        <li data-i18n="heroProofSecurity">Security Operations</li>
+                        <li data-i18n="heroProofInfra">תשתיות, WAF, SSL ו-Cloudflare</li>
+                        <li data-i18n="heroProofAi">AI agents ומודלים מקומיים</li>
+                    </ul>
+
+                    <div class="hero-actions">
+                        <a class="button button-primary" href="#maya-lab" data-i18n="heroPrimaryCta">לראות את מעבדת מאיה</a>
+                        <a
+                            class="button button-secondary"
+                            href="https://www.linkedin.com/in/rotem-zacaim-b4a709223/"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            data-i18n="heroSecondaryCta"
+                        >
+                            LinkedIn / יצירת קשר
+                        </a>
+                    </div>
+
+                    <ul class="hero-tags" aria-label="טכנולוגיות מרכזיות" data-i18n-attr="aria-label:heroTagsLabel">
+                        <li>Splunk</li>
+                        <li>Check Point</li>
+                        <li>Imperva</li>
+                        <li>F5</li>
+                        <li>CyberArk</li>
+                        <li>Cloudflare</li>
+                        <li>Node.js</li>
+                        <li>llama.cpp</li>
+                    </ul>
+                </div>
+
+                <aside class="hero-panel">
+                    <div class="command-card card" data-reveal>
+                        <div class="panel-topline">
+                            <span class="status-pill" data-i18n="heroPanelStatus">Operator profile</span>
+                            <span class="panel-label">about.rotem-dev.org</span>
+                        </div>
+                        <div class="console-shell" aria-label="תמונת פרופיל" data-i18n-attr="aria-label:consoleLabel">
+                            <div class="console-chrome">
+                                <div class="console-dots" aria-hidden="true"><span></span><span></span><span></span></div>
+                                <p class="console-path">ops://rotem/about</p>
+                            </div>
+                            <div class="console-body">
+                                <p class="console-line"><span class="console-prompt">&gt;</span> profile.focus()</p>
+                                <p class="console-output" data-i18n="consoleOne">אבטחת מידע, תשתיות, ניטור ותגובה בסביבות אמיתיות.</p>
+                                <p class="console-line"><span class="console-prompt">&gt;</span> lab.proof()</p>
+                                <p class="console-output" data-i18n="consoleTwo">Maya: סוכן WhatsApp עם כלים, זיכרון, מודלים מקומיים ושליטה בתשתיות.</p>
+                                <p class="console-line"><span class="console-prompt">&gt;</span> mode</p>
+                                <p class="console-output accent-output" data-i18n="consoleThree">observe / validate / automate / report</p>
+                            </div>
+                        </div>
+                    </div>
+                </aside>
+            </section>
+
+            <section class="signal-strip" aria-label="זרם יכולות מרכזי" data-i18n-attr="aria-label:signalLabel" data-reveal>
+                <div class="signal-track">
+                    <div class="signal-group">
+                        <span>Splunk</span><span>SIEM</span><span>WAF</span><span>SSL / TLS</span><span>Cloudflare</span><span>Linux</span><span>Windows</span><span>Node.js</span><span>Home Assistant</span><span>RoteMGPT</span><span>RedLab</span>
+                    </div>
+                    <div class="signal-group" aria-hidden="true">
+                        <span>Splunk</span><span>SIEM</span><span>WAF</span><span>SSL / TLS</span><span>Cloudflare</span><span>Linux</span><span>Windows</span><span>Node.js</span><span>Home Assistant</span><span>RoteMGPT</span><span>RedLab</span>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section" id="profile">
+                <div class="section-heading" data-reveal>
+                    <p class="eyebrow" data-i18n="profileEyebrow">Core profile</p>
+                    <h2 data-i18n="profileTitle">מה אני יודע לפתור בפועל</h2>
+                    <p class="section-copy" data-i18n="profileCopy">החוזקה שלי יושבת בחיבור בין אבטחת מידע, תשתיות, ניטור, לוגים, תעבורה וכלים שמקצרים עבודה.</p>
+                </div>
+                <div class="feature-grid capability-grid">
+                    <article class="feature-card card" data-reveal>
+                        <p class="feature-index">01</p>
+                        <h3 data-i18n="capabilityOneTitle">חקירת אירועים ולוגים</h3>
+                        <p data-i18n="capabilityOneCopy">עבודה יומיומית עם Splunk, ניתוח לוגים, תעבורת רשת, תקלות שירות וזיהוי חריגות.</p>
+                    </article>
+                    <article class="feature-card card" data-reveal>
+                        <p class="feature-index">02</p>
+                        <h3 data-i18n="capabilityTwoTitle">Edge security ותשתיות</h3>
+                        <p data-i18n="capabilityTwoCopy">ניסיון עם WAF, Proxy, Load Balancer, Check Point, Imperva, F5, CyberArk, FireGlass ו-Cloudflare.</p>
+                    </article>
+                    <article class="feature-card card" data-reveal>
+                        <p class="feature-index">03</p>
+                        <h3 data-i18n="capabilityThreeTitle">SSL, Gateway ושרתים</h3>
+                        <p data-i18n="capabilityThreeCopy">תחקור תקלות ב-Windows/Linux, תעודות SSL, IIS, API Gateway, IBM DataPower וזמינות אתרים.</p>
+                    </article>
+                </div>
+            </section>
+
+            <section class="section maya-lab-section" id="maya-lab">
+                <div class="section-heading" data-reveal>
+                    <p class="eyebrow" data-i18n="mayaEyebrow">Maya AI Lab</p>
+                    <h2 data-i18n="mayaTitle">מעבדת AI אישית שמחברת מודלים, WhatsApp ותשתיות</h2>
+                    <p class="section-copy" data-i18n="mayaCopy">מאיה היא סוכן אישי בעברית שמחבר שיחה טבעית לכלים אמיתיים: זיכרון, יומן, קול, תמונות, בית חכם, ניטור, Cloudflare ומודלים מקומיים.</p>
+                </div>
+                <div class="lab-shell card" data-reveal>
+                    <div class="lab-map" aria-hidden="true">
+                        <span>WhatsApp</span><span>Google Calendar</span><span>OAuth</span><span>SQLite</span><span>GGUF</span><span>RoteMGPT</span><span>Home Assistant</span><span>Browser Lab</span><span>Game Lab</span><span>Maya Command OS</span><span>server observability</span><span>Cloudflare</span>
+                    </div>
+                    <div class="lab-copy">
+                        <h3 data-i18n="mayaClosedLabTitle">מודלים מקומיים במסגרת מעבדה סגורה</h3>
+                        <p data-i18n="mayaClosedLabCopy">הרצת מודלים מקומיים בסביבת מעבדה סגורה, ללא תלות בסינון של ספק חיצוני, לצורכי מחקר, בדיקה והבנת סיכוני AI.</p>
+                        <ul class="lab-details">
+                            <li data-i18n="mayaDetailIntegrations">Google integrations דרך Google Calendar ו-OAuth, יחד עם URL tools, weather, maps, voucher, finance ו-daily digest.</li>
+                            <li data-i18n="mayaDetailMemory">זיכרון מבוסס SQLite עם semantic retrieval כדי להחזיר הקשר רלוונטי לשיחה ולמשימות.</li>
+                            <li data-i18n="mayaDetailRuntime">הרצת מודלי GGUF דרך llama.cpp וממשק OpenAI-compatible, לצד RoteMGPT כעמדת בדיקה מקומית.</li>
+                            <li data-i18n="mayaDetailOps">Maya Command OS ו-admin dashboard לניהול מצב, משימות, בריאות שירותים ו-server observability בסביבה ביתית.</li>
+                            <li data-i18n="mayaDetailPlay">Browser Lab ו-Game Lab לניסויי UI, משחקי דפדפן, אוטומציה ובדיקת אינטראקציות.</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section" id="systems">
+                <div class="section-heading" data-reveal>
+                    <p class="eyebrow" data-i18n="systemsEyebrow">Selected systems</p>
+                    <h2 data-i18n="systemsTitle">פרויקטים שמראים בנייה מקצה לקצה</h2>
+                </div>
+                <div class="systems-grid">
+                    <article class="system-tile card" data-reveal><h3>Maya WhatsApp Agent</h3><p data-i18n="systemWhatsapp">שיחה בעברית, tool-calling, זיכרון ארוך טווח, קול, תמונות ותזכורות פרואקטיביות.</p></article>
+                    <article class="system-tile card" data-reveal><h3>RoteMGPT</h3><p data-i18n="systemRoteMgpt">ממשק שיחה מול מודל מקומי OpenAI-compatible עם Markdown, העתקה ו-session חי.</p></article>
+                    <article class="system-tile card" data-reveal><h3>Home Assistant</h3><p data-i18n="systemHome">פאנל בית חכם לטאבלט, מזגן, שואב, מצלמות, תריס ותאורת שרת OpenRGB.</p></article>
+                    <article class="system-tile card" data-reveal><h3>RedLab</h3><p data-i18n="systemRedLab">סביבת PT מורשית עם recon, כלים allowlisted, ראיות ודוחות טכניים בעברית.</p></article>
+                    <article class="system-tile card" data-reveal><h3>Android Lab</h3><p data-i18n="systemAndroid">שליטה במכשיר Android מעבדה דרך ADB, scrcpy, מסך, הקלדה ופעולות מוגבלות למכשיר מאושר.</p></article>
+                    <article class="system-tile card" data-reveal><h3>Cloudflare Ops</h3><p data-i18n="systemCloudflare">Cloudflare Tunnel ו-Access לתפעול מרחוק מאובטח וניטור שירותים, בלי חשיפת כתובות או מפתחות.</p></article>
+                </div>
+            </section>
+
+            <section class="section deep-dive-section" id="deep-dive">
+                <div class="section-heading" data-reveal>
+                    <p class="eyebrow" data-i18n="deepEyebrow">Technical deep dives</p>
+                    <h2 data-i18n="deepTitle">לחיצה אחת, יותר עומק על מה שבנינו</h2>
+                    <p class="section-copy" data-i18n="deepCopy">הדף נשאר נקי מבחוץ, אבל מי שרוצה להבין את העבודה באמת יכול לפתוח פירוט טכני על שכבות ה-AI, ה-API, הבית החכם, המשחקים והניטור.</p>
+                </div>
+
+                <div class="deep-dive-grid">
+                    <details class="deep-dive-card card" data-reveal open>
+                        <summary>
+                            <span class="deep-index">01</span>
+                            <strong data-i18n="deepMayaTitle">Maya: סוכן WhatsApp אופרטיבי</strong>
+                            <span class="deep-toggle" data-i18n="deepToggle">פתח פירוט</span>
+                        </summary>
+                        <div class="deep-dive-body">
+                            <p data-i18n="deepMayaCopy">מאיה מחברת הודעת WhatsApp רגילה לשכבת orchestration: ניתוב הודעות, הרשאות, tool-calling, זיכרון, מודלים וכלי עבודה אמיתיים.</p>
+                            <ul class="deep-points">
+                                <li data-i18n="deepMayaPointOne">Event Bus פנימי לאירועים כמו הודעה נכנסת, כלי שהופעל, זיכרון שעודכן ותזכורת שנשלחה.</li>
+                                <li data-i18n="deepMayaPointTwo">Plugin registry שמאפשר להוסיף דומיינים חדשים כמו Calendar, URL intelligence, vouchers, weather, memory ו-Home Assistant.</li>
+                                <li data-i18n="deepMayaPointThree">זיכרון ארוך טווח מבוסס SQLite ושליפה סמנטית, כך שהמערכת מחזירה הקשר רלוונטי לשיחות ולמשימות.</li>
+                            </ul>
+                        </div>
+                    </details>
+
+                    <details class="deep-dive-card card" data-reveal>
+                        <summary>
+                            <span class="deep-index">02</span>
+                            <strong data-i18n="deepApiTitle">API ושירותים מחוברים</strong>
+                            <span class="deep-toggle" data-i18n="deepToggle">פתח פירוט</span>
+                        </summary>
+                        <div class="deep-dive-body">
+                            <p data-i18n="deepApiCopy">המערכת עובדת מול שירותים חיצוניים ופנימיים בצורה מבוקרת: OAuth, APIs, endpoints מוגנים, headers ייעודיים וולידציה לפני פעולה.</p>
+                            <ul class="deep-points">
+                                <li data-i18n="deepApiPointOne">Google Calendar דרך OAuth: קריאה, יצירה, עדכון, מחיקה, חיפוש חלונות פנויים וייבוא משמרות מתמונה.</li>
+                                <li data-i18n="deepApiPointTwo">כלים ל-URL/DNS/SSL/redirects, מזג אוויר, מפות, שערי מטבע, שוברים וסיכום יומי.</li>
+                                <li data-i18n="deepApiPointThree">שכבות admin כמו overview, logs, memory, docs ו-RoteMGPT יושבות מאחורי גישה מוגנת ולא חושפות secrets בדף הציבורי.</li>
+                            </ul>
+                        </div>
+                    </details>
+
+                    <details class="deep-dive-card card" data-reveal>
+                        <summary>
+                            <span class="deep-index">03</span>
+                            <strong data-i18n="deepHaTitle">Home Assistant ובית חכם</strong>
+                            <span class="deep-toggle" data-i18n="deepToggle">פתח פירוט</span>
+                        </summary>
+                        <div class="deep-dive-body">
+                            <p data-i18n="deepHaCopy">שכבת הבית החכם מחברת את מאיה ופאנל הטאבלט ל-Home Assistant API: קריאת state, הפעלת services ותצוגה חיה של הבית.</p>
+                            <ul class="deep-points">
+                                <li data-i18n="deepHaPointOne">שליטה בישויות כמו שואב, תאורה, מתגים, אקלים, מצלמות, תריסים וסנסורים דרך API מאובטח בצד השרת.</li>
+                                <li data-i18n="deepHaPointTwo">פאנל קיר מותאם לטאבלט עם כרטיסים חיים, מזג אוויר, מצלמות, לוח שנה ואזורי פעולה מהירים.</li>
+                                <li data-i18n="deepHaPointThree">החיבור בנוי כך שמאיה יכולה להפוך שיחה בעברית לפעולה בבית, עם בדיקות זהירות לפני פעולות אקטיביות.</li>
+                            </ul>
+                        </div>
+                    </details>
+
+                    <details class="deep-dive-card card" data-reveal>
+                        <summary>
+                            <span class="deep-index">04</span>
+                            <strong data-i18n="deepGameTitle">Game Lab ומשחקי דפדפן</strong>
+                            <span class="deep-toggle" data-i18n="deepToggle">פתח פירוט</span>
+                        </summary>
+                        <div class="deep-dive-body">
+                            <p data-i18n="deepGameCopy">מעבדת המשחקים התחילה כדרך לבדוק שליטה, latency, קלט משתמש, WebAssembly ו-automation בסביבה גרפית אמיתית.</p>
+                            <ul class="deep-points">
+                                <li data-i18n="deepGamePointOne">Quake 2 Demo רץ בדפדפן דרך Qwasm2, WebAssembly ו-WebGL2, עם טעינת נכסי הדמו ושמירת cache מקומי בדפדפן.</li>
+                                <li data-i18n="deepGamePointTwo">QuakeJS Arena הוא מסלול נפרד למולטיפלייר פרטי, עם gateway שמיועד למשחק בלבד ולא לדשבורד הניהול של מאיה.</li>
+                                <li data-i18n="deepGamePointThree">בנוסף קיימות שכבות Game Lab ל-Android/Clash Royale ול-FortySevenMS, כולל צילום מסך, זיהוי מצב, safety policy ופקדי פעולה מוגבלים.</li>
+                            </ul>
+                            <div class="deep-actions">
+                                <a class="button button-primary" href="https://arena.rotem-dev.org/" target="_blank" rel="noopener noreferrer" data-i18n="deepGamePrimaryCta">פתח את Arena</a>
+                                <a class="button button-secondary" href="https://mon.rotem-dev.org/game/" target="_blank" rel="noopener noreferrer" data-i18n="deepGameSecondaryCta">Quake 2 מוגן</a>
+                            </div>
+                        </div>
+                    </details>
+
+                    <details class="deep-dive-card card" data-reveal>
+                        <summary>
+                            <span class="deep-index">05</span>
+                            <strong data-i18n="deepObsTitle">ניטור, דשבורד ותפעול שרת</strong>
+                            <span class="deep-toggle" data-i18n="deepToggle">פתח פירוט</span>
+                        </summary>
+                        <div class="deep-dive-body">
+                            <p data-i18n="deepObsCopy">מאיה כוללת שכבת observability שמציגה בריאות מערכת, שימוש, לוגים ותמונה תפעולית כדי להבין מהר מה חי ומה דורש טיפול.</p>
+                            <ul class="deep-points">
+                                <li data-i18n="deepObsPointOne">Dashboard עם CPU, RAM, disk, uptime, רשת, שירותי Maya, counters ותזמוני פעולות.</li>
+                                <li data-i18n="deepObsPointTwo">Maya Command OS מרכז overview, memory, logs, RoteMGPT, פעולות מהירות ו-Command Palette למעבר בין מסכים.</li>
+                                <li data-i18n="deepObsPointThree">Cloudflare Tunnel ו-Access נותנים שכבת גישה מרחוק מוגנת בלי לחשוף hosts פנימיים או secrets.</li>
+                            </ul>
+                        </div>
+                    </details>
+
+                    <details class="deep-dive-card card" data-reveal>
+                        <summary>
+                            <span class="deep-index">06</span>
+                            <strong data-i18n="deepAndroidTitle">Android Lab ו-Companion</strong>
+                            <span class="deep-toggle" data-i18n="deepToggle">פתח פירוט</span>
+                        </summary>
+                        <div class="deep-dive-body">
+                            <p data-i18n="deepAndroidCopy">Android Lab מוסיף לגוף של מאיה מכשיר מעבדה נשלט: מסך, קול, מגע, אפליקציות ומשימות real-time מעל ADB ו-scrcpy.</p>
+                            <ul class="deep-points">
+                                <li data-i18n="deepAndroidPointOne">פקדי tap, swipe, typing, home/back, long press ו-sequence מהיר, כולל פקדים יחסיים למסך כדי לעבוד על רזולוציות שונות.</li>
+                                <li data-i18n="deepAndroidPointTwo">Companion app מוסיף microphone, speaker, camera presence ופקודות נראות מהטלפון אל שרת מאיה.</li>
+                                <li data-i18n="deepAndroidPointThree">שימושי במיוחד לבדיקת WhatsApp מעבדה, משחקים, latency ופעולות UI שלא מספיק לתאר בטקסט.</li>
+                            </ul>
+                        </div>
+                    </details>
+                </div>
+            </section>
+
+            <section class="section experience-section" id="experience">
+                <div class="section-heading" data-reveal>
+                    <p class="eyebrow" data-i18n="experienceEyebrow">Experience</p>
+                    <h2 data-i18n="experienceTitle">ניסיון מקצועי ותפעולי</h2>
+                </div>
+                <div class="experience-layout">
+                    <article class="experience-card card" data-reveal>
+                        <div class="timeline-item"><p class="timeline-label" data-i18n="expOneDate">2023 - היום</p><h3 data-i18n="expOneTitle">אנליסט אבטחת מידע ותפעול תשתיות / מערך הדיגיטל הלאומי</h3><p data-i18n="expOneCopy">SIEM, מוצרי אבטחה, תשתיות, Cloudflare, WAF, SSL, ניטור ותחקור תקלות מקצה לקצה.</p></div>
+                        <div class="timeline-item"><p class="timeline-label">2021 - 2023</p><h3 data-i18n="expTwoTitle">מרכז שליטה ובקרה / משרד הבריאות</h3><p data-i18n="expTwoCopy">תמיכה טכנית ואפליקטיבית, Active Directory, הרשאות, אוטומציות ותמיכה במערכות בריאות.</p></div>
+                        <div class="timeline-item"><p class="timeline-label">2014 - 2017</p><h3 data-i18n="expThreeTitle">ERP SAP וניהול מלאי / צה״ל</h3><p data-i18n="expThreeCopy">תפעול SAP, ניהול מלאי ולוגיסטיקה, סיום קורס ניהול מלאי בהצטיינות.</p></div>
+                    </article>
+                    <section class="principles-card card" id="certifications" data-reveal>
+                        <p class="eyebrow" data-i18n="certEyebrow">Certifications</p>
+                        <h3 data-i18n="certTitle">הכשרות והסמכות</h3>
+                        <ul class="principles-list">
+                            <li data-i18n="certOne">קורס מגן סייבר / ג׳ון ברייס, 650 שעות</li>
+                            <li data-i18n="certTwo">QA תוכנה / טכניון</li>
+                            <li data-i18n="certThree">Cisco CCNA 200-301 Packet Tracer Labs</li>
+                            <li data-i18n="certFour">Applied Ethical Hacking and Rules of Engagement</li>
+                            <li data-i18n="certFive">Jr Penetration Tester Certificate / TryHackMe</li>
+                        </ul>
+                    </section>
+                </div>
+            </section>
+
+            <section class="contact-banner card" id="contact" data-reveal>
+                <div>
+                    <p class="eyebrow" data-i18n="contactEyebrow">Contact</p>
+                    <h2 data-i18n="contactTitle">מחפשים אדם שמבין אבטחה, תשתיות ו-AI מעשי?</h2>
+                    <p class="contact-copy" data-i18n="contactCopy">אפשר לפנות אליי לשיחות על Security Operations, תשתיות, אוטומציה, AI tooling ומעבדות מחקר סגורות.</p>
+                </div>
+                <div class="contact-actions">
+                    <a class="button button-primary" href="mailto:Rotemvnkll@gmail.com" data-i18n="contactEmail">Email</a>
+                    <a class="button button-secondary" href="https://www.linkedin.com/in/rotem-zacaim-b4a709223/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+                </div>
+            </section>
+        </main>
+
+        <footer class="footer">
+            <p data-i18n="footerName">רותם זכאים</p>
+            <p data-i18n="footerTagline">אבטחת מידע, תשתיות ו-AI אופרטיבי</p>
+            <p>&copy; <span data-year></span></p>
+        </footer>
+    </div>
+
+    <nav class="mobile-action-dock" aria-label="פעולות מהירות" data-i18n-attr="aria-label:mobileDockLabel">
+        <a href="#maya-lab" data-i18n="mobileDockMaya">Maya Lab</a>
+        <a href="#systems" data-i18n="mobileDockProjects">פרויקטים</a>
+        <a href="mailto:Rotemvnkll@gmail.com" data-i18n="mobileDockContact">קשר</a>
+    </nav>
+
+    <div class="assistant-widget" data-assistant-widget data-state="greet" data-compact="false" data-expanded="true">
+        <div class="assistant-bubble" id="assistant-bubble" data-assistant-bubble>
+            <div class="assistant-bubble-head">
+                <div class="assistant-bubble-dots" aria-hidden="true">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+            <p class="assistant-bubble-text" data-assistant-message data-i18n="assistantInitialMessage">שלום, אני כאן.</p>
+        </div>
+        <div
+            class="assistant-stage"
+            data-assistant-stage
+            data-state="greet"
+            role="button"
+            tabindex="0"
+            aria-controls="assistant-bubble"
+            aria-expanded="true"
+            aria-label="החלפת הערות assistant"
+            data-i18n-attr="aria-label:assistantToggleLabel"
+        >
+            <div class="assistant-dock" aria-hidden="true">
+                <span class="assistant-dock-ring assistant-dock-ring-outer"></span>
+                <span class="assistant-dock-ring assistant-dock-ring-mid"></span>
+                <span class="assistant-dock-ring assistant-dock-ring-inner"></span>
+                <span class="assistant-dock-core"></span>
+            </div>
+            <div class="assistant-bot-frame" aria-hidden="true">
+                <div class="assistant-bot" data-assistant-bot data-state="greet">
+                    <svg class="assistant-bot-art" viewBox="0 0 220 220" role="presentation">
+                        <defs>
+                            <linearGradient id="assistant-head-shell" x1="10%" y1="0%" x2="88%" y2="100%">
+                                <stop offset="0%" stop-color="#2a3748" />
+                                <stop offset="42%" stop-color="#1b2838" />
+                                <stop offset="100%" stop-color="#0d1724" />
+                            </linearGradient>
+                            <linearGradient id="assistant-head-shadow-shell" x1="10%" y1="0%" x2="90%" y2="100%">
+                                <stop offset="0%" stop-color="#131d2a" />
+                                <stop offset="100%" stop-color="#050b13" />
+                            </linearGradient>
+                            <linearGradient id="assistant-body-shell" x1="18%" y1="0%" x2="82%" y2="100%">
+                                <stop offset="0%" stop-color="#243142" />
+                                <stop offset="46%" stop-color="#182434" />
+                                <stop offset="100%" stop-color="#0b1420" />
+                            </linearGradient>
+                            <linearGradient id="assistant-pod-shell" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#334258" />
+                                <stop offset="100%" stop-color="#0e1724" />
+                            </linearGradient>
+                            <linearGradient id="assistant-visor" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#0f1b29" />
+                                <stop offset="50%" stop-color="#050c16" />
+                                <stop offset="100%" stop-color="#010409" />
+                            </linearGradient>
+                            <linearGradient id="assistant-limb-shell" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#324154" />
+                                <stop offset="58%" stop-color="#1b2939" />
+                                <stop offset="100%" stop-color="#0b141f" />
+                            </linearGradient>
+                            <linearGradient id="assistant-cable" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#233650" />
+                                <stop offset="100%" stop-color="#08111d" />
+                            </linearGradient>
+                            <linearGradient id="assistant-glow" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#e4fff9" />
+                                <stop offset="100%" stop-color="#45dfff" />
+                            </linearGradient>
+                            <radialGradient id="assistant-core" cx="50%" cy="50%" r="55%">
+                                <stop offset="0%" stop-color="#d8fff5" />
+                                <stop offset="100%" stop-color="#4fe0c4" />
+                            </radialGradient>
+                            <radialGradient id="assistant-neck-light" cx="50%" cy="45%" r="60%">
+                                <stop offset="0%" stop-color="rgba(121, 226, 255, 0.56)" />
+                                <stop offset="100%" stop-color="rgba(121, 226, 255, 0)" />
+                            </radialGradient>
+                            <filter id="assistant-soft-shadow" x="-30%" y="-30%" width="160%" height="160%">
+                                <feDropShadow dx="0" dy="10" stdDeviation="8" flood-color="#020712" flood-opacity="0.18" />
+                            </filter>
+                        </defs>
+
+                        <g class="assistant-shadow">
+                            <ellipse cx="110" cy="199" rx="46" ry="12" />
+                        </g>
+
+                        <g class="assistant-antenna">
+                            <path d="M110 35V17" />
+                            <circle cx="110" cy="12" r="6" />
+                        </g>
+
+                        <g class="assistant-arm assistant-arm-left" filter="url(#assistant-soft-shadow)">
+                            <circle cx="80" cy="128" r="10" class="assistant-joint-shadow" />
+                            <circle cx="80" cy="128" r="8.2" class="assistant-joint-cap" />
+                            <path class="assistant-cable" d="M79 132C60 145 53 161 58 182" />
+                            <rect
+                                x="45"
+                                y="149"
+                                width="21"
+                                height="41"
+                                rx="10.5"
+                                class="assistant-limb-shell"
+                                transform="rotate(8 55.5 169.5)"
+                            />
+                            <ellipse cx="59" cy="153" rx="7.2" ry="5.2" class="assistant-joint-soft" />
+                            <path class="assistant-grip" d="M47 190L52 198M55 188L60 198M63 187L68 196" />
+                        </g>
+
+                        <g class="assistant-arm assistant-arm-right" filter="url(#assistant-soft-shadow)">
+                            <circle cx="140" cy="128" r="10" class="assistant-joint-shadow" />
+                            <circle cx="140" cy="128" r="8.2" class="assistant-joint-cap" />
+                            <path class="assistant-cable" d="M141 132C165 128 179 114 184 89" />
+                            <rect
+                                x="174"
+                                y="68"
+                                width="21"
+                                height="41"
+                                rx="10.5"
+                                class="assistant-limb-shell"
+                                transform="rotate(-31 184.5 88.5)"
+                            />
+                            <ellipse cx="175" cy="108" rx="7.2" ry="5.2" class="assistant-joint-soft" />
+                            <path class="assistant-grip" d="M183 64L191 57M176 66L184 60M190 69L197 63" />
+                        </g>
+
+                        <g class="assistant-body assistant-body-idle" filter="url(#assistant-soft-shadow)">
+                            <ellipse cx="110" cy="120" rx="22" ry="6.6" class="assistant-neck-glow" />
+                            <ellipse cx="110" cy="120" rx="17.5" ry="4.8" class="assistant-neck-ring" />
+                            <path class="assistant-body-upper" d="M89 126L99 112H121L131 126V153L121 165H99L89 153Z" />
+                            <path class="assistant-shell-shadow" d="M95 130L102 120H118L125 130V149L118 157H102L95 149Z" />
+                            <path class="assistant-body-contour" d="M99 127H121" />
+                            <path class="assistant-body-lower" d="M94 160L126 160L132 186L110 201L88 186Z" />
+                            <path class="assistant-belly-highlight" d="M98 172L110 180L122 172" />
+                            <ellipse cx="110" cy="169" rx="18" ry="24" class="assistant-body-core-shadow" />
+                            <path class="assistant-core-bezel" d="M91 134H129L134 140V148L129 154H91L86 148V140Z" />
+                            <path class="assistant-core-panel" d="M97 138H123L128 142V147L123 151H97L92 147V142Z" />
+                            <circle cx="100.5" cy="144.5" r="3.4" class="assistant-core-light" />
+                            <circle cx="110" cy="144.5" r="3.4" class="assistant-core-light assistant-core-light-mid" />
+                            <circle cx="119.5" cy="144.5" r="3.4" class="assistant-core-light" />
+                        </g>
+
+                        <g class="assistant-head-group assistant-head-idle" filter="url(#assistant-soft-shadow)">
+                            <path class="assistant-head-shadow" d="M61 50L81 28H139L159 50V93L139 120H81L61 93Z" />
+                            <ellipse cx="110" cy="121" rx="26" ry="8.5" class="assistant-head-underlight" />
+
+                            <g class="assistant-sidepods">
+                                <path class="assistant-pod-shadow" d="M46 72L58 76V102L46 108L39 101V77Z" />
+                                <path class="assistant-pod-shadow" d="M162 76L174 72L181 77V101L174 108L162 102Z" />
+                                <path class="assistant-sidepod-shell" d="M49 70L61 74V101L49 106L43 100V77Z" />
+                                <path class="assistant-sidepod-shell" d="M159 74L171 70L177 77V100L171 106L159 101Z" />
+                                <path class="assistant-pod-gloss" d="M50 78L58 75" />
+                                <path class="assistant-pod-gloss" d="M162 75L170 78" />
+                            </g>
+
+                            <path class="assistant-head-shell" d="M67 48L83 30H137L153 48V93L137 116H83L67 93Z" />
+                            <path class="assistant-shell-edge" d="M80 40L93 34H127L140 40" />
+                            <path class="assistant-head-rim" d="M76 52L87 40H133L144 52" />
+                            <path class="assistant-head-chin" d="M87 111H133" />
+                            <g class="assistant-face-assembly">
+                                <path class="assistant-face-bezel" d="M82 61H138L145 69V90L137 101H83L75 90V69Z" />
+                                <path class="assistant-faceplate" d="M86 65H134L140 72V88L133 97H87L80 88V72Z" />
+                                <path class="assistant-visor-shine" d="M92 71H128" />
+                                <path class="assistant-face-gloss" d="M89 77L98 70" />
+                                <path class="assistant-face-gloss assistant-face-gloss-soft" d="M125 70L132 77" />
+                                <path class="assistant-face-inner-shadow" d="M86 90H134" />
+                                <path class="assistant-brow-glow" d="M87 69H104" />
+                                <path class="assistant-brow-glow assistant-brow-glow-right" d="M116 69H133" />
+
+                                <g class="assistant-eye assistant-eye-left" data-eye-group="left">
+                                    <rect x="83" y="74" width="24" height="12" rx="4" class="assistant-eye-socket" />
+                                    <circle cx="92" cy="77" r="1.5" class="assistant-eye-glint" />
+                                    <rect x="91" y="76" width="8" height="8" rx="2.6" class="assistant-pupil" data-pupil="left" />
+                                </g>
+
+                                <g class="assistant-eye assistant-eye-right" data-eye-group="right">
+                                    <rect x="113" y="74" width="24" height="12" rx="4" class="assistant-eye-socket" />
+                                    <circle cx="122" cy="77" r="1.5" class="assistant-eye-glint" />
+                                    <rect x="119" y="76" width="8" height="8" rx="2.6" class="assistant-pupil" data-pupil="right" />
+                                </g>
+
+                                <path
+                                    class="assistant-mouth-shadow"
+                                    data-assistant-mouth-shadow
+                                    d="M100 98C105 101 116 101 120 98"
+                                />
+                                <path
+                                    class="assistant-mouth"
+                                    data-assistant-mouth
+                                    d="M103 99C107 101 113 101 117 99"
+                                />
+                            </g>
+                        </g>
+
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
 </html>
