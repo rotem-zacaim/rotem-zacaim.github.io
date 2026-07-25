@@ -1,365 +1,365 @@
-# Cinematic 3D Rotem About Site Design
+# מפרט עיצוב לאתר About קולנועי עם דמות 3D
 
-Date: 2026-07-25
-Status: Approved design direction, pending implementation plan
-Target site: `about.rotem-dev.org`
-Implementation repo: `C:\Users\rotem\Documents\codex\WEB\rotem-zacaim.github.io`
+תאריך: 2026-07-25  
+סטטוס: כיוון עיצוב מאושר, לפני תוכנית יישום  
+אתר יעד: `about.rotem-dev.org`  
+ריפו יישום: `C:\Users\rotem\Documents\codex\WEB\rotem-zacaim.github.io`
 
-## Goal
+## מטרה
 
-Redesign the existing About site into a premium personal site for Rotem Zacaim.
+לעצב מחדש את אתר ה-About הקיים לאתר אישי פרימיום עבור רותם זכאים.
 
-The site must stay focused on Rotem: information security, infrastructure operations, AI tooling, practical lab work, experience, and credibility. It must not become a Maya product page and must not let the character take over the story.
+האתר חייב להישאר ממוקד ברותם: אבטחת מידע, תפעול תשתיות, כלי AI, מעבדות מעשיות, ניסיון ואמינות מקצועית. הוא לא צריך להפוך לאתר מוצר של מאיה, ולא לתת לדמות להשתלט על הסיפור.
 
-The approved creative direction is:
+כיוון הקריאייטיב שאושר:
 
-> Dark cinematic personal brand with Cyber / Command Center touches and a living 3D rabbit character as a supporting signature element.
+> מותג אישי כהה וקולנועי, עם נגיעות Cyber / Command Center, ודמות ארנב 3D חיה כאלמנט חתימה תומך.
 
-The current site feels too template-like. The new version should feel more custom, intentional, cinematic, technical, and memorable.
+האתר הנוכחי מרגיש תבניתי מדי. הגרסה החדשה צריכה להרגיש אישית יותר, מכוונת יותר, קולנועית, טכנית וזכירה.
 
-## Approved Decisions
+## החלטות מאושרות
 
-- Main direction: cinematic and dark, with restrained Command Center details.
-- Site focus: Rotem first, Maya and AI Lab second.
-- Character style: 3D rabbit mascot similar to the provided reference image.
-- Character role: living side guide, not page subject.
-- Character production path: Meshy or Tripo to generate GLB candidates, Blender cleanup, Three.js integration.
-- Initial character budget: about 20 USD for first model-generation experiments.
-- Hosting target: keep the existing static GitHub Pages architecture unless a concrete blocker is found.
-- Current content should remain, but be reorganized and elevated visually.
+- כיוון ראשי: כהה וקולנועי, עם פרטי Command Center מדודים.
+- פוקוס האתר: רותם קודם, מאיה וה-AI Lab אחר כך.
+- סגנון הדמות: ארנב 3D דומה לתמונת הרפרנס שסופקה.
+- תפקיד הדמות: מדריך צדדי חי, לא הנושא של האתר.
+- מסלול הפקת הדמות: Meshy או Tripo ליצירת מועמדי GLB, ניקוי ב-Blender, הטמעה ב-Three.js.
+- תקציב ניסוי ראשוני לדמות: סביב 20 דולר.
+- יעד אירוח: להישאר בארכיטקטורת GitHub Pages סטטית, אלא אם נמצא חסם אמיתי.
+- התוכן הקיים נשאר, אבל נארז מחדש בצורה גבוהה ומדויקת יותר.
 
-## Audience
+## קהל יעד
 
-Primary audience:
+קהל עיקרי:
 
-- Recruiters and managers in cyber security, SOC, security operations, infrastructure, and AI-adjacent technical roles.
-- Technical people who want proof that Rotem builds real systems.
-- Potential collaborators or clients interested in AI automation, secure labs, and infrastructure tooling.
+- מגייסים ומנהלים בתחומי Cyber Security, SOC, Security Operations, תשתיות ותפקידים טכניים משיקים ל-AI.
+- אנשים טכניים שרוצים לראות הוכחה שרותם באמת בונה מערכות.
+- שותפים או לקוחות פוטנציאליים שמתעניינים באוטומציה עם AI, מעבדות מאובטחות וכלי תשתית.
 
-The first impression should be:
+הרושם הראשון צריך להיות:
 
-> This is a capable security and infrastructure operator who also builds serious AI systems.
+> זה איש תפעול אבטחת מידע ותשתיות שמבין מערכות אמיתיות, וגם בונה כלי AI רציניים.
 
-It should not feel like:
+האתר לא צריך להרגיש כמו:
 
-- A generic resume template.
-- A product page for Maya.
-- A mascot showcase.
-- A fake hacker poster.
-- A dashboard mockup with decorative data.
+- תבנית קורות חיים גנרית.
+- אתר מוצר של מאיה.
+- תצוגת Mascot.
+- פוסטר האקרים מזויף.
+- דשבורד דמה עם נתונים דקורטיביים.
 
-## Visual Direction
+## כיוון ויזואלי
 
-The site should feel:
+האתר צריך להרגיש:
 
-- Dark and cinematic.
-- Premium, controlled, and sharp.
-- Technical without being noisy.
-- Personal and credible.
-- More like an operator profile than a portfolio template.
+- כהה וקולנועי.
+- פרימיום, נשלט וחד.
+- טכני בלי להיות רועש.
+- אישי ואמין.
+- יותר פרופיל של Operator מאשר תיק עבודות תבניתי.
 
-Visual language:
+שפה ויזואלית:
 
-- Near-black cinematic background.
-- Controlled light sources and depth.
-- Subtle grid, signal, terminal, or system-map details.
-- Small polished panels, not oversized generic cards.
-- Strong Hebrew typography and careful RTL spacing.
-- Selective accent colors, likely one cool cyan or green signal accent plus one restrained warm/fuchsia accent from the character environment.
-- No decorative blobs or generic gradient orbs.
-- No huge hero section that hides all following content; first viewport should hint at the next section.
+- רקע כמעט שחור, עם עומק קולנועי.
+- מקורות אור מבוקרים ותחושת עומק.
+- פרטי grid, signal, terminal או system map עדינים.
+- פאנלים קטנים ומלוטשים, לא כרטיסים ענקיים וגנריים.
+- טיפוגרפיה עברית חזקה ו-RTL מוקפד.
+- צבעי accent מדודים: כנראה cyan או ירוק signal, יחד עם accent חם/פוקסיה עדין שמגיע מהסביבה של הדמות.
+- בלי blobs דקורטיביים או gradient orbs גנריים.
+- בלי hero ענק שמסתיר את כל ההמשך; ה-viewport הראשון צריך לרמוז שיש תוכן נוסף מתחת.
 
-The site should include enough visual assets to feel real. The 3D character is the main custom asset. Other technical visuals should be code-native or light procedural UI, not stock-like filler.
+האתר צריך לכלול מספיק נכסים ויזואליים כדי להרגיש אמיתי. דמות ה-3D היא הנכס המותאם המרכזי. ויזואליות טכנית אחרת יכולה להיות code-native או UI פרוצדורלי קל, לא תמונות stock.
 
-## Content Strategy
+## אסטרטגיית תוכן
 
-The existing content remains the source of truth:
+התוכן הקיים נשאר מקור האמת:
 
-- Rotem's cyber and infrastructure experience.
-- Security Operations and infrastructure tooling.
-- Maya AI Lab as proof of serious independent AI work.
+- ניסיון ה-Cyber והתשתיות של רותם.
+- Security Operations וכלי תשתית.
+- Maya AI Lab כהוכחה לעבודה עצמאית רצינית ב-AI.
 - RoteMGPT.
 - Home Assistant.
 - Android Lab.
 - RedLab.
-- Cloudflare and server operations.
-- Experience and certifications.
-- Contact links.
+- Cloudflare ותפעול שרתים.
+- ניסיון והסמכות.
+- קישורי קשר.
 
-Content should be reorganized around Rotem's story:
+התוכן יאורגן סביב הסיפור של רותם:
 
-1. Who Rotem is.
-2. What Rotem solves professionally.
-3. What Rotem builds independently.
-4. What systems prove those claims.
-5. Experience, certifications, and contact.
+1. מי רותם.
+2. אילו בעיות רותם פותר מקצועית.
+3. מה רותם בונה עצמאית.
+4. אילו מערכות מוכיחות את זה.
+5. ניסיון, הסמכות ויצירת קשר.
 
-Maya should be presented as one strong proof point in the AI Lab, not as the whole identity of the page.
+מאיה תוצג כהוכחה חזקה אחת בתוך ה-AI Lab, לא כזהות המרכזית של האתר.
 
-## Page Structure
+## מבנה עמוד
 
-### 1. Cinematic Hero
+### 1. Hero קולנועי
 
-Purpose: establish Rotem immediately.
+מטרה: לבסס מיד מי זה רותם.
 
-The hero should include:
+ה-hero יכלול:
 
-- Name: Rotem Zacaim / רותם זכאים.
-- Main professional positioning around cyber security, infrastructure, and operational AI tooling.
-- Short supporting copy in Hebrew by default.
-- Primary CTA to the AI Lab or project section.
-- Secondary CTA to LinkedIn or contact.
-- Language toggle.
-- 3D rabbit character as a hero signature, visually connected to the composition.
+- שם: רותם זכאים / Rotem Zacaim.
+- מיצוב מקצועי סביב אבטחת מידע, תשתיות וכלי AI אופרטיביים.
+- טקסט תמיכה קצר בעברית כברירת מחדל.
+- CTA ראשי ל-AI Lab או לאזור הפרויקטים.
+- CTA משני ל-LinkedIn או יצירת קשר.
+- מתג שפה.
+- דמות ארנב 3D כחתימה ויזואלית שמחוברת לקומפוזיציה.
 
-The character starts as part of the hero scene, not as a floating image.
+הדמות מתחילה כחלק מסצנת ה-hero, לא כתמונה שצפה מעל האתר.
 
 ### 2. Operator Profile
 
-Purpose: show practical professional capability.
+מטרה: להראות יכולת מקצועית מעשית.
 
-Include compact groups for:
+לכלול קבוצות קומפקטיות עבור:
 
-- Security operations.
-- SIEM and Splunk.
+- Security Operations.
+- SIEM ו-Splunk.
 - WAF, Proxy, Load Balancer, SSL, API Gateway.
-- Windows/Linux troubleshooting.
-- Cloudflare and remote access patterns.
-- Monitoring and observability.
-- Incident response and investigation.
+- תחקור Windows/Linux.
+- Cloudflare ודפוסי גישה מרחוק.
+- ניטור ו-observability.
+- Incident Response וחקירה.
 
-This section should answer:
+הסקשן הזה צריך לענות על השאלה:
 
-> What problems can Rotem solve in the real world?
+> אילו בעיות רותם יודע לפתור בעולם אמיתי?
 
 ### 3. AI Lab / Maya
 
-Purpose: provide the memorable wow moment while keeping Rotem as the subject.
+מטרה: לתת את רגע ה-wow, אבל להשאיר את רותם כנושא.
 
-Include:
+לכלול:
 
 - Maya WhatsApp AI Agent.
-- Memory and semantic retrieval.
-- Google Calendar and OAuth integrations.
-- Voice, vision, tools, daily digest, reminders.
-- RoteMGPT and local model experiments.
-- Home Assistant smart-home integration.
+- זיכרון ושליפה סמנטית.
+- Google Calendar ו-OAuth.
+- קול, תמונה, כלים, daily digest ותזכורות.
+- RoteMGPT וניסויים במודלים מקומיים.
+- Home Assistant ובית חכם.
 - Android Lab.
-- RedLab as an authorized and bounded security workbench.
-- Cloudflare infrastructure and protected access.
+- RedLab כסביבת אבטחה מורשית ומוגבלת.
+- Cloudflare ותשתית גישה מוגנת.
 
-Tone:
+טון:
 
-- Impressive, but responsible.
-- Use "closed lab", "authorized", "allowlisted", "guarded", and "operator-controlled" where relevant.
-- Do not expose internal IDs, tokens, secrets, or operational access details.
+- מרשים, אבל אחראי.
+- להשתמש במונחים כמו "מעבדה סגורה", "מורשה", "allowlisted", "guarded", "operator-controlled" כשזה רלוונטי.
+- לא לחשוף מזהים פנימיים, טוקנים, secrets או פרטי גישה תפעוליים.
 
 ### 4. Project / Systems Map
 
-Purpose: turn the current long content into a memorable system view.
+מטרה: להפוך את התוכן הארוך הקיים לתמונת מערכת זכירה.
 
-Recommended pattern:
+דפוס מומלץ:
 
-- A cinematic Command Center style map.
-- Each node represents a system: Maya, RoteMGPT, Home Assistant, Android Lab, RedLab, Cloudflare, Observability.
-- User can scan quickly, then open or read compact details.
+- מפת מערכות בסגנון Command Center קולנועי.
+- כל node מייצג מערכת: Maya, RoteMGPT, Home Assistant, Android Lab, RedLab, Cloudflare, Observability.
+- המשתמש יכול לסרוק מהר ואז לקרוא פרטים קומפקטיים.
 
-The section should not become a dense dashboard. It should feel like a polished technical map.
+הסקשן לא צריך להפוך לדשבורד צפוף. הוא צריך להרגיש כמו מפה טכנית מלוטשת.
 
-### 5. Experience And Certifications
+### 5. ניסיון והסמכות
 
-Purpose: provide resume depth after the story is established.
+מטרה: לתת עומק של קורות חיים אחרי שהסיפור כבר ברור.
 
-Include:
+לכלול:
 
-- Current National Digital Agency role.
-- Ministry of Health command/control role.
-- Military SAP/logistics experience.
-- Relevant cyber, QA, CCNA, ethical hacking, TryHackMe, MDA, and volunteer experience.
+- התפקיד הנוכחי במערך הדיגיטל הלאומי.
+- תפקיד חמ"ל / מרכז שליטה במשרד הבריאות.
+- ניסיון SAP / לוגיסטיקה בצבא.
+- הסמכות רלוונטיות: Cyber, QA, CCNA, Ethical Hacking, TryHackMe, MDA והתנדבות.
 
-This section should be compact and readable, not a CV dump.
+הסקשן צריך להיות קומפקטי וקריא, לא dump של קורות חיים.
 
-### 6. Contact
+### 6. יצירת קשר
 
-Purpose: clear next step.
+מטרה: פעולה הבאה ברורה.
 
-Include:
+לכלול:
 
 - Email.
 - LinkedIn.
-- Optional GitHub link if verified.
-- Short call to action for cyber, infrastructure, AI tooling, and automation conversations.
+- קישור GitHub אם אומת.
+- טקסט CTA קצר לשיחות על Cyber, תשתיות, AI tooling ואוטומציה.
 
-## 3D Character Specification
+## מפרט דמות 3D
 
-The character should be similar to the supplied rabbit image, but branded for Rotem.
+הדמות תהיה דומה לתמונת הארנב שסופקה, אבל ממותגת לרותם.
 
-Character requirements:
+דרישות דמות:
 
-- 3D grey rabbit.
-- Soft fur feeling.
-- Dark sunglasses.
-- Black shirt.
-- Text on shirt: `rotem.z`.
-- White pants.
-- Light or white shoes.
-- Cool, confident pose.
-- A pointing hand or subtle gesture is preferred.
-- Not childish.
-- Not a generic cute mascot.
-- Should feel like a premium brand companion.
+- ארנב 3D אפור.
+- תחושת פרווה רכה.
+- משקפי שמש כהים.
+- חולצה שחורה.
+- טקסט על החולצה: `rotem.z`.
+- מכנס לבן.
+- נעליים בהירות או לבנות.
+- פוזה בטוחה וקולית.
+- עדיפות ליד מצביעה או gesture עדין.
+- לא ילדותי.
+- לא mascot חמוד גנרי.
+- צריך להרגיש כמו companion של מותג פרימיום.
 
-The text `MAYA AGENT` should not appear on the character. This avoids making the site feel like a Maya product page.
+הטקסט `MAYA AGENT` לא יופיע על הדמות. זה מונע מהאתר להרגיש כמו אתר מוצר של מאיה.
 
-## 3D Production Pipeline
+## Pipeline להפקת 3D
 
-Approved pipeline:
+המסלול שאושר:
 
-1. Use Meshy or Tripo to generate several GLB candidates from the reference character and prompt.
-2. Select the best model candidate.
-3. Clean and optimize in Blender.
-4. Export web-ready GLB.
-5. Integrate with Three.js.
-6. QA desktop and mobile performance.
+1. להשתמש ב-Meshy או Tripo כדי ליצור כמה מועמדי GLB מתמונת הרפרנס ומהפרומפט.
+2. לבחור את המודל הטוב ביותר.
+3. לנקות ולבצע אופטימיזציה ב-Blender.
+4. לייצא GLB מותאם לאתר.
+5. להטמיע עם Three.js.
+6. לבצע QA לדסקטופ ולמובייל.
 
-Budget:
+תקציב:
 
-- Initial experiment budget is around 20 USD.
-- Use the budget to generate multiple candidates, not to chase a perfect first result.
-- The expected first milestone is a usable prototype-quality character, not a guaranteed final AAA mascot.
+- תקציב הניסוי הראשוני הוא סביב 20 דולר.
+- התקציב נועד ליצירת כמה מועמדים, לא לרדיפה אחרי תוצאה מושלמת בניסיון הראשון.
+- היעד הראשון הוא דמות prototype שימושית, לא הבטחה ל-mascot ברמת AAA.
 
-Official tool references:
+מקורות רשמיים:
 
 - Meshy pricing: `https://www.meshy.ai/pricing`
 - Tripo pricing: `https://developers.tripo3d.ai/en/pricing`
 - Three.js: `https://threejs.org/`
-- Spline pricing, if needed for comparison: `https://spline.design/pricing`
+- Spline pricing, אם צריך להשוות: `https://spline.design/pricing`
 
-MCP role:
+תפקיד MCP:
 
-- MCP can help with Figma, GitHub, browser testing, and process coordination.
-- MCP does not replace the 3D model production pipeline.
-- A dedicated 3D asset tool or manual Blender cleanup is still required.
+- MCP יכול לעזור עם Figma, GitHub, בדיקות דפדפן וניהול תהליך.
+- MCP לא מחליף את pipeline הפקת ה-3D.
+- עדיין נדרש כלי 3D ייעודי או ניקוי ידני ב-Blender.
 
-## Character Behavior
+## התנהגות הדמות
 
-Approved role: living side guide.
+תפקיד שאושר: מדריך צדדי חי.
 
-Desktop behavior:
+בדסקטופ:
 
-- Character appears in the hero as part of the cinematic scene.
-- On scroll, it moves to the side and becomes a smaller guide.
-- It has a subtle idle animation.
-- It can look or turn slightly toward the pointer.
-- It can react gently when entering key sections.
-- It should never cover important text or buttons.
+- הדמות מופיעה ב-hero כחלק מהסצנה הקולנועית.
+- בגלילה היא זזה לצד והופכת למדריך קטן יותר.
+- יש לה idle animation עדין.
+- היא יכולה להסתכל או להסתובב מעט לכיוון העכבר.
+- היא יכולה להגיב בעדינות בכניסה לסקשנים מרכזיים.
+- היא לעולם לא מכסה טקסט חשוב או כפתורים.
 
-Mobile behavior:
+במובייל:
 
-- Character appears in the opening in a controlled way.
-- It should not remain as a persistent side guide on small screens.
-- It may reappear in selected sections if it does not block content.
-- It must not cause horizontal overflow.
-- It must respect limited GPU and battery performance.
+- הדמות מופיעה בפתיחה בצורה מבוקרת.
+- היא לא נשארת כמדריך צדדי קבוע במסכים קטנים.
+- היא יכולה להופיע מחדש בסקשנים נבחרים רק אם אינה חוסמת תוכן.
+- אסור שתיצור horizontal overflow.
+- היא חייבת להתחשב ב-GPU ובסוללה.
 
-Accessibility:
+נגישות:
 
-- Respect `prefers-reduced-motion`.
-- Provide a static or simplified fallback.
-- Keep content usable if the 3D asset fails to load.
-- Do not rely on the character to communicate essential information.
+- לכבד `prefers-reduced-motion`.
+- לספק fallback סטטי או מופשט.
+- התוכן נשאר שימושי גם אם נכס ה-3D לא נטען.
+- לא להשתמש בדמות כדי להעביר מידע חיוני.
 
-## Technical Direction
+## כיוון טכני
 
-Preferred implementation:
+יישום מועדף:
 
-- Keep static site architecture.
-- Use existing `index.html`, `styles.css`, `script.js` unless the implementation plan finds a real reason to change.
-- Add Three.js only for the 3D character scene.
-- Use GLTFLoader for GLB.
-- Use lazy loading or delayed initialization if needed.
-- Use responsive canvas sizing.
-- Use fallback static image or hidden character state if WebGL is unavailable.
+- להישאר באתר סטטי.
+- להשתמש ב-`index.html`, `styles.css`, `script.js` הקיימים, אלא אם תוכנית היישום תמצא סיבה אמיתית לשנות.
+- להוסיף Three.js רק עבור סצנת דמות ה-3D.
+- להשתמש ב-GLTFLoader עבור GLB.
+- להשתמש ב-lazy loading או אתחול מושהה אם צריך.
+- להשתמש ב-canvas רספונסיבי.
+- להסתיר את הדמות או להשתמש ב-fallback אם WebGL אינו זמין.
 
-Performance requirements:
+דרישות ביצועים:
 
-- Optimize GLB size.
-- Avoid huge textures.
-- Avoid heavy realtime shadows.
-- Keep mobile GPU work modest.
-- Verify with browser screenshots and canvas checks.
+- לבצע אופטימיזציה לגודל ה-GLB.
+- להימנע מטקסטורות ענק.
+- להימנע מצללים בזמן אמת כבדים.
+- לשמור על עומס GPU צנוע במובייל.
+- לוודא עם screenshots ובדיקות canvas.
 
-## What Went Wrong Before
+## מה השתבש בניסיון הקודם
 
-The reverted Maya Agent attempt failed because:
+ניסיון Maya Agent שבוטל נכשל כי:
 
-- It shifted the site focus from Rotem to Maya.
-- The character was a floating raster image, not a living 3D asset.
-- The hero composition blocked or competed with the actual content.
-- The page became too much like a character product page.
-- Mobile composition was fragile.
+- הוא העביר את פוקוס האתר מרותם למאיה.
+- הדמות הייתה תמונת raster צפה, לא נכס 3D חי.
+- קומפוזיציית ה-hero חסמה או התחרתה בתוכן האמיתי.
+- העמוד הרגיש יותר מדי כמו עמוד מוצר של דמות.
+- קומפוזיציית המובייל הייתה שבירה.
 
-This redesign must avoid those mistakes.
+העיצוב החדש חייב להימנע מהטעויות האלה.
 
 ## Non-Goals
 
-- Do not build a Maya-first site.
-- Do not make the 3D character the main content.
-- Do not ship a static cutout as the final character solution.
-- Do not use a heavy 3D scene that breaks mobile.
-- Do not expose private operational details, secrets, tokens, group IDs, phone IDs, keys, credentials, or remote access internals.
-- Do not publish offensive security instructions.
-- Do not rebuild the whole repo into React unless there is a concrete implementation need.
-- Do not add a backend or contact form for this phase.
+- לא לבנות אתר Maya-first.
+- לא להפוך את דמות ה-3D לתוכן המרכזי.
+- לא לשלוח cutout סטטי כפתרון סופי לדמות.
+- לא להשתמש בסצנת 3D כבדה ששוברת מובייל.
+- לא לחשוף פרטים תפעוליים פרטיים, secrets, טוקנים, group IDs, phone IDs, מפתחות, credentials או פרטי גישה מרחוק.
+- לא לפרסם הוראות offensive security.
+- לא לבנות את כל הריפו מחדש ב-React אלא אם יש צורך יישומי אמיתי.
+- לא להוסיף backend או טופס יצירת קשר בשלב הזה.
 
-## Verification Requirements
+## דרישות אימות
 
-Before any final handoff, verify:
+לפני handoff סופי יש לוודא:
 
-- Existing page content still exists in upgraded form.
-- Site remains about Rotem.
-- Hebrew default works.
-- English toggle works if preserved in scope.
-- Desktop layout.
-- Mobile layout.
-- No horizontal overflow.
-- No clipped or overlapping text.
-- Character does not block content.
-- Three.js scene loads.
-- GLB loads.
-- Canvas is not blank.
-- Character moves on desktop.
-- Scroll transition works.
-- Mobile fallback is acceptable.
-- Reduced motion fallback works.
-- Existing tests pass.
-- New tests cover character hooks and public safety.
+- תוכן האתר הקיים עדיין מופיע בגרסה משודרגת.
+- האתר נשאר על רותם.
+- עברית נטענת כברירת מחדל.
+- מתג אנגלית עובד אם הוא נשאר בסקופ.
+- פריסת דסקטופ תקינה.
+- פריסת מובייל תקינה.
+- אין horizontal overflow.
+- אין טקסט חתוך או חופף.
+- הדמות לא חוסמת תוכן.
+- סצנת Three.js נטענת.
+- קובץ GLB נטען.
+- ה-canvas אינו ריק.
+- הדמות זזה בדסקטופ.
+- מעבר גלילה עובד.
+- fallback במובייל סביר.
+- reduced motion עובד.
+- בדיקות קיימות עוברות.
+- בדיקות חדשות מכסות hooks של הדמות ובטיחות ציבורית.
 
-## Implementation Phasing
+## שלבי יישום
 
-Phase 1: Design and content implementation without final 3D dependency.
+### שלב 1: עיצוב ותוכן בלי תלות ב-3D הסופי
 
-- Build the dark cinematic / command-center site structure.
-- Keep content focused on Rotem.
-- Add a temporary 3D placeholder only if needed for layout testing.
+- לבנות את מבנה האתר הכהה/קולנועי עם נגיעות Command Center.
+- לשמור על תוכן ממוקד ברותם.
+- להוסיף 3D placeholder זמני רק אם צריך לבדוק layout.
 
-Phase 2: 3D asset production.
+### שלב 2: הפקת נכס 3D
 
-- Generate candidates in Meshy or Tripo.
-- Select model.
-- Clean in Blender.
-- Export web-ready GLB.
+- לייצר מועמדים ב-Meshy או Tripo.
+- לבחור מודל.
+- לנקות ב-Blender.
+- לייצא GLB מותאם לאתר.
 
-Phase 3: Three.js integration.
+### שלב 3: הטמעת Three.js
 
-- Add real character.
-- Implement idle, pointer, and scroll behavior.
-- Add reduced-motion and fallback states.
+- להוסיף את הדמות האמיתית.
+- ליישם idle, pointer ו-scroll behavior.
+- להוסיף reduced-motion ו-fallback states.
 
-Phase 4: Browser QA and polish.
+### שלב 4: QA וליטוש בדפדפן
 
-- Desktop and mobile screenshots.
-- Canvas checks.
-- Performance checks.
-- Final copy and layout pass.
+- screenshots בדסקטופ ובמובייל.
+- בדיקות canvas.
+- בדיקות ביצועים.
+- מעבר אחרון על copy ו-layout.
 
