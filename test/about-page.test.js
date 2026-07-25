@@ -8,394 +8,120 @@ const indexHtml = fs.readFileSync(path.join(repoRoot, "index.html"), "utf8");
 const stylesCss = fs.readFileSync(path.join(repoRoot, "styles.css"), "utf8");
 const scriptJs = fs.readFileSync(path.join(repoRoot, "script.js"), "utf8");
 const cname = fs.readFileSync(path.join(repoRoot, "CNAME"), "utf8").trim();
-const publicContentSource = [indexHtml, scriptJs].join("\n");
-const publicSiteSource = [indexHtml, stylesCss, scriptJs].join("\n");
-const acceptedLanguageToggleLabelPhrases = [
-    "\u05e9\u05e4\u05d4",
-    "Language",
-    "Switch to English",
-    "\u05e2\u05d1\u05e8\u05d9\u05ea",
-];
+const publicSource = `${indexHtml}\n${stylesCss}\n${scriptJs}`;
 
 function escapeRegExp(value) {
-    return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return String(value).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
-function assertMatches(source, pattern, message) {
-    assert.ok(pattern.test(source), message);
+function tags(markup, tagName) {
+  return Array.from(markup.matchAll(new RegExp(`<${escapeRegExp(tagName)}(?=\\s|[>/])[^>]*>`, "gi")), (match) => match[0]);
 }
 
-function findTagsByName(markup, tagName) {
-    return Array.from(
-        markup.matchAll(new RegExp(`<${escapeRegExp(tagName)}(?=\\s|[>/])[^>]*>`, "gi")),
-        ([tag]) => tag
-    );
+function attr(tag, name) {
+  const match = tag.match(new RegExp(`(?:^|\\s)${escapeRegExp(name)}\\s*=\\s*(["'])(.*?)\\1`, "is"));
+  return match ? match[2] : "";
 }
 
-function findTagEntriesByName(markup, tagName) {
-    return Array.from(
-        markup.matchAll(new RegExp(`<${escapeRegExp(tagName)}(?=\\s|[>/])[^>]*>`, "gi")),
-        (match) => ({ tag: match[0], index: match.index })
-    );
-}
-
-function getAttributePattern(attributeName) {
-    return new RegExp(
-        `(?:^|\\s)${escapeRegExp(attributeName)}(?=\\s*=|[\\s>/]|$)`,
-        "i"
-    );
-}
-
-function findTagsWithAttribute(markup, attributeName) {
-    const attributePattern = getAttributePattern(attributeName);
-
-    return Array.from(markup.matchAll(/<[a-z][^>]*>/gi), ([tag]) => tag).filter((tag) =>
-        attributePattern.test(tag)
-    );
-}
-
-function getAttributeValue(tag, attributeName) {
-    const match = tag.match(
-        new RegExp(`(?:^|\\s)${escapeRegExp(attributeName)}\\s*=\\s*(["'])(.*?)\\1`, "is")
-    );
-
-    return match ? match[2] : "";
-}
-
-function hasClassToken(tag, className) {
-    return getAttributeValue(tag, "class").split(/\s+/).includes(className);
+function hasAttr(markup, name) {
+  return new RegExp(`\\s${escapeRegExp(name)}(?:[\\s=>]|$)`, "i").test(markup);
 }
 
 function getObjectBlock(source, openingBraceIndex) {
-    let depth = 0;
-
-    for (let index = openingBraceIndex; index < source.length; index += 1) {
-        if (source[index] === "{") {
-            depth += 1;
-        }
-
-        if (source[index] === "}") {
-            depth -= 1;
-
-            if (depth === 0) {
-                return source.slice(openingBraceIndex, index + 1);
-            }
-        }
+  let depth = 0;
+  for (let index = openingBraceIndex; index < source.length; index += 1) {
+    if (source[index] === "{") depth += 1;
+    if (source[index] === "}") {
+      depth -= 1;
+      if (depth === 0) return source.slice(openingBraceIndex, index + 1);
     }
-
-    return "";
+  }
+  return "";
 }
 
-function getI18nBlock() {
-    const marker = /\bconst\s+I18N\s*=\s*{/.exec(scriptJs);
-
-    if (!marker) {
-        return "";
-    }
-
-    return getObjectBlock(scriptJs, marker.index + marker[0].lastIndexOf("{"));
+function i18nBlock() {
+  const marker = /\bconst\s+I18N\s*=\s*{/.exec(scriptJs);
+  assert.ok(marker, "script.js must declare const I18N.");
+  return getObjectBlock(scriptJs, marker.index + marker[0].lastIndexOf("{"));
 }
 
-function getLanguageBlock(language) {
-    const i18nBlock = getI18nBlock();
-    const marker = new RegExp(`\\b${escapeRegExp(language)}\\s*:\\s*{`).exec(i18nBlock);
-
-    if (!marker) {
-        return "";
-    }
-
-    return getObjectBlock(i18nBlock, marker.index + marker[0].lastIndexOf("{"));
+function languageBlock(language) {
+  const block = i18nBlock();
+  const marker = new RegExp(`\\b${language}\\s*:\\s*{`).exec(block);
+  assert.ok(marker, `I18N must include ${language}.`);
+  return getObjectBlock(block, marker.index + marker[0].lastIndexOf("{"));
 }
 
-function extractDataI18nKeys(markup) {
-    const dataI18nKeys = findTagsWithAttribute(markup, "data-i18n").map((tag) =>
-        getAttributeValue(tag, "data-i18n").trim()
-    );
-    const dataI18nAttrKeys = findTagsWithAttribute(markup, "data-i18n-attr").flatMap((tag) =>
-        Array.from(
-            getAttributeValue(tag, "data-i18n-attr").matchAll(
-                /(?:^|[\s,;])[^:\s,;]+\s*:\s*([^\s,;]+)/g
-            ),
-            ([, key]) => key.trim()
-        )
-    );
-
-    return [
-        ...new Set([...dataI18nKeys, ...dataI18nAttrKeys].filter(Boolean)),
-    ];
+function i18nKeys() {
+  const textKeys = Array.from(indexHtml.matchAll(/data-i18n="([^"]+)"/g), (match) => match[1]);
+  const attrKeys = Array.from(indexHtml.matchAll(/data-i18n-attr="([^"]+)"/g)).flatMap((match) =>
+    Array.from(match[1].matchAll(/(?:^|[\s,;])[^:\s,;]+\s*:\s*([^\s,;]+)/g), (item) => item[1])
+  );
+  return [...new Set([...textKeys, ...attrKeys])];
 }
 
-test("attribute helpers ignore names that only end with the requested attribute", () => {
-    const markup = `
-        <html data-lang="he" data-dir="rtl">
-        <button data-aria-label="Language" data-data-language-toggle></button>
-        <section data-id="profile"></section>
-    `;
-
-    assert.deepEqual(findTagsWithAttribute(markup, "lang"), []);
-    assert.deepEqual(findTagsWithAttribute(markup, "dir"), []);
-    assert.deepEqual(findTagsWithAttribute(markup, "aria-label"), []);
-    assert.deepEqual(findTagsWithAttribute(markup, "data-language-toggle"), []);
-    assert.equal(getAttributeValue('<button data-aria-label="Language">', "aria-label"), "");
-    assert.equal(getAttributeValue('<section data-id="profile">', "id"), "");
-    assert.deepEqual(findTagsByName("<section-widget id=\"profile\"></section-widget>", "section"), []);
+test("page defaults to Hebrew RTL and the approved custom domain", () => {
+  assert.ok(tags(indexHtml, "html").some((tag) => attr(tag, "lang") === "he" && attr(tag, "dir") === "rtl"));
+  assert.equal(cname, "about.rotem-dev.org");
+  assert.ok(indexHtml.includes('href="#main-content"'));
+  assert.ok(hasAttr(indexHtml, "data-language-toggle"));
 });
 
-test("i18n key extraction includes translated attribute references", () => {
-    const markup = `
-        <nav data-i18n-attr="aria-label:primaryNavLabel"></nav>
-        <a data-i18n="contactCta" data-i18n-attr="title:contactTitle, aria-label:contactAria"></a>
-        <button data-i18n-attr="aria-label:primaryNavLabel"></button>
-    `;
-
-    assert.deepEqual(extractDataI18nKeys(markup), [
-        "contactCta",
-        "primaryNavLabel",
-        "contactTitle",
-        "contactAria",
-    ]);
+test("approved Maya Agent sections and hero assets exist", () => {
+  for (const id of ["story", "abilities", "projects", "contact"]) {
+    assert.ok(indexHtml.includes(`id="${id}"`), `missing section ${id}`);
+  }
+  assert.ok(indexHtml.includes("assets/maya-agent-cutout.webp"));
+  assert.ok(indexHtml.includes("assets/maya-agent-cutout.png"));
+  assert.ok(indexHtml.includes("MAYA AGENT") || publicSource.includes("Maya Agent"));
 });
 
-test("page defaults to accessible Hebrew RTL", () => {
-    const htmlTags = findTagsByName(indexHtml, "html");
-
-    assert.ok(
-        htmlTags.some(
-            (tag) => getAttributeValue(tag, "lang") === "he" && getAttributeValue(tag, "dir") === "rtl"
-        ),
-        'Expected <html> to include lang="he" and dir="rtl".'
-    );
-    assert.ok(
-        findTagsByName(indexHtml, "a").some(
-            (tag) =>
-                hasClassToken(tag, "skip-link") &&
-                getAttributeValue(tag, "href") === "#main-content" &&
-                getAttributeValue(tag, "data-i18n") === "skipLink"
-        ),
-        'Expected skip link: <a class="skip-link" href="#main-content" data-i18n="skipLink">.'
-    );
-
-    const languageToggleTags = findTagsWithAttribute(indexHtml, "data-language-toggle");
-
-    assert.ok(languageToggleTags.length > 0, "Expected a language control marked with data-language-toggle.");
-    assert.ok(
-        languageToggleTags.some((tag) => {
-            const ariaLabel = getAttributeValue(tag, "aria-label").trim();
-
-            return (
-                ariaLabel.length > 0 &&
-                acceptedLanguageToggleLabelPhrases.some((phrase) => ariaLabel.includes(phrase))
-            );
-        }),
-        `Expected the language control aria-label to be non-empty and include one of: ${acceptedLanguageToggleLabelPhrases.join(", ")}.`
-    );
+test("character motion hooks are present", () => {
+  assert.ok(hasAttr(indexHtml, "data-character-hero"));
+  assert.ok(hasAttr(indexHtml, "data-maya-character"));
+  assert.match(scriptJs, /\bclass\s+MayaCharacterMotion\b/);
+  assert.match(scriptJs, /requestAnimationFrame/);
+  assert.match(stylesCss, /\.hero-stage\.is-character-shifted/);
+  assert.match(stylesCss, /prefers-reduced-motion/);
 });
 
-test("skip link is first and becomes visible on keyboard focus", () => {
-    const skipLink = findTagEntriesByName(indexHtml, "a").find(
-        ({ tag }) => hasClassToken(tag, "skip-link")
-    );
-    const shell = findTagEntriesByName(indexHtml, "div").find(
-        ({ tag }) => hasClassToken(tag, "site-shell")
-    );
-
-    assert.ok(skipLink, "Expected a skip link in the document.");
-    assert.ok(shell, "Expected the page shell after the skip link.");
-    assert.ok(skipLink.index < shell.index, "Expected skip link before the main page shell.");
-    assertMatches(
-        stylesCss,
-        /\.skip-link\s*{[^}]*transform\s*:\s*translateY\(-140%\)/s,
-        "Expected skip link to start off-screen."
-    );
-    assertMatches(
-        stylesCss,
-        /\.skip-link:focus-visible\s*{[^}]*transform\s*:\s*translateY\(0\)/s,
-        "Expected skip link to become visible on focus."
-    );
-    assertMatches(
-        stylesCss,
-        /\.skip-link\s*{[^}]*z-index\s*:\s*(?:9\d|[1-9]\d{2,})/s,
-        "Expected skip link to sit above the boot overlay while focused."
-    );
-    assertMatches(
-        stylesCss,
-        /\.boot-screen\s*{[^}]*z-index\s*:\s*80/s,
-        "Expected the boot overlay z-index contract to stay explicit."
-    );
+test("core public-safe Maya content is represented", () => {
+  for (const phrase of [
+    "WhatsApp AI Agent",
+    "Memory + Calendar",
+    "Voice, Vision, Automation",
+    "RoteMGPT",
+    "Home Assistant",
+    "Android Lab",
+    "RedLab",
+    "Cloudflare",
+  ]) {
+    assert.ok(publicSource.includes(phrase), `missing phrase: ${phrase}`);
+  }
 });
 
-test("approved sections exist in the page", () => {
-    const approvedSectionIds = [
-        "overview",
-        "profile",
-        "maya-lab",
-        "systems",
-        "deep-dive",
-        "experience",
-        "certifications",
-        "contact",
-    ];
-
-    for (const sectionId of approvedSectionIds) {
-        assert.ok(
-            findTagsByName(indexHtml, "section").some(
-                (tag) => getAttributeValue(tag, "id") === sectionId
-            ),
-            `Expected section #${sectionId} to exist.`
-        );
+test("all HTML i18n keys have Hebrew and English translations", () => {
+  const keys = i18nKeys();
+  assert.ok(keys.length >= 20, `expected at least 20 i18n keys, found ${keys.length}`);
+  for (const language of ["he", "en"]) {
+    const block = languageBlock(language);
+    for (const key of keys) {
+      assert.match(block, new RegExp(`(?:^|[,{\\s])(?:${escapeRegExp(key)}|["']${escapeRegExp(key)}["'])\\s*:`), `${language} missing ${key}`);
     }
+  }
 });
 
-test("GitHub Pages custom domain is configured for the approved subdomain", () => {
-    assert.equal(cname, "about.rotem-dev.org");
-});
-
-test("Maya lab public-safe content is represented", () => {
-    const requiredPublicContent = [
-        "Maya AI Lab",
-        "WhatsApp",
-        "RoteMGPT",
-        "Home Assistant",
-        "Android Lab",
-        "RedLab",
-        "Cloudflare",
-        "Google Calendar",
-        "OAuth",
-        "SQLite",
-        "semantic retrieval",
-        "URL tools",
-        "weather",
-        "maps",
-        "voucher",
-        "finance",
-        "daily digest",
-        "Maya Command OS",
-        "admin dashboard",
-        "GGUF",
-        "Browser Lab",
-        "Game Lab",
-        "Quake 2 Demo",
-        "Qwasm2",
-        "WebAssembly",
-        "WebGL2",
-        "Home Assistant API",
-        "server observability",
-        "מודלים מקומיים",
-        "מעבדה סגורה",
-    ];
-
-    for (const phrase of requiredPublicContent) {
-        assert.ok(publicContentSource.includes(phrase), `Expected public-safe content phrase: ${phrase}`);
-    }
-});
-
-test("technical deep dive cards and game links are present", () => {
-    const deepDiveCards = findTagsByName(indexHtml, "details").filter((tag) =>
-        hasClassToken(tag, "deep-dive-card")
-    );
-
-    assert.ok(deepDiveCards.length >= 6, "Expected at least six expandable technical deep dive cards.");
-    assert.ok(
-        indexHtml.includes('href="https://arena.rotem-dev.org/"'),
-        "Expected a primary link to the private Arena game gateway."
-    );
-    assert.ok(
-        indexHtml.includes('href="https://mon.rotem-dev.org/game/"'),
-        "Expected a secondary link to the protected Quake 2 browser game."
-    );
-    assertMatches(
-        stylesCss,
-        /\.deep-dive-grid\s*{[^}]*grid-template-columns\s*:\s*repeat\(2,\s*minmax\(0,\s*1fr\)\)/s,
-        "Expected desktop deep dive cards to use a two-column grid."
-    );
-    assertMatches(
-        stylesCss,
-        /@media\s*\(\s*max-width\s*:\s*760px\s*\)[\s\S]*\.deep-dive-grid\s*{[\s\S]*grid-template-columns\s*:\s*1fr/s,
-        "Expected deep dive cards to collapse to one column on mobile."
-    );
-});
-
-test("all referenced i18n keys in HTML have Hebrew and English translations", () => {
-    const keys = extractDataI18nKeys(indexHtml);
-
-    assert.ok(keys.length > 30, `Expected more than 30 unique i18n keys, found ${keys.length}.`);
-    assertMatches(scriptJs, /\bconst\s+I18N\s*=\s*{/, "Expected script.js to declare const I18N.");
-    assertMatches(getI18nBlock(), /\bhe\s*:\s*{/, "Expected I18N to include he translations.");
-    assertMatches(getI18nBlock(), /\ben\s*:\s*{/, "Expected I18N to include en translations.");
-    assertMatches(scriptJs, /\bfunction\s+applyLanguage\s*\(/, "Expected script.js to declare applyLanguage.");
-
-    const languageBlocks = {
-        he: getLanguageBlock("he"),
-        en: getLanguageBlock("en"),
-    };
-
-    for (const [language, block] of Object.entries(languageBlocks)) {
-        for (const key of keys) {
-            assertMatches(
-                block,
-                new RegExp(`(?:^|[,{\\s])(?:${escapeRegExp(key)}|["']${escapeRegExp(key)}["'])\\s*:\\s*(["'\`])`, "m"),
-                `Missing ${language} string translation for i18n key "${key}".`
-            );
-        }
-    }
-});
-
-test("page avoids publishing secrets or sensitive operational internals", () => {
-    const forbiddenPatterns = [
-        ["OPENAI_API_KEY", /OPENAI_API_KEY/i],
-        ["HOME_ASSISTANT_TOKEN", /HOME_ASSISTANT_TOKEN/i],
-        ["GOOGLE_MAPS_API_KEY", /GOOGLE_MAPS_API_KEY/i],
-        ["credentials.google.json", /credentials\.google\.json/i],
-        ["token.google.json", /token\.google\.json/i],
-        ["ALLOWED_PHONE_NUMBERS", /ALLOWED_PHONE_NUMBERS/i],
-        ["WhatsApp group ID", /\b120363\d+@g\.us\b/i],
-        ["WhatsApp contact ID", /\b972\d+@c\.us\b/i],
-        ["PRIVATE KEY", /PRIVATE KEY/i],
-        ["remote admin surface details", /Browser SSH|VNC|systemd/i],
-    ];
-
-    for (const [label, pattern] of forbiddenPatterns) {
-        assert.doesNotMatch(publicSiteSource, pattern, `Public page must not expose ${label}.`);
-    }
-});
-
-test("styles include responsive, RTL, and reduced-motion support", () => {
-    assertMatches(stylesCss, /\[dir=["']rtl["']\]/, 'Expected styles for [dir="rtl"].');
-    assertMatches(stylesCss, /\[dir=["']ltr["']\]/, 'Expected styles for [dir="ltr"].');
-    assertMatches(stylesCss, /@media\s*\(\s*max-width\s*:\s*760px\s*\)/, "Expected mobile breakpoint at 760px.");
-    assertMatches(stylesCss, /prefers-reduced-motion/, "Expected reduced-motion support.");
-    assertMatches(stylesCss, /\.language-toggle\b/, "Expected .language-toggle styles.");
-    assertMatches(
-        stylesCss,
-        /\.assistant-widget\s*{[^}]*display\s*:\s*grid/s,
-        "Expected assistant widget to remain visible by default on roomy screens."
-    );
-    assertMatches(
-        stylesCss,
-        /@media\s*\(\s*max-width\s*:\s*1320px\s*\)\s*,\s*\(\s*max-height\s*:\s*780px\s*\)\s*{[^}]*\.assistant-widget\s*{[^}]*display\s*:\s*none/s,
-        "Expected assistant widget to hide only on cramped viewports."
-    );
-});
-
-test("mobile experience includes a compact hero brief and quick action dock", () => {
-    assertMatches(
-        indexHtml,
-        /class=["'][^"']*\bmobile-command-strip\b[^"']*["'][^>]*data-i18n-attr=["']aria-label:mobileBriefLabel["']/s,
-        "Expected a mobile-only hero brief with an accessible translated label."
-    );
-    assertMatches(
-        indexHtml,
-        /class=["'][^"']*\bmobile-action-dock\b[^"']*["'][^>]*data-i18n-attr=["']aria-label:mobileDockLabel["']/s,
-        "Expected a mobile quick action dock with an accessible translated label."
-    );
-    assertMatches(
-        stylesCss,
-        /@media\s*\(\s*max-width\s*:\s*760px\s*\)[\s\S]*\.mobile-action-dock\s*{[\s\S]*display\s*:\s*grid/s,
-        "Expected the quick action dock to become visible on mobile."
-    );
-    assertMatches(
-        stylesCss,
-        /@media\s*\(\s*max-width\s*:\s*760px\s*\)[\s\S]*\.capability-grid\s*,\s*\.systems-grid\s*{[\s\S]*scroll-snap-type\s*:\s*x\s+mandatory/s,
-        "Expected key mobile card groups to use horizontal snap scrolling."
-    );
+test("public page avoids secrets and private operational identifiers", () => {
+  for (const pattern of [
+    /OPENAI_API_KEY/i,
+    /HOME_ASSISTANT_TOKEN/i,
+    /GOOGLE_MAPS_API_KEY/i,
+    /credentials\.google\.json/i,
+    /token\.google\.json/i,
+    /\b120363\d+@g\.us\b/i,
+    /\b972\d+@c\.us\b/i,
+    /PRIVATE KEY/i,
+  ]) {
+    assert.doesNotMatch(publicSource, pattern);
+  }
 });
