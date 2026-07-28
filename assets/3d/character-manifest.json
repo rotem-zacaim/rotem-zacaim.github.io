@@ -1,4 +1,6 @@
 {
-    "ready": false,
-    "model": "assets/3d/rotem-z-rabbit.glb"
+    "ready": true,
+    "model": "assets/3d/rotem-z-rabbit.glb?v=20260728-rabbit-live",
+    "source": "Purchased rabbit mascot GLB",
+    "notes": "Live rabbit mascot asset. The site keeps scroll-based model movement and is ready for a future rigged character."
 }

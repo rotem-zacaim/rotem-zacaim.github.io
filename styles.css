@@ -15,6 +15,11 @@
     --radius: 8px;
     --shadow: 0 24px 80px rgba(0, 0, 0, 0.42);
     --max-width: 1500px;
+    --page-gutter: clamp(1rem, 3vw, 3rem);
+    --character-rail-width: clamp(20rem, 35vw, 37rem);
+    --content-max: 920px;
+    --content-width: min(var(--content-max), calc(100% - var(--character-rail-width) - var(--page-gutter)));
+    --character-dock-shift: 0rem;
 }
 
 *,
@@ -220,11 +225,12 @@ main {
     position: relative;
     isolation: isolate;
     display: grid;
-    grid-template-columns: minmax(0, 0.92fr) minmax(320px, 0.86fr);
+    grid-template-columns: minmax(0, 1fr);
     align-items: center;
-    width: min(var(--max-width), calc(100% - clamp(2rem, 6vw, 6rem)));
+    width: var(--content-width);
     min-height: min(860px, 92svh);
-    margin: 0 auto;
+    margin-inline-start: var(--page-gutter);
+    margin-inline-end: auto;
     padding: clamp(7rem, 11vw, 10rem) 0 clamp(3rem, 6vw, 5rem);
 }
 
@@ -324,17 +330,17 @@ main {
 
 .character-canvas {
     position: absolute;
-    right: max(1vw, calc((100vw - var(--max-width)) / 2));
+    right: max(0.4rem, calc(var(--page-gutter) * 0.45));
     bottom: 0;
-    width: min(48vw, 660px);
+    width: min(44vw, 620px);
     height: min(84svh, 790px);
 }
 
 .stage-ring {
     position: absolute;
-    right: max(2vw, calc((100vw - var(--max-width)) / 2 + 1rem));
+    right: max(0.6rem, calc(var(--page-gutter) * 0.7));
     bottom: 1.8rem;
-    width: min(38vw, 560px);
+    width: min(36vw, 520px);
     height: 6.2rem;
     border: 1px solid rgba(255, 79, 95, 0.34);
     border-radius: 50%;
@@ -347,7 +353,7 @@ main {
 
 .character-static-fallback {
     position: absolute;
-    right: 8vw;
+    right: calc(var(--character-rail-width) - 18rem);
     bottom: 18svh;
     display: block;
     padding: 0.7rem 0.9rem;
@@ -363,8 +369,17 @@ main {
 }
 
 body.is-character-docked .character-guide {
-    transform: translateX(28vw) scale(0.72);
-    opacity: 0.24;
+    transform: translateX(var(--character-dock-shift)) scale(1);
+    opacity: 1;
+}
+
+body.is-character-walking .stage-ring {
+    box-shadow: 0 0 42px rgba(255, 79, 95, 0.28), 0 0 24px rgba(102, 227, 255, 0.1);
+}
+
+body.is-character-pointing .stage-ring {
+    border-color: rgba(102, 227, 255, 0.45);
+    box-shadow: 0 0 46px rgba(102, 227, 255, 0.18), 0 0 36px rgba(255, 79, 95, 0.22);
 }
 
 .no-webgl-character .character-canvas,
@@ -383,8 +398,9 @@ body.is-character-docked .character-guide {
 .next-signal,
 .section,
 .contact-section {
-    width: min(var(--max-width), calc(100% - clamp(2rem, 6vw, 6rem)));
-    margin: 0 auto;
+    width: var(--content-width);
+    margin-inline-start: var(--page-gutter);
+    margin-inline-end: auto;
 }
 
 .next-signal {
@@ -793,19 +809,24 @@ body.is-character-docked .character-guide {
 
 [dir="rtl"] .character-canvas {
     right: auto;
-    left: max(1vw, calc((100vw - var(--max-width)) / 2));
+    left: max(0.4rem, calc(var(--page-gutter) * 0.45));
 }
 
 [dir="rtl"] .stage-ring {
     right: auto;
-    left: max(2vw, calc((100vw - var(--max-width)) / 2 + 1rem));
+    left: max(0.6rem, calc(var(--page-gutter) * 0.7));
 }
 
 [dir="rtl"] body.is-character-docked .character-guide {
-    transform: translateX(-28vw) scale(0.72);
+    transform: translateX(calc(var(--character-dock-shift) * -1)) scale(0.88);
 }
 
 @media (max-width: 1180px) {
+    :root {
+        --character-rail-width: clamp(15rem, 32vw, 22rem);
+        --content-max: 760px;
+    }
+
     .topnav {
         gap: 1rem;
     }
@@ -817,12 +838,22 @@ body.is-character-docked .character-guide {
     }
 
     .character-canvas {
-        width: min(52vw, 520px);
+        right: max(0.25rem, calc(var(--page-gutter) * 0.35));
+        width: min(46vw, 500px);
         height: min(60svh, 620px);
     }
 
     .stage-ring {
-        width: min(42vw, 440px);
+        right: max(0.4rem, calc(var(--page-gutter) * 0.55));
+        width: min(38vw, 420px);
+    }
+
+    [dir="rtl"] .character-canvas {
+        left: max(0.25rem, calc(var(--page-gutter) * 0.35));
+    }
+
+    [dir="rtl"] .stage-ring {
+        left: max(0.4rem, calc(var(--page-gutter) * 0.55));
     }
 
     .section {
@@ -888,6 +919,13 @@ body.is-character-docked .character-guide {
 }
 
 @media (max-width: 720px) {
+    :root {
+        --page-gutter: 0.85rem;
+        --character-rail-width: clamp(9.75rem, 42vw, 10.6rem);
+        --content-width: calc(100% - var(--character-rail-width) - var(--page-gutter));
+        --character-dock-shift: 0rem;
+    }
+
     body {
         background-size: 34px 34px, 34px 34px, auto;
         padding-bottom: 5.5rem;
@@ -907,7 +945,9 @@ body.is-character-docked .character-guide {
     .next-signal,
     .section,
     .contact-section {
-        width: min(100% - 1.5rem, 42rem);
+        width: max(9.5rem, var(--content-width));
+        margin-inline-start: var(--page-gutter);
+        margin-inline-end: auto;
     }
 
     .cinematic-hero {
@@ -915,15 +955,15 @@ body.is-character-docked .character-guide {
         flex-direction: column;
         align-items: stretch;
         min-height: auto;
-        padding: 3.4rem 0 1.8rem;
+        padding: 4.2rem 0 1.8rem;
     }
 
     .hero-copy h1 {
-        font-size: clamp(3.6rem, 16vw, 5rem);
+        font-size: clamp(2.9rem, 13vw, 4.35rem);
     }
 
     .hero-lede {
-        max-width: 23rem;
+        max-width: 21rem;
         font-size: 1.18rem;
     }
 
@@ -945,53 +985,57 @@ body.is-character-docked .character-guide {
     }
 
     .character-guide {
-        position: relative;
-        order: -1;
-        inset: auto;
-        height: 33svh;
-        min-height: 15.5rem;
-        max-width: 100%;
-        overflow: hidden;
-        margin-bottom: 1rem;
-        opacity: 0.9;
-        transform: none;
+        position: fixed;
+        inset: 0;
+        z-index: 3;
+        overflow: visible;
+        opacity: 1;
     }
 
     .character-canvas {
-        right: 50%;
-        bottom: -0.25rem;
-        transform: translateX(50%);
-        width: min(82vw, 350px);
-        height: 33svh;
-        min-height: 15.5rem;
+        inset-block-start: 5.15rem;
+        inset-inline-end: 0.2rem;
+        right: 0.2rem;
+        left: auto;
+        bottom: auto;
+        width: 9.4rem;
+        height: 13.8rem;
+        min-height: 0;
+        transform: none;
     }
 
     [dir="rtl"] .character-canvas {
-        left: 50%;
+        inset-inline-start: 0.2rem;
+        inset-inline-end: auto;
+        left: 0.2rem;
         right: auto;
-        transform: translateX(-50%);
+        transform: none;
     }
 
     .stage-ring {
-        right: 50%;
-        bottom: 0.25rem;
-        transform: translateX(50%) perspective(780px) rotateX(68deg);
-        width: min(66vw, 300px);
-        height: 4rem;
-        opacity: 0.72;
+        inset-block-start: 17rem;
+        inset-inline-end: calc(var(--character-rail-width) - 6.2rem);
+        right: calc(var(--character-rail-width) - 6.2rem);
+        left: auto;
+        bottom: auto;
+        transform: perspective(780px) rotateX(68deg);
+        width: 6.2rem;
+        height: 2.4rem;
+        opacity: 0.8;
     }
 
     [dir="rtl"] .stage-ring {
-        left: 50%;
+        inset-inline-start: calc(var(--character-rail-width) - 6.2rem);
+        inset-inline-end: auto;
+        left: calc(var(--character-rail-width) - 6.2rem);
         right: auto;
-        transform: translateX(-50%) perspective(780px) rotateX(68deg);
+        transform: perspective(780px) rotateX(68deg);
     }
 
     body.is-character-docked .character-guide,
     [dir="rtl"] body.is-character-docked .character-guide {
-        transform: scale(0.82);
-        transform-origin: center top;
-        opacity: 0.34;
+        transform: none;
+        opacity: 1;
     }
 
     .desktop-label {

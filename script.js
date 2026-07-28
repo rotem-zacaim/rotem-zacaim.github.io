@@ -1,5 +1,42 @@
 const CHARACTER_GLB_URL = "assets/3d/rotem-z-rabbit.glb";
 const CHARACTER_MANIFEST_URL = "assets/3d/character-manifest.json";
+const EXTERNAL_CHARACTER_MODEL_NAME = "rotem-z-rabbit-glb";
+const CHARACTER_ANIMATION_NAMES = {
+    idle: ["Idle", "idle", "Breathing", "Stand"],
+    walk: ["WalkToSide", "Walk", "walk", "SideStep"],
+    pointLeft: ["PointLeft"],
+    pointRight: ["PointRight"],
+    point: ["Point", "point"],
+};
+const CHARACTER_STATE_THRESHOLDS = {
+    dock: 0.04,
+    walkEnd: 0.3,
+};
+const EXTERNAL_SCROLL_MOTION = {
+    desktopTravel: 0.34,
+    mobileTravel: 0.3,
+    desktopSideBias: 0.28,
+    mobileSideBias: 0.16,
+    pointSettle: 0.08,
+    yaw: 0.22,
+    lean: 0.1,
+    bounce: 0.08,
+};
+const RIGGED_BONE_NAMES = {
+    head: "Head",
+    neck: "Neck",
+    spine: "Spine",
+    spine1: "Spine1",
+    spine2: "Spine2",
+    leftHand: "LeftHand",
+    leftForeArm: "LeftForeArm",
+    leftArm: "LeftArm",
+    leftLeg: "LeftLeg",
+    rightHand: "RightHand",
+    rightForeArm: "RightForeArm",
+    rightArm: "RightArm",
+    rightLeg: "RightLeg",
+};
 let THREE;
 let GLTFLoader;
 
@@ -15,78 +52,78 @@ const I18N = {
         languageToggleLabel: "Switch to Hebrew",
         topbarContact: "Email",
         heroTitle: "Rotem Zacaim",
-        heroLede: "Security operations, AI automation, and practical systems built for real workflows.",
+        heroLede: "Security operations, AI automation, and production-minded systems for teams that need clarity under pressure.",
         heroActionsLabel: "Primary actions",
         heroPrimary: "Start a conversation",
         heroSecondary: "View systems",
         heroFocusLabel: "Focus areas",
         heroFocus: "Detect. Automate. Operate.",
         previewLabel: "Profile preview",
-        previewTitle: "I build the systems that keep security teams effective.",
-        previewCopy: "From SOC workflows to AI-powered automations, the work is built for clarity, speed, and control.",
-        profileTitle: "Operator profile",
-        profileIntro: "I run security operations as a system: first signal, final response, clear ownership, and repeatable outcomes.",
-        profileCopyOne: "My work sits between Security Operations, infrastructure, automation, and AI. I care about the full path from alert to action, not only the dashboard that shows the alert.",
-        profileCopyTwo: "That means triage discipline, better enrichment, cleaner handoffs, and tooling that removes friction instead of adding another noisy layer.",
+        previewTitle: "I turn noisy operations into reliable response systems.",
+        previewCopy: "From SOC workflows to AI-powered automations, I design and ship tools that reduce noise, speed up response, and keep control visible.",
+        profileTitle: "Security operator. Builder. Owner.",
+        profileIntro: "I work where alerts, infrastructure, code, and people meet.",
+        profileCopyOne: "My strength is turning messy operational reality into systems a team can actually use: clear triage, useful context, repeatable response, and automation that earns trust.",
+        profileCopyTwo: "I care about the handoff from first signal to final action. Tools are useful only when they reduce noise, explain decisions, and keep ownership visible.",
         operatorRailLabel: "Operator principles",
-        operateTitle: "Operate",
-        operateCopy: "Lead SOC workflows and own incidents end to end.",
+        operateTitle: "Investigate",
+        operateCopy: "Follow the signal until the team knows what matters and why.",
         automateTitle: "Automate",
-        automateCopy: "Build automations that remove friction and raise the bar.",
+        automateCopy: "Turn repeated work into workflows with context, guardrails, and clean handoffs.",
         ownTitle: "Own",
-        ownCopy: "Take responsibility for outcomes, not only tasks.",
+        ownCopy: "Stay close to the result: what changed, what improved, and what still needs attention.",
         labTitle: "AI Lab",
-        labIntro: "A focused lab for building and testing AI workflows that support real security operations.",
+        labIntro: "A focused lab for building AI workflows that support real operators instead of becoming another dashboard to watch.",
         projectLabel: "Project",
-        mayaCopy: "Maya is an AI workflow project for research assistance, alert context, response support, and operational learning. It is one project in the lab, not the site.",
+        mayaCopy: "Maya is one case study from my AI lab: a Hebrew-first personal agent that connects conversation to useful tools like memory, calendar, voice, images, monitoring, Cloudflare, and local models.",
         labSignalOne: "Research assistance",
-        labOutcomeOne: "Faster signal analysis",
+        labOutcomeOne: "Faster understanding",
         labSignalTwo: "Context enrichment",
-        labOutcomeTwo: "Stronger decisions",
+        labOutcomeTwo: "Better decisions",
         labSignalThree: "Response support",
-        labOutcomeThree: "Operator leverage",
+        labOutcomeThree: "More operator leverage",
         systemsTitle: "Systems map",
-        systemsIntro: "The operating system for security work: tight feedback loops, clear handoffs, and disciplined change.",
+        systemsIntro: "The way I build: detect the signal, enrich the context, automate the repeatable part, and deploy carefully.",
         systemsMapLabel: "Systems map",
         systemSocTitle: "SOC workflow",
-        systemSocCopy: "Triage, investigate, and respond with a consistent operating cadence.",
+        systemSocCopy: "Structure triage, investigation, and response so every alert has a path.",
         systemAlertTitle: "Alert enrichment",
-        systemAlertCopy: "Add context, threat intel, and business signals to turn noise into insight.",
+        systemAlertCopy: "Add useful context so the team can separate noise from work that matters.",
         systemAiTitle: "AI automations",
-        systemAiCopy: "Automate repeatable workflows and support operator decision-making.",
+        systemAiCopy: "Use AI where it helps operators move faster without hiding the reasoning.",
         systemDeployTitle: "Deployment discipline",
-        systemDeployCopy: "Test, validate, monitor, and improve with guardrails.",
+        systemDeployCopy: "Ship with checks, rollback thinking, monitoring, and clear ownership.",
         deepTitle: "Deep dive",
-        deepIntro: "My workflow is built for clarity, speed, and control. From idea to impact, designed to ship and built to scale.",
+        deepIntro: "Every project starts with the same question: what needs to become calmer, clearer, and easier to operate?",
         workflowUnderstandTitle: "Understand",
-        workflowUnderstandCopy: "Decode the real problem, constraints, users, and mission.",
+        workflowUnderstandCopy: "Find the real workflow, the friction, the constraints, and the owner.",
         workflowArchitectTitle: "Architect",
-        workflowArchitectCopy: "Design structure, data flow, and automation logic first.",
+        workflowArchitectCopy: "Map structure, data flow, permissions, failure modes, and handoffs.",
         workflowBuildTitle: "Build",
-        workflowBuildCopy: "Ship clean code, reliable flows, and tested integrations.",
+        workflowBuildCopy: "Build the smallest useful system with clean code and tested integrations.",
         workflowDeployTitle: "Deploy",
-        workflowDeployCopy: "Use environments, CI/CD, monitoring, and measured rollout.",
+        workflowDeployCopy: "Release with environments, checks, monitoring, and measured rollout.",
         workflowEvolveTitle: "Evolve",
-        workflowEvolveCopy: "Measure, learn, iterate, and make the system sharper.",
+        workflowEvolveCopy: "Measure the result, remove friction, and make the system sharper.",
         experienceTitle: "Experience",
-        experienceIntro: "A focus on reliable systems, automation, and developer experience.",
+        experienceIntro: "Hands-on building across automation, backend systems, AI workflows, and security-minded delivery.",
         roleOneTitle: "Freelance Automation & AI Engineer",
-        roleOneCopy: "Building automation systems, AI agents, and developer tooling for global clients.",
+        roleOneCopy: "Building automations, AI agents, internal tools, and workflow systems for real operational needs.",
         roleTwoTitle: "Lead Developer & Automation Engineer",
-        roleTwoCopy: "Led end-to-end delivery of web platforms and backend services.",
+        roleTwoCopy: "Led end-to-end delivery of web platforms, backend services, integrations, and deployment flows.",
         roleThreeTitle: "Full Stack Developer",
-        roleThreeCopy: "Delivered scalable features and integrations across web applications.",
+        roleThreeCopy: "Delivered product features, APIs, integrations, and maintainable application logic.",
         roleFourTitle: "Software Developer",
-        roleFourCopy: "Built and maintained production systems and internal tools.",
+        roleFourCopy: "Built and maintained production systems, internal tools, and the everyday glue teams rely on.",
         certTitle: "Certifications",
-        certIntro: "Continuous learning. Real-world impact.",
-        contactTitle: "Let's build the next reliable system",
-        contactCopy: "Open to meaningful projects, collaborations, and new challenges that need security thinking, automation, and practical delivery.",
+        certIntro: "Continuous learning, practical execution, and tools that survive real use.",
+        contactTitle: "Bring me the messy workflow",
+        contactCopy: "I like projects where the goal is clear: reduce noise, connect tools, automate responsibly, and give people a system they can trust.",
         contactEmail: "Email Rotem",
         mobileDockLabel: "Quick actions",
         mobileStart: "Start",
         mobileSystems: "Systems",
-        metaDescription: "Rotem Zacaim builds practical security operations, AI automation, and reliable systems for real workflows.",
+        metaDescription: "Rotem Zacaim turns security operations, AI automation, and messy workflows into reliable response systems.",
         pageTitle: "Rotem Zacaim | Security Operations, AI Automation & Systems",
     },
     he: {
@@ -100,78 +137,78 @@ const I18N = {
         languageToggleLabel: "Switch to English",
         topbarContact: "אימייל",
         heroTitle: "Rotem Zacaim",
-        heroLede: "אבטחת מידע תפעולית, אוטומציות AI ומערכות מעשיות שנבנות סביב עבודה אמיתית.",
+        heroLede: "Security operations, אוטומציות AI ומערכות production-minded לצוותים שצריכים בהירות תחת לחץ.",
         heroActionsLabel: "פעולות ראשיות",
         heroPrimary: "נתחיל שיחה",
         heroSecondary: "לראות מערכות",
         heroFocusLabel: "מוקדי עבודה",
         heroFocus: "Detect. Automate. Operate.",
         previewLabel: "תצוגת פרופיל",
-        previewTitle: "אני בונה את המערכות שמחזיקות צוותי אבטחה יעילים.",
-        previewCopy: "מ־SOC workflows ועד אוטומציות AI, העבודה בנויה סביב בהירות, מהירות ושליטה.",
-        profileTitle: "Operator profile",
-        profileIntro: "אני מתייחס ל־security operations כמערכת: מהסיגנל הראשון ועד תגובה, אחריות ותוצאה שחוזרת על עצמה.",
-        profileCopyOne: "העבודה שלי יושבת בין Security Operations, תשתיות, אוטומציה ו־AI. אני מסתכל על כל הדרך מהתרעה לפעולה, לא רק על הדשבורד שמציג אותה.",
-        profileCopyTwo: "זה אומר משמעת triage, העשרה טובה יותר, handoffs נקיים וכלים שמורידים חיכוך במקום להוסיף שכבת רעש.",
+        previewTitle: "אני הופך רעש תפעולי למערכות תגובה אמינות.",
+        previewCopy: "מ־SOC workflows ועד אוטומציות AI, אני מתכנן ובונה כלים שמורידים רעש, מקצרים תגובה ושומרים שליטה גלויה.",
+        profileTitle: "Security operator. Builder. Owner.",
+        profileIntro: "אני עובד בדיוק במקום שבו התרעות, תשתיות, קוד ואנשים נפגשים.",
+        profileCopyOne: "החוזקה שלי היא להפוך מציאות תפעולית מבולגנת למערכות שצוות באמת יכול להשתמש בהן: triage ברור, קונטקסט שימושי, תגובה שחוזרת על עצמה ואוטומציה שאפשר לסמוך עליה.",
+        profileCopyTwo: "אני מסתכל על כל המעבר מהסיגנל הראשון לפעולה האחרונה. כלי טוב הוא כלי שמוריד רעש, מסביר החלטות ומשאיר אחריות ברורה.",
         operatorRailLabel: "עקרונות עבודה",
-        operateTitle: "Operate",
-        operateCopy: "להוביל SOC workflows ולקחת בעלות מקצה לקצה.",
+        operateTitle: "Investigate",
+        operateCopy: "לעקוב אחרי הסיגנל עד שהצוות יודע מה חשוב ולמה.",
         automateTitle: "Automate",
-        automateCopy: "לבנות אוטומציות שמורידות חיכוך ומשפרות סטנדרט.",
+        automateCopy: "להפוך עבודה חוזרת ל־workflows עם קונטקסט, guardrails ו־handoffs נקיים.",
         ownTitle: "Own",
-        ownCopy: "לקחת אחריות על תוצאות, לא רק על משימות.",
+        ownCopy: "להישאר קרוב לתוצאה: מה השתנה, מה השתפר ומה עדיין דורש תשומת לב.",
         labTitle: "AI Lab",
-        labIntro: "מעבדה ממוקדת לבנייה ובדיקה של תהליכי AI שתומכים בעבודת אבטחה אמיתית.",
+        labIntro: "מעבדה ממוקדת לבניית workflows של AI שתומכים באנשים שמפעילים מערכות, לא בעוד דשבורד שצריך להשגיח עליו.",
         projectLabel: "Project",
-        mayaCopy: "Maya היא פרויקט AI workflow למחקר, העשרת התרעות, תמיכה בתגובה ולמידה תפעולית. זה פרויקט אחד במעבדה, לא האתר עצמו.",
+        mayaCopy: "Maya היא case study אחד מתוך מעבדת ה־AI שלי: סוכן אישי בעברית שמחבר שיחה לכלים שימושיים כמו זיכרון, יומן, קול, תמונות, ניטור, Cloudflare ומודלים מקומיים.",
         labSignalOne: "סיוע במחקר",
-        labOutcomeOne: "ניתוח סיגנלים מהיר יותר",
+        labOutcomeOne: "הבנה מהירה יותר",
         labSignalTwo: "העשרת קונטקסט",
-        labOutcomeTwo: "החלטות חזקות יותר",
+        labOutcomeTwo: "החלטות טובות יותר",
         labSignalThree: "תמיכה בתגובה",
-        labOutcomeThree: "מינוף לאופרייטור",
+        labOutcomeThree: "יותר מינוף לאופרייטור",
         systemsTitle: "Systems map",
-        systemsIntro: "מערכת הפעלה לעבודת אבטחה: feedback loops הדוקים, handoffs ברורים ושינוי ממושמע.",
+        systemsIntro: "כך אני בונה: מזהה את הסיגנל, מעשיר את הקונטקסט, מאוטמט את החלק שחוזר על עצמו ומשחרר בזהירות.",
         systemsMapLabel: "מפת מערכות",
         systemSocTitle: "SOC workflow",
-        systemSocCopy: "Triage, חקירה ותגובה בקצב עבודה עקבי.",
+        systemSocCopy: "לבנות triage, חקירה ותגובה כך שלכל התרעה יש מסלול ברור.",
         systemAlertTitle: "Alert enrichment",
-        systemAlertCopy: "הוספת קונטקסט, מודיעין ואותות עסקיים כדי להפוך רעש לתובנה.",
+        systemAlertCopy: "להוסיף קונטקסט שימושי כדי שהצוות יפריד בין רעש לבין עבודה שבאמת חשובה.",
         systemAiTitle: "AI automations",
-        systemAiCopy: "אוטומציה לתהליכים חוזרים ותמיכה בקבלת החלטות.",
+        systemAiCopy: "להשתמש ב־AI איפה שהוא עוזר לאנשים לזוז מהר יותר בלי להסתיר את ההיגיון.",
         systemDeployTitle: "Deployment discipline",
-        systemDeployCopy: "בדיקה, אימות, ניטור ושיפור עם guardrails.",
+        systemDeployCopy: "לשחרר עם בדיקות, מחשבת rollback, ניטור ובעלות ברורה.",
         deepTitle: "Deep dive",
-        deepIntro: "תהליך העבודה שלי בנוי לבהירות, מהירות ושליטה. מרעיון להשפעה, מתוכנן להישלח ולהתרחב.",
+        deepIntro: "כל פרויקט מתחיל באותה שאלה: מה צריך להפוך רגוע יותר, ברור יותר וקל יותר לתפעול?",
         workflowUnderstandTitle: "Understand",
-        workflowUnderstandCopy: "לפענח את הבעיה, המגבלות, המשתמשים והמשימה.",
+        workflowUnderstandCopy: "למצוא את ה־workflow האמיתי, החיכוך, המגבלות והבעלים.",
         workflowArchitectTitle: "Architect",
-        workflowArchitectCopy: "לתכנן מבנה, data flow ולוגיקת אוטומציה לפני קוד.",
+        workflowArchitectCopy: "למפות מבנה, data flow, הרשאות, נקודות כשל ו־handoffs.",
         workflowBuildTitle: "Build",
-        workflowBuildCopy: "לשלוח קוד נקי, flows אמינים ואינטגרציות בדוקות.",
+        workflowBuildCopy: "לבנות את המערכת השימושית הכי קטנה עם קוד נקי ואינטגרציות בדוקות.",
         workflowDeployTitle: "Deploy",
-        workflowDeployCopy: "לעבוד עם environments, CI/CD, ניטור והשקה מדודה.",
+        workflowDeployCopy: "לשחרר עם environments, בדיקות, ניטור והשקה מדודה.",
         workflowEvolveTitle: "Evolve",
-        workflowEvolveCopy: "למדוד, ללמוד, לשפר ולחדד את המערכת.",
+        workflowEvolveCopy: "למדוד את התוצאה, להוריד חיכוך ולחדד את המערכת.",
         experienceTitle: "Experience",
-        experienceIntro: "פוקוס על מערכות אמינות, אוטומציה וחוויית פיתוח.",
+        experienceIntro: "בנייה מעשית של אוטומציה, מערכות backend, workflows של AI ו־delivery עם חשיבה אבטחתית.",
         roleOneTitle: "Freelance Automation & AI Engineer",
-        roleOneCopy: "בניית מערכות אוטומציה, AI agents וכלי פיתוח ללקוחות גלובליים.",
+        roleOneCopy: "בניית אוטומציות, AI agents, כלים פנימיים ומערכות workflow לצרכים תפעוליים אמיתיים.",
         roleTwoTitle: "Lead Developer & Automation Engineer",
-        roleTwoCopy: "הובלת delivery מקצה לקצה של פלטפורמות web ושירותי backend.",
+        roleTwoCopy: "הובלת delivery מקצה לקצה של פלטפורמות web, שירותי backend, אינטגרציות ותהליכי deployment.",
         roleThreeTitle: "Full Stack Developer",
-        roleThreeCopy: "פיתוח יכולות scalable ואינטגרציות באפליקציות web.",
+        roleThreeCopy: "פיתוח פיצ'רים, APIs, אינטגרציות ולוגיקה אפליקטיבית שאפשר לתחזק.",
         roleFourTitle: "Software Developer",
-        roleFourCopy: "בנייה ותחזוקה של מערכות production וכלים פנימיים.",
+        roleFourCopy: "בנייה ותחזוקה של מערכות production, כלים פנימיים והחיבורים היומיומיים שצוותים נשענים עליהם.",
         certTitle: "Certifications",
-        certIntro: "למידה מתמשכת. השפעה בעולם אמיתי.",
-        contactTitle: "בוא נבנה את המערכת האמינה הבאה",
-        contactCopy: "פתוח לפרויקטים משמעותיים, שיתופי פעולה ואתגרים שצריכים חשיבה אבטחתית, אוטומציה וביצוע מעשי.",
+        certIntro: "למידה מתמשכת, ביצוע מעשי וכלים ששורדים שימוש אמיתי.",
+        contactTitle: "תביאו לי את ה־workflow המבולגן",
+        contactCopy: "אני אוהב פרויקטים שבהם המטרה ברורה: להוריד רעש, לחבר כלים, לאוטמט באחריות ולתת לאנשים מערכת שאפשר לסמוך עליה.",
         contactEmail: "אימייל לרותם",
         mobileDockLabel: "פעולות מהירות",
         mobileStart: "התחלה",
         mobileSystems: "מערכות",
-        metaDescription: "רותם זכאים בונה מערכות אבטחת מידע תפעוליות, אוטומציות AI וכלים מעשיים סביב עבודה אמיתית.",
+        metaDescription: "רותם זכאים הופך Security Operations, אוטומציות AI ו־workflows מבולגנים למערכות תגובה אמינות.",
         pageTitle: "רותם זכאים | אבטחת מידע, אוטומציות AI ומערכות",
     },
 };
@@ -234,6 +271,10 @@ function applyLanguage(language) {
     } catch (error) {
         // Local storage can be blocked in privacy-focused contexts.
     }
+
+    window.dispatchEvent(new CustomEvent("site-language-change", {
+        detail: { language: normalized },
+    }));
 }
 
 function getInitialLanguage() {
@@ -254,6 +295,9 @@ class RotemCharacterScene {
         this.visible = true;
         this.model = null;
         this.mixer = null;
+        this.actions = new Map();
+        this.activeAction = null;
+        this.characterState = "idle";
         this.frame = 0;
         this.resize = this.resize.bind(this);
         this.animate = this.animate.bind(this);
@@ -289,10 +333,16 @@ class RotemCharacterScene {
         this.addLighting();
         this.model = this.createProceduralRabbit();
         this.scene.add(this.model);
+        if (new URLSearchParams(window.location.search).has("qa")) {
+            window.__rotemCharacterScene = this;
+        }
+        document.body.dataset.characterState = this.characterState;
+        document.body.dataset.characterSide = this.getCharacterDirection().side;
         document.documentElement.classList.add("using-procedural-character");
 
         this.loadExternalModelFromManifest();
         this.bindEvents();
+        this.updateCharacterState();
         this.resize();
         this.renderFrame();
 
@@ -397,10 +447,14 @@ class RotemCharacterScene {
         pants.position.y = -0.58;
         group.add(pants);
 
-        [-0.33, 0.33].forEach((x) => {
+        const legs = [];
+
+        [-0.33, 0.33].forEach((x, index) => {
             const leg = new THREE.Mesh(new THREE.CapsuleGeometry(0.13, 0.72, 8, 12), darkFur);
+            leg.name = index === 0 ? "left-leg" : "right-leg";
             leg.position.set(x, -1.15, 0.02);
             group.add(leg);
+            legs.push(leg);
 
             const shoe = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.16, 0.66), sole);
             shoe.position.set(x, -1.58, 0.18);
@@ -408,50 +462,100 @@ class RotemCharacterScene {
             group.add(shoe);
         });
 
-        const shirtText = this.createTextPlane("rotem.z");
-        shirtText.position.set(0, 0.18, 0.75);
-        group.add(shirtText);
-
         const armGeometry = new THREE.CapsuleGeometry(0.11, 0.86, 8, 12);
         const pointingArm = new THREE.Mesh(armGeometry, fur);
-        pointingArm.position.set(-0.88, 0.48, 0.2);
-        pointingArm.rotation.z = Math.PI / 2.25;
-        pointingArm.rotation.y = -0.3;
+        pointingArm.name = "pointing-arm";
+        pointingArm.position.set(-0.72, 0.1, 0.08);
+        pointingArm.rotation.z = 0.18;
+        pointingArm.rotation.y = -0.08;
         group.add(pointingArm);
 
         const finger = new THREE.Mesh(new THREE.CapsuleGeometry(0.045, 0.34, 8, 10), fur);
-        finger.position.set(-1.37, 0.66, 0.34);
-        finger.rotation.z = Math.PI / 2;
+        finger.name = "pointing-finger";
+        finger.position.set(-0.95, 0.06, 0.2);
+        finger.rotation.z = 0.28;
+        finger.scale.setScalar(0.52);
         group.add(finger);
 
         const relaxedArm = new THREE.Mesh(armGeometry, fur);
+        relaxedArm.name = "relaxed-arm";
         relaxedArm.position.set(0.78, 0.22, 0.08);
         relaxedArm.rotation.z = -0.35;
         group.add(relaxedArm);
 
         group.position.y = -0.74;
         group.userData.baseY = -0.74;
+        group.userData.parts = {
+            finger,
+            head,
+            leftEar,
+            leftLeg: legs[0],
+            pointingArm,
+            relaxedArm,
+            rightEar,
+            rightLeg: legs[1],
+        };
+        group.userData.motionTargets = {
+            finger: {
+                position: new THREE.Vector3(-1.37, 0.66, 0.34),
+                rotation: new THREE.Euler(0, 0, Math.PI / 2),
+                scale: 1,
+            },
+            pointingArm: {
+                position: new THREE.Vector3(-0.88, 0.48, 0.2),
+                rotation: new THREE.Euler(0, -0.3, Math.PI / 2.25),
+            },
+        };
+
+        Object.values(group.userData.parts).forEach((part) => {
+            if (!part) return;
+            part.userData.restPosition = part.position.clone();
+            part.userData.restRotation = part.rotation.clone();
+            part.userData.restScale = part.scale.clone();
+        });
+
         return group;
     }
 
-    createTextPlane(text) {
-        const label = document.createElement("canvas");
-        label.width = 512;
-        label.height = 192;
-        const ctx = label.getContext("2d");
-        ctx.clearRect(0, 0, label.width, label.height);
-        ctx.fillStyle = "#f4f6f8";
-        ctx.font = "700 88px Arial";
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-        ctx.fillText(text, 256, 96);
+    prepareExternalModel(model) {
+        model.updateMatrixWorld(true);
+        const box = new THREE.Box3().setFromObject(model);
+        const size = box.getSize(new THREE.Vector3());
 
-        const texture = new THREE.CanvasTexture(label);
-        texture.colorSpace = THREE.SRGBColorSpace;
-        const material = new THREE.MeshBasicMaterial({ map: texture, transparent: true });
-        const plane = new THREE.Mesh(new THREE.PlaneGeometry(0.9, 0.34), material);
-        plane.name = "rotem-z-shirt-label";
-        return plane;
+        model.userData.unscaledHeight = Math.max(size.x, size.y, size.z, 0.001);
+        model.userData.unscaledMinY = box.min.y;
+        model.userData.unscaledMaxY = box.max.y;
+
+        model.traverse((object) => {
+            if (!object.isMesh) return;
+            object.frustumCulled = false;
+
+            const materials = Array.isArray(object.material) ? object.material : [object.material];
+            materials.filter(Boolean).forEach((material) => {
+                material.side = THREE.DoubleSide;
+                material.needsUpdate = true;
+            });
+        });
+
+        this.cacheRiggedCharacterBones(model);
+    }
+
+    cacheRiggedCharacterBones(model) {
+        const bones = {};
+
+        Object.entries(RIGGED_BONE_NAMES).forEach(([key, name]) => {
+            bones[key] = model.getObjectByName(name) || null;
+        });
+
+        const riggedBoneList = Object.values(bones).filter(Boolean);
+        riggedBoneList.forEach((bone) => {
+            bone.userData.restQuaternion = bone.quaternion.clone();
+            bone.userData.restPosition = bone.position.clone();
+        });
+
+        model.userData.rigBones = bones;
+        model.userData.riggedBoneList = riggedBoneList;
+        model.userData.isRiggedCharacter = riggedBoneList.length > 0;
     }
 
     loadExternalModelFromManifest() {
@@ -473,9 +577,10 @@ class RotemCharacterScene {
             url,
             (gltf) => {
                 const incoming = gltf.scene;
-                incoming.name = "rotem-z-rabbit-glb";
-                incoming.position.set(0, -1.15, 0);
-                incoming.userData.baseY = -1.15;
+                incoming.name = EXTERNAL_CHARACTER_MODEL_NAME;
+                incoming.position.set(0, -0.8, 0);
+                incoming.userData.baseY = -0.8;
+                this.prepareExternalModel(incoming);
 
                 this.scene.remove(this.model);
                 this.model = incoming;
@@ -486,7 +591,8 @@ class RotemCharacterScene {
 
                 if (gltf.animations.length && !this.reducedMotion) {
                     this.mixer = new THREE.AnimationMixer(this.model);
-                    gltf.animations.forEach((clip) => this.mixer.clipAction(clip).play());
+                    this.configureAnimationActions(gltf.animations);
+                    this.playCharacterAnimation(this.characterState, 0);
                 }
             },
             undefined,
@@ -494,6 +600,212 @@ class RotemCharacterScene {
                 document.documentElement.classList.add("using-procedural-character");
             }
         );
+    }
+
+    configureAnimationActions(clips) {
+        this.actions.clear();
+
+        clips.forEach((clip) => {
+            const clipName = clip.name.toLowerCase();
+            const state = Object.entries(CHARACTER_ANIMATION_NAMES).find(([, names]) =>
+                names.some((name) => clipName.includes(name.toLowerCase()))
+            )?.[0];
+
+            if (!state || this.actions.has(state)) return;
+
+            const action = this.mixer.clipAction(clip);
+            action.enabled = true;
+            action.clampWhenFinished = false;
+            action.timeScale = state === "walk" ? 0.92 : 1;
+            this.actions.set(state, action);
+        });
+    }
+
+    playCharacterAnimation(state, fadeDuration = 0.35) {
+        const directedState = state === "point"
+            ? this.getCharacterDirection().pointDirection === -1
+                ? "pointLeft"
+                : "pointRight"
+            : state;
+        const action = this.actions.get(directedState) || this.actions.get(state) || this.actions.get("idle");
+
+        if (!action || action === this.activeAction) return;
+
+        action.reset().fadeIn(fadeDuration).play();
+
+        if (this.activeAction) {
+            this.activeAction.fadeOut(fadeDuration);
+        }
+
+        this.activeAction = action;
+    }
+
+    setCharacterState(nextState) {
+        if (this.characterState === nextState) return;
+
+        this.characterState = nextState;
+        document.body.dataset.characterState = nextState;
+        document.body.dataset.characterSide = this.getCharacterDirection().side;
+        document.body.classList.toggle("is-character-walking", nextState === "walk");
+        document.body.classList.toggle("is-character-pointing", nextState === "point");
+
+        if (!this.reducedMotion) {
+            this.playCharacterAnimation(nextState);
+        }
+    }
+
+    updateCharacterState() {
+        document.body.dataset.characterSide = this.getCharacterDirection().side;
+
+        const isDocked = this.scrollProgress > CHARACTER_STATE_THRESHOLDS.dock;
+        const nextState = this.scrollProgress <= CHARACTER_STATE_THRESHOLDS.dock
+            ? "idle"
+            : this.scrollProgress < CHARACTER_STATE_THRESHOLDS.walkEnd
+                ? "walk"
+                : "point";
+
+        document.body.classList.toggle("is-character-docked", isDocked);
+        if (nextState === this.characterState && nextState === "point" && !this.reducedMotion) {
+            this.playCharacterAnimation(nextState);
+        }
+        this.setCharacterState(nextState);
+    }
+
+    getCharacterDirection() {
+        const isRtl = document.documentElement.dir === "rtl";
+        const walkDirection = document.documentElement.dir === "rtl" ? -1 : 1;
+        const pointDirection = document.documentElement.dir === "rtl" ? 1 : -1;
+
+        return {
+            side: isRtl ? "left" : "right",
+            walkDirection,
+            pointDirection,
+        };
+    }
+
+    restoreProceduralPart(part) {
+        if (!part?.userData?.restPosition || !part.userData.restRotation || !part.userData.restScale) return;
+
+        part.position.copy(part.userData.restPosition);
+        part.rotation.copy(part.userData.restRotation);
+        part.scale.copy(part.userData.restScale);
+    }
+
+    applyProceduralCharacterMotion(elapsed, walkProgress, pointProgress, pointDirection = -1) {
+        const parts = this.model?.userData?.parts;
+        const targets = this.model?.userData?.motionTargets;
+
+        if (!parts || !targets) return;
+
+        const step = Math.sin(elapsed * 10.5) * walkProgress * (1 - pointProgress * 0.72);
+        const shoulder = Math.sin(elapsed * 5.2) * walkProgress * 0.04;
+        const earDrift = Math.sin(elapsed * 1.4) * 0.025;
+
+        Object.values(parts).forEach((part) => this.restoreProceduralPart(part));
+
+        if (parts.leftLeg) parts.leftLeg.rotation.x += step * 0.34;
+        if (parts.rightLeg) parts.rightLeg.rotation.x -= step * 0.34;
+        if (parts.relaxedArm) parts.relaxedArm.rotation.z += step * 0.18 + shoulder;
+        if (parts.leftEar) parts.leftEar.rotation.z += earDrift;
+        if (parts.rightEar) parts.rightEar.rotation.z -= earDrift;
+        if (parts.head) parts.head.rotation.y += this.pointer.x * 0.025;
+
+        if (parts.pointingArm && targets.pointingArm) {
+            const pointingArmTargetPosition = targets.pointingArm.position.clone();
+            pointingArmTargetPosition.x = Math.abs(pointingArmTargetPosition.x) * pointDirection;
+            const pointingArmTargetRotationZ = Math.abs(targets.pointingArm.rotation.z) * -pointDirection;
+
+            parts.pointingArm.position.lerpVectors(
+                parts.pointingArm.userData.restPosition,
+                pointingArmTargetPosition,
+                pointProgress
+            );
+            parts.pointingArm.rotation.x = THREE.MathUtils.lerp(
+                parts.pointingArm.userData.restRotation.x,
+                targets.pointingArm.rotation.x,
+                pointProgress
+            );
+            parts.pointingArm.rotation.y = THREE.MathUtils.lerp(
+                parts.pointingArm.userData.restRotation.y,
+                targets.pointingArm.rotation.y,
+                pointProgress
+            );
+            parts.pointingArm.rotation.z = THREE.MathUtils.lerp(
+                parts.pointingArm.userData.restRotation.z,
+                pointingArmTargetRotationZ,
+                pointProgress
+            );
+        }
+
+        if (parts.finger && targets.finger) {
+            const fingerTargetPosition = targets.finger.position.clone();
+            fingerTargetPosition.x = Math.abs(fingerTargetPosition.x) * pointDirection;
+            const fingerTargetRotationZ = Math.abs(targets.finger.rotation.z) * -pointDirection;
+
+            parts.finger.position.lerpVectors(parts.finger.userData.restPosition, fingerTargetPosition, pointProgress);
+            parts.finger.rotation.x = THREE.MathUtils.lerp(parts.finger.userData.restRotation.x, targets.finger.rotation.x, pointProgress);
+            parts.finger.rotation.y = THREE.MathUtils.lerp(parts.finger.userData.restRotation.y, targets.finger.rotation.y, pointProgress);
+            parts.finger.rotation.z = THREE.MathUtils.lerp(parts.finger.userData.restRotation.z, fingerTargetRotationZ, pointProgress);
+            parts.finger.scale.setScalar(THREE.MathUtils.lerp(parts.finger.userData.restScale.x, targets.finger.scale, pointProgress));
+        }
+    }
+
+    resetRiggedCharacterBones() {
+        this.model?.userData?.riggedBoneList?.forEach((bone) => {
+            if (bone.userData.restQuaternion) bone.quaternion.copy(bone.userData.restQuaternion);
+            if (bone.userData.restPosition) bone.position.copy(bone.userData.restPosition);
+        });
+    }
+
+    rotateRiggedBone(bone, x, y, z, influence = 1, compose = "local") {
+        if (!bone?.userData?.restQuaternion) return;
+
+        const rotation = new THREE.Quaternion().setFromEuler(new THREE.Euler(
+            x * influence,
+            y * influence,
+            z * influence,
+            "XYZ"
+        ));
+
+        bone.quaternion.copy(bone.userData.restQuaternion);
+        if (compose === "skeleton") {
+            bone.quaternion.premultiply(rotation);
+            return;
+        }
+
+        bone.quaternion.multiply(rotation);
+    }
+
+    applyRiggedCharacterMotion(elapsed, walkProgress, pointProgress, pointDirection = -1) {
+        const bones = this.model?.userData?.rigBones;
+        if (!bones) return;
+
+        this.resetRiggedCharacterBones();
+
+        const stepPulse = Math.sin(elapsed * 9.8) * walkProgress * (1 - pointProgress * 0.75);
+        const idlePulse = Math.sin(elapsed * 1.7);
+        const useLeftSide = pointDirection > 0;
+        const pointSide = useLeftSide ? 1 : -1;
+
+        bones.pointHand = useLeftSide ? bones.leftHand : bones.rightHand;
+        bones.pointForeArm = useLeftSide ? bones.leftForeArm : bones.rightForeArm;
+        bones.pointArm = useLeftSide ? bones.leftArm : bones.rightArm;
+
+        this.rotateRiggedBone(bones.head, 0.02 * idlePulse - this.pointer.y * 0.025, this.pointer.x * 0.04 + pointDirection * pointProgress * 0.18, 0, 1);
+        this.rotateRiggedBone(bones.neck, 0, pointDirection * pointProgress * 0.08, 0, 1);
+        this.rotateRiggedBone(bones.spine2, 0.02 * idlePulse, pointDirection * pointProgress * 0.08, -pointDirection * walkProgress * 0.05, 1);
+        this.rotateRiggedBone(bones.spine1, 0, 0, -pointDirection * walkProgress * 0.035, 1);
+
+        this.rotateRiggedBone(bones.leftArm, stepPulse * 0.28, 0, -0.08 + stepPulse * 0.12, 1 - pointProgress);
+        this.rotateRiggedBone(bones.rightArm, -stepPulse * 0.28, 0, 0.08 - stepPulse * 0.12, 1 - pointProgress);
+        this.rotateRiggedBone(bones.leftForeArm, stepPulse * 0.12, 0, -0.04, 1 - pointProgress);
+        this.rotateRiggedBone(bones.rightForeArm, -stepPulse * 0.12, 0, 0.04, 1 - pointProgress);
+        this.rotateRiggedBone(bones.leftLeg, -stepPulse * 0.22, 0, 0, 1);
+        this.rotateRiggedBone(bones.rightLeg, stepPulse * 0.22, 0, 0, 1);
+
+        this.rotateRiggedBone(bones.pointArm, 0.05, 0.05 * pointSide, 1.45 * pointSide, pointProgress, "skeleton");
+        this.rotateRiggedBone(bones.pointForeArm, 0.05, 0.05 * pointSide, 1.02 * pointSide, pointProgress, "skeleton");
+        this.rotateRiggedBone(bones.pointHand, 0, 0.08 * pointSide, 0.28 * pointSide, pointProgress, "skeleton");
     }
 
     bindEvents() {
@@ -509,8 +821,14 @@ class RotemCharacterScene {
         window.addEventListener("scroll", () => {
             const max = Math.max(1, window.innerHeight * 0.85);
             this.scrollProgress = Math.min(1, window.scrollY / max);
-            document.body.classList.toggle("is-character-docked", this.scrollProgress > 0.04);
+            this.updateCharacterState();
         }, { passive: true });
+
+        window.addEventListener("site-language-change", () => {
+            this.updateCharacterState();
+            this.applyResponsiveFraming();
+            if (this.reducedMotion) this.renderFrame();
+        });
 
         if (typeof window.IntersectionObserver !== "function") {
             this.visible = true;
@@ -539,17 +857,43 @@ class RotemCharacterScene {
     applyResponsiveFraming() {
         const isMobile = window.matchMedia("(max-width: 720px)").matches;
         const isTablet = window.matchMedia("(max-width: 1180px)").matches;
-        const scale = this.model?.name === "rotem-z-rabbit-glb"
-            ? (isMobile ? 1.1 : isTablet ? 1.32 : 1.45)
+        const isExternalModel = this.model?.name === EXTERNAL_CHARACTER_MODEL_NAME;
+        const externalTargetHeight = isMobile ? 2.12 : isTablet ? 2.9 : 3.72;
+        const scale = isExternalModel
+            ? externalTargetHeight / Math.max(this.model.userData.unscaledHeight || 1, 0.001)
             : (isMobile ? 0.52 : isTablet ? 0.62 : 0.68);
+        const mirror = isExternalModel && document.documentElement.dir === "rtl" ? -1 : 1;
 
         this.camera.position.z = isMobile ? 8.1 : 7.8;
         this.camera.position.y = isMobile ? 1.38 : 1.22;
         this.camera.lookAt(0, isMobile ? 0.35 : 0.2, 0);
 
         if (this.model) {
-            this.model.scale.setScalar(scale);
+            this.model.scale.set(scale * mirror, scale, scale);
+
+            if (isExternalModel) {
+                const topY = isMobile ? 0.95 : isTablet ? 0.38 : 0.08;
+                this.model.userData.baseY = topY - (this.model.userData.unscaledMaxY || 0) * scale;
+                this.model.position.y = this.model.userData.baseY;
+            }
+
         }
+    }
+
+    getExternalScrollTransform(elapsed, walkProgress, pointProgress, walkDirection, pointDirection) {
+        const isMobile = window.matchMedia("(max-width: 720px)").matches;
+        const travel = isMobile ? EXTERNAL_SCROLL_MOTION.mobileTravel : EXTERNAL_SCROLL_MOTION.desktopTravel;
+        const sideBias = isMobile ? EXTERNAL_SCROLL_MOTION.mobileSideBias : EXTERNAL_SCROLL_MOTION.desktopSideBias;
+        const stepPulse = Math.sin(elapsed * 11.5) * walkProgress * (1 - pointProgress * 0.55);
+        const stepLift = Math.max(0, stepPulse) * EXTERNAL_SCROLL_MOTION.bounce;
+
+        return {
+            x: walkDirection * (-sideBias + walkProgress * travel - pointProgress * EXTERNAL_SCROLL_MOTION.pointSettle),
+            yOffset: stepLift,
+            rotationX: Math.sin(elapsed * 6.2) * walkProgress * (1 - pointProgress) * 0.026,
+            rotationY: pointDirection * (pointProgress * EXTERNAL_SCROLL_MOTION.yaw + walkProgress * 0.08),
+            rotationZ: -walkDirection * walkProgress * (1 - pointProgress * 0.35) * EXTERNAL_SCROLL_MOTION.lean,
+        };
     }
 
     renderFrame() {
@@ -578,12 +922,26 @@ class RotemCharacterScene {
 
         if (this.model) {
             const idle = this.reducedMotion ? 0 : Math.sin(elapsed * 1.8) * 0.035;
-            const scrollX = document.documentElement.dir === "rtl" ? -this.scrollProgress * 0.58 : this.scrollProgress * 0.58;
+            const walkProgress = THREE.MathUtils.smoothstep(this.scrollProgress, CHARACTER_STATE_THRESHOLDS.dock, CHARACTER_STATE_THRESHOLDS.walkEnd);
+            const pointProgress = THREE.MathUtils.smoothstep(this.scrollProgress, CHARACTER_STATE_THRESHOLDS.walkEnd, 0.52);
+            const { walkDirection, pointDirection } = this.getCharacterDirection();
+            const isExternalModel = this.model.name === EXTERNAL_CHARACTER_MODEL_NAME;
+            const externalMotion = isExternalModel
+                ? this.getExternalScrollTransform(elapsed, walkProgress, pointProgress, walkDirection, pointDirection)
+                : null;
+            const motionDistance = window.matchMedia("(max-width: 720px)").matches ? 0.18 : 0.34;
+            const scrollX = externalMotion?.x ?? walkDirection * walkProgress * motionDistance;
             const baseY = typeof this.model.userData.baseY === "number" ? this.model.userData.baseY : -0.74;
-            this.model.rotation.y = THREE.MathUtils.lerp(this.model.rotation.y, this.pointer.x * 0.16 - this.scrollProgress * 0.28, 0.08);
-            this.model.rotation.x = THREE.MathUtils.lerp(this.model.rotation.x, -this.pointer.y * 0.055, 0.06);
-            this.model.position.y = baseY + idle;
-            this.model.position.x = THREE.MathUtils.lerp(this.model.position.x, scrollX, 0.07);
+            const targetRotationY = isExternalModel
+                ? this.pointer.x * 0.035 + externalMotion.rotationY
+                : this.pointer.x * 0.07 + pointDirection * pointProgress * 0.32;
+            this.model.rotation.y = THREE.MathUtils.lerp(this.model.rotation.y, targetRotationY, 0.08);
+            this.model.rotation.x = THREE.MathUtils.lerp(this.model.rotation.x, -this.pointer.y * 0.055 + (externalMotion?.rotationX ?? 0), 0.06);
+            this.model.rotation.z = THREE.MathUtils.lerp(this.model.rotation.z, externalMotion?.rotationZ ?? 0, 0.08);
+            this.model.position.y = baseY + idle + (externalMotion?.yOffset ?? Math.sin(elapsed * 10.5) * walkProgress * (1 - pointProgress) * 0.018);
+            this.model.position.x = THREE.MathUtils.lerp(this.model.position.x, scrollX, 0.06);
+            if (isExternalModel) this.applyRiggedCharacterMotion(elapsed, walkProgress, pointProgress, pointDirection);
+            this.applyProceduralCharacterMotion(elapsed, walkProgress, pointProgress, pointDirection);
         }
 
         this.renderFrame();
