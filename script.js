@@ -1010,6 +1010,27 @@ function findProjectById(projectId) {
     return PRIMARY_PROJECTS.find((project) => project.id === projectId) || null;
 }
 
+function findProjectToggle(projectId) {
+    return document.querySelector(`[data-project-toggle="${projectId}"]`);
+}
+
+function moveProjectDetailPanelAfterCard(panel, projectId) {
+    const activeCard = findProjectToggle(projectId)?.closest(".project-card");
+
+    if (activeCard?.parentElement) {
+        activeCard.insertAdjacentElement("afterend", panel);
+    }
+}
+
+function restoreProjectDetailPanelPosition(panel) {
+    const surface = document.querySelector(".project-surface");
+    const grid = document.querySelector("[data-project-grid]");
+
+    if (surface && grid && panel && panel.parentElement !== surface) {
+        surface.insertBefore(panel, grid.nextSibling);
+    }
+}
+
 function decodeProjectHash() {
     const prefix = "#project-";
 
@@ -1029,6 +1050,7 @@ function renderProjects(language) {
 
     if (!grid) return;
 
+    if (detailPanel) restoreProjectDetailPanelPosition(detailPanel);
     clearChildren(grid);
 
     PRIMARY_PROJECTS.forEach((project) => {
@@ -1155,6 +1177,7 @@ function openProjectDetail(projectOrId, options = {}) {
     if (!project || !panel || !content) return false;
 
     content.innerHTML = projectDetailMarkup(project, lastPortfolioLanguage);
+    moveProjectDetailPanelAfterCard(panel, project.id);
     panel.hidden = false;
     panel.setAttribute("aria-hidden", "false");
     panel.dataset.activeProject = project.id;
@@ -1178,7 +1201,14 @@ function openProjectDetail(projectOrId, options = {}) {
         }
     }
 
-    if (focusPanel) panel.focus({ preventScroll: true });
+    if (focusPanel) {
+        panel.focus({ preventScroll: true });
+
+        if (typeof panel.scrollIntoView === "function") {
+            const reduceMotion = typeof window.matchMedia === "function" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+            panel.scrollIntoView({ block: "start", behavior: reduceMotion ? "auto" : "smooth" });
+        }
+    }
 
     return true;
 }
@@ -1202,6 +1232,7 @@ function closeProjectDetail(options = {}) {
         panel.setAttribute("aria-hidden", "true");
         panel.removeAttribute("data-active-project");
         panel.classList.remove("is-open");
+        restoreProjectDetailPanelPosition(panel);
     }
 
     if (updateHash && window.location.hash.startsWith("#project-")) {
@@ -1209,7 +1240,7 @@ function closeProjectDetail(options = {}) {
     }
 
     if (focusReturn && previousProjectId) {
-        document.querySelector(`[data-project-toggle="${previousProjectId}"]`)?.focus({ preventScroll: true });
+        findProjectToggle(previousProjectId)?.focus({ preventScroll: true });
     }
 }
 

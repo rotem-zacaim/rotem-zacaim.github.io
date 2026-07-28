@@ -1574,6 +1574,11 @@ body.is-character-pointing .stage-ring {
     outline: none;
 }
 
+.project-grid > .project-detail-panel {
+    grid-column: 1 / -1;
+    margin-block: 0.25rem 0.5rem;
+}
+
 .project-detail-panel:focus-visible {
     border-color: var(--accent-2);
 }
