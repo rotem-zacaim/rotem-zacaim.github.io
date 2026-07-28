@@ -125,23 +125,23 @@ test("custom domain stays mapped to about.rotem-dev.org", () => {
 test("first viewport is Rotem-first with approved nav and hero copy", () => {
     assert.equal(getFirstH1Text(), "Rotem Zacaim");
     assert.match(indexHtml, />\s*Profile\s*</);
-    assert.match(indexHtml, />\s*AI Lab\s*</);
+    assert.match(indexHtml, />\s*Tool Lab\s*</);
     assert.match(indexHtml, />\s*Systems\s*</);
     assert.match(indexHtml, />\s*Experience\s*</);
     assert.match(indexHtml, />\s*Contact\s*</);
     assert.match(
         indexHtml,
-        /Security operations,\s*AI automation,\s*and production-minded systems/
+        /Cyber security operations,\s*infrastructure troubleshooting,\s*AI agents/
     );
     assert.match(indexHtml, /Start a conversation/);
     assert.match(indexHtml, /View systems/);
 });
 
 test("content speaks about Rotem's practical operating style", () => {
-    assert.match(publicSiteSource, /turn noisy operations into reliable response systems/i);
+    assert.match(publicSiteSource, /turn noisy infrastructure and security work into clear operating systems/i);
     assert.match(publicSiteSource, /where alerts,\s*infrastructure,\s*code,\s*and people meet/i);
-    assert.match(publicSiteSource, /one case study from my AI lab/i);
-    assert.match(publicSiteSource, /Bring me the messy workflow/i);
+    assert.match(publicSiteSource, /government-scale environments/i);
+    assert.match(publicSiteSource, /Bring me the system nobody wants to untangle/i);
     assert.doesNotMatch(publicSiteSource, /Full Workflow Automation/i);
 });
 
@@ -151,6 +151,40 @@ test("site remains focused on Rotem and does not present Maya as the product", (
     assert.match(indexHtml, /Maya/i);
     assert.doesNotMatch(indexHtml, /<h1[^>]*>\s*Maya Agent\s*<\/h1>/i);
     assert.doesNotMatch(publicSiteSource, /MAYA AGENT/);
+});
+
+test("public content includes the approved tools and architecture without exposing internals", () => {
+    const expectedSignals = [
+        /Maya/i,
+        /RoteMGPT/i,
+        /RedLab/i,
+        /ZACAIM/i,
+        /Cloudflare Access/i,
+        /Cloudflare Access\/Tunnel/i,
+        /Home Assistant/i,
+        /Android Lab/i,
+        /URL Intelligence/i,
+        /SQLite Memory/i,
+        /WhatsApp adapter/i,
+        /event bus/i,
+        /systemd service state/i,
+        /local GGUF/i,
+    ];
+
+    for (const pattern of expectedSignals) {
+        assert.match(publicSiteSource, pattern);
+    }
+});
+
+test("experience and education reflect Rotem's CV rather than generic developer roles", () => {
+    assert.match(publicSiteSource, /Information Security & Infrastructure Operations Analyst/i);
+    assert.match(publicSiteSource, /Control & Monitoring Center/i);
+    assert.match(publicSiteSource, /Israel Police/i);
+    assert.match(publicSiteSource, /Cyber Defender/i);
+    assert.match(publicSiteSource, /Software QA/i);
+    assert.match(publicSiteSource, /Jr Penetration Tester/i);
+    assert.doesNotMatch(publicSiteSource, /AWS Certified Developer/i);
+    assert.doesNotMatch(publicSiteSource, /Meta Front-End Developer/i);
 });
 
 test("required about sections are present", () => {

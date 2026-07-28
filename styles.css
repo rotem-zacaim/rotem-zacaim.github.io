@@ -16,7 +16,7 @@
     --shadow: 0 24px 80px rgba(0, 0, 0, 0.42);
     --max-width: 1500px;
     --page-gutter: clamp(1rem, 3vw, 3rem);
-    --character-rail-width: clamp(20rem, 35vw, 37rem);
+    --character-rail-width: clamp(23rem, 38vw, 40rem);
     --content-max: 920px;
     --content-width: min(var(--content-max), calc(100% - var(--character-rail-width) - var(--page-gutter)));
     --character-dock-shift: 0rem;
@@ -604,7 +604,7 @@ body.is-character-pointing .stage-ring {
 .systems-map {
     grid-column: 2 / -1;
     display: grid;
-    grid-template-columns: auto repeat(4, minmax(8rem, 1fr)) auto;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 0.75rem;
     align-items: stretch;
     padding: clamp(1rem, 2vw, 1.6rem);
@@ -619,7 +619,7 @@ body.is-character-pointing .stage-ring {
 
 .systems-map article {
     position: relative;
-    min-height: 15rem;
+    min-height: 12rem;
     padding: 1.1rem;
     border: 1px solid var(--line);
     border-radius: var(--radius);
@@ -627,13 +627,7 @@ body.is-character-pointing .stage-ring {
 }
 
 .systems-map article::after {
-    content: "";
-    position: absolute;
-    top: 50%;
-    left: 100%;
-    width: 0.75rem;
-    height: 1px;
-    background: var(--line-strong);
+    display: none;
 }
 
 [dir="rtl"] .systems-map article::after {
@@ -657,6 +651,7 @@ body.is-character-pointing .stage-ring {
 }
 
 .map-end {
+    display: none;
     align-self: center;
     border: 1px solid var(--line);
     border-radius: var(--radius);
