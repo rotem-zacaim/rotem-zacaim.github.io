@@ -10,6 +10,29 @@
 
 ---
 
+## Status update - 2026-07-28
+
+This plan is now historical. The current canonical guidance is `PROJECT_GUIDANCE.md`.
+
+Completed and published:
+
+- Live site: `https://about.rotem-dev.org`
+- Published commit before this docs refresh: `9b5ba32`
+- Active worktree: `C:\Users\rotem\Documents\codex\WEB\rotem-zacaim-about-3d`
+- Tests after the content/architecture update: `node --test test\about-page.test.js` passed with 18 tests.
+
+Decisions that supersede older snippets below:
+
+- Do not add `rotem.z` or any runtime shirt label to the character.
+- Keep the rabbit's original black shirt and skull emblem.
+- Do not add fake arms, pointer geometry, or invented limbs in Three.js.
+- The current live GLB is `assets/3d/rotem-z-rabbit.glb`; it is not rigged enough for real hand/walk animation, so current movement is whole-model/procedural.
+- A future true walking/pointing character requires a rigged asset with real bones or Blender cleanup/rigging.
+- `assets/3d/night-city-resident.glb` is unrelated and must remain untracked unless Rotem explicitly approves adding it.
+- The site is Rotem-first, with `Tool Lab` / `Systems & tools`; Maya is one project in the story, not the site identity.
+
+---
+
 ## החלטת מוצר
 
 האתר לא הופך לאתר של Maya Agent. Maya מופיעה כפרויקט / מעבדת AI בתוך הסיפור של רותם. ה־hero, הניווט, הכותרות וה־CTA מציגים את רותם ואת היכולת המקצועית שלו.
@@ -18,7 +41,7 @@
 
 - ארנב תלת־ממדי אפור בסגנון התמונה שסופקה.
 - משקפי שמש כהים.
-- חולצה שחורה עם הכיתוב `rotem.z`.
+- חולצה שחורה עם סמל הגולגולת המקורי; לא מוסיפים `rotem.z` כטקסט runtime.
 - מכנס לבן ונעליים בהירות.
 - תנועה עדינה, מבט חי, ותגובה לגלילה / עכבר.
 - בדסקטופ: עומדת במרכז בתחילת הכניסה, ואז זזה לצד כאשר גוללים או מזיזים עכבר.
@@ -42,7 +65,7 @@
 החלטות extraction מהקונספטים:
 
 - ה־H1 הראשון הוא `Rotem Zacaim` ללא eyebrow, kicker, badge או pill מעליו.
-- הלוגו במובייל לא מועתק מהקונספט אם הוא מזכיר Maya; משתמשים בסימן `RZ` / `rotem.z` נקי.
+- הלוגו במובייל לא מועתק מהקונספט אם הוא מזכיר Maya; משתמשים בסימן `RZ` נקי.
 - הדמות היא stage תלת־ממדי בצד ימין / מרכז־ימין, והיא מפנה מקום לתוכן בגלילה.
 - סקשני האמצע משתמשים ב־operator profile, AI Lab ו־systems map בריתמוס משתנה: rail, list, map, לא grid תבניתי.
 - סקשני התחתית משתמשים ב־deep dive, timeline, credential rows ו־contact band.
@@ -54,7 +77,7 @@
 - `script.js` - i18n קיים, ניווט, ו־`RotemCharacterScene` עבור Three.js.
 - `test/about-page.test.js` - חוזה בדיקות חדש שמוודא שהאתר ממוקד ברותם ושהדמות היא שכבת 3D תקינה.
 - `assets/3d/README.md` - הנחיות לדמות GLB הסופית.
-- `assets/3d/rotem-z-rabbit.glb` - קובץ הדמות הסופי אחרי Meshy/Tripo + Blender. לא נדרש לשלב הראשון כי יש דמות פרוצדורלית ב־Three.js.
+- `assets/3d/rotem-z-rabbit.glb` - קובץ הדמות הפעיל. המודל הנוכחי אינו rigged לאנימציית יד/הליכה אמיתית; תנועות האתר הן whole-model/procedural עד נכס rigged עתידי.
 
 ## שלב 1: בידוד עבודה ובסיס בדיקות
 
@@ -222,7 +245,7 @@ node --test test\about-page.test.js
 
   <div class="character-guide" data-character-guide aria-hidden="true">
     <canvas class="character-canvas" data-three-character-stage></canvas>
-    <div class="character-static-fallback">rotem.z</div>
+    <div class="character-static-fallback">RZ</div>
   </div>
 </section>
 ```
@@ -520,45 +543,11 @@ class RotemCharacterScene {
     pants.position.y = -0.58;
     group.add(pants);
 
-    const shirtText = this.createTextPlane("rotem.z");
-    shirtText.position.set(0, 0.18, 0.75);
-    group.add(shirtText);
-
-    const armGeometry = new THREE.CapsuleGeometry(0.11, 0.86, 8, 12);
-    const pointingArm = new THREE.Mesh(armGeometry, fur);
-    pointingArm.position.set(-0.88, 0.48, 0.2);
-    pointingArm.rotation.z = Math.PI / 2.25;
-    pointingArm.rotation.y = -0.3;
-    group.add(pointingArm);
-
-    const relaxedArm = new THREE.Mesh(armGeometry, fur);
-    relaxedArm.position.set(0.78, 0.26, 0.08);
-    relaxedArm.rotation.z = -0.35;
-    group.add(relaxedArm);
+    // Production GLB keeps the original shirt/skull. Do not add shirt text or fake pointer limbs.
 
     group.scale.setScalar(0.98);
     group.position.y = -0.76;
     return group;
-  }
-
-  createTextPlane(text) {
-    const label = document.createElement("canvas");
-    label.width = 512;
-    label.height = 192;
-    const ctx = label.getContext("2d");
-    ctx.clearRect(0, 0, label.width, label.height);
-    ctx.fillStyle = "#f4f6f8";
-    ctx.font = "700 88px Arial";
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.fillText(text, 256, 96);
-
-    const texture = new THREE.CanvasTexture(label);
-    texture.colorSpace = THREE.SRGBColorSpace;
-    const material = new THREE.MeshBasicMaterial({ map: texture, transparent: true });
-    const plane = new THREE.Mesh(new THREE.PlaneGeometry(0.86, 0.32), material);
-    plane.name = "rotem-z-shirt-label";
-    return plane;
   }
 
   loadExternalModel(url) {
@@ -659,14 +648,14 @@ if (characterCanvas) {
 - [ ] ליצור `assets/3d/README.md` עם ההנחיות הבאות:
 
 ```md
-# Rotem.z 3D Character
+# Rotem 3D Character
 
 Final asset path: `assets/3d/rotem-z-rabbit.glb`
 
 Visual brief:
 - stylized premium grey rabbit mascot
 - dark sunglasses
-- black shirt with readable `rotem.z`
+- black shirt with the original skull emblem
 - white pants
 - light sneakers
 - confident, cool, slightly pointing pose
@@ -686,13 +675,13 @@ Web constraints:
 Prompt מומלץ באנגלית:
 
 ```text
-Stylized premium 3D grey rabbit mascot for a personal cybersecurity and AI portfolio website. The rabbit wears dark sunglasses, a clean black t-shirt with the exact text "rotem.z", white pants, and light sneakers. Confident cool posture, one arm slightly pointing to the side, high-end product mascot quality, soft realistic fur detail, web-ready character, neutral front pose, no background, no logos except "rotem.z", not childish, not cartoon toy, not Maya branding.
+Stylized premium 3D grey rabbit mascot for a personal cybersecurity and AI portfolio website. The rabbit wears dark sunglasses, a clean black t-shirt with a small skull emblem, white pants, and light sneakers. Confident cool posture, high-end product mascot quality, soft realistic fur detail, web-ready character, neutral front pose, no background, no shirt text, not childish, not cartoon toy, not Maya branding.
 ```
 
 Negative prompt:
 
 ```text
-No text other than "rotem.z", no MAYA AGENT, no childish toy style, no giant head, no scary horror style, no weapons, no background, no extra characters, no unreadable shirt text.
+No shirt text, no "rotem.z", no MAYA AGENT, no fake limbs, no childish toy style, no giant head, no scary horror style, no weapons, no background, no extra characters, no unreadable shirt text.
 ```
 
 - [ ] לבחור מועמד אחד ולנקות ב־Blender:

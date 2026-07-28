@@ -200,7 +200,7 @@ Use compact cards or rows for:
 - RedLab: authorized security workbench with deterministic recon, local LLM planning, evidence, reports.
 - Android Lab: ADB, scrcpy, screen control, WhatsApp compose, realtime actions, device allowlist.
 - Browser/Game Lab: private browser games, Quake/arena hosting, Clash Royale agent, FortySevenMS GUI control through visible screen only.
-- Cloudflare Remote Ops: `ssh.rotem-dev.org`, `vnc.rotem-dev.org`, tunnels, Access, systemd services.
+- Cloudflare Remote Ops: private SSH/VNC-style access behind tunnels, Access, and systemd services, without publishing operational hostnames.
 - Google Integrations: Calendar OAuth, maps, gateway/API style integration experience.
 
 Each card should answer:
