@@ -47,8 +47,8 @@
             }
         }
     </script>
-    <link rel="stylesheet" href="styles.css?v=20260728-projects-final">
-    <script type="module" src="script.js?v=20260728-projects-final"></script>
+    <link rel="stylesheet" href="styles.css?v=20260801-home-lab">
+    <script type="module" src="script.js?v=20260801-home-lab"></script>
 </head>
 <body>
     <a class="skip-link" href="#main-content" data-i18n="skipLink">דלג לתוכן</a>
@@ -110,10 +110,32 @@
                 </div>
             </div>
 
-            <div class="character-guide" data-character-guide aria-hidden="true">
-                <canvas class="character-canvas" data-three-character-stage></canvas>
-                <div class="character-static-fallback">rotem.z</div>
-                <div class="stage-ring"></div>
+            <div class="home-lab-scene" data-home-lab-scene aria-hidden="true">
+                <div class="home-lab-visual">
+                    <img
+                        src="assets/3d/home-lab-hero-concept.png"
+                        alt=""
+                        class="home-lab-image"
+                        decoding="async"
+                        fetchpriority="high"
+                    >
+                    <div class="home-lab-fog"></div>
+                    <div class="home-lab-data-lines"></div>
+                    <div class="home-lab-leds">
+                        <span style="--x: 55%; --y: 28%; --delay: 0ms"></span>
+                        <span style="--x: 57%; --y: 39%; --delay: 320ms"></span>
+                        <span style="--x: 63%; --y: 44%; --delay: 780ms"></span>
+                        <span style="--x: 75%; --y: 34%; --delay: 1120ms"></span>
+                        <span style="--x: 82%; --y: 52%; --delay: 1560ms"></span>
+                    </div>
+                </div>
+                <div class="home-lab-modules">
+                    <span class="home-lab-module module-maya">Maya</span>
+                    <span class="home-lab-module module-ha">HA</span>
+                    <span class="home-lab-module module-ai">Local AI</span>
+                    <span class="home-lab-module module-pt">PT</span>
+                    <span class="home-lab-module module-games">Games</span>
+                </div>
             </div>
         </section>
 

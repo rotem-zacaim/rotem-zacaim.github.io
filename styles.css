@@ -16,10 +16,14 @@
     --shadow: 0 24px 80px rgba(0, 0, 0, 0.42);
     --max-width: 1500px;
     --page-gutter: clamp(1rem, 3vw, 3rem);
-    --character-rail-width: clamp(23rem, 38vw, 40rem);
+    --scene-rail-width: clamp(25rem, 42vw, 48rem);
     --content-max: 920px;
-    --content-width: min(var(--content-max), calc(100% - var(--character-rail-width) - var(--page-gutter)));
-    --character-dock-shift: 0rem;
+    --content-width: min(var(--content-max), calc(100% - var(--scene-rail-width) - var(--page-gutter)));
+    --scene-scroll-progress: 0;
+    --scene-blur: 0px;
+    --scene-opacity: 0.94;
+    --scene-scale: 1;
+    --scene-parallax-y: 0px;
 }
 
 *,
@@ -320,80 +324,167 @@ main {
     color: var(--accent);
 }
 
-.character-guide {
+.home-lab-scene {
     position: fixed;
     inset: 0;
     z-index: 1;
     pointer-events: none;
-    opacity: 0.84;
-    transition: transform 720ms cubic-bezier(.2,.8,.2,1), opacity 320ms ease;
+    opacity: var(--scene-opacity);
+    transform: translate3d(0, var(--scene-parallax-y), 0) scale(var(--scene-scale));
+    transform-origin: center bottom;
+    transition: opacity 180ms ease, filter 180ms ease;
 }
 
-.character-canvas {
+.home-lab-visual {
     position: absolute;
-    right: max(0.4rem, calc(var(--page-gutter) * 0.45));
-    bottom: 0;
-    width: min(44vw, 620px);
-    height: min(84svh, 790px);
+    inset-block-end: -3svh;
+    inset-inline-end: 0;
+    width: min(58vw, 960px);
+    height: min(86svh, 860px);
+    filter: blur(var(--scene-blur)) saturate(1.12) contrast(1.04);
+    transform-origin: center bottom;
 }
 
-.stage-ring {
+.home-lab-image {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center bottom;
+}
+
+.home-lab-fog,
+.home-lab-data-lines,
+.home-lab-leds,
+.home-lab-modules {
     position: absolute;
-    right: max(0.6rem, calc(var(--page-gutter) * 0.7));
-    bottom: 1.8rem;
-    width: min(36vw, 520px);
-    height: 6.2rem;
-    border: 1px solid rgba(255, 79, 95, 0.34);
-    border-radius: 50%;
-    transform: perspective(780px) rotateX(68deg);
+    inset: 0;
+    pointer-events: none;
+}
+
+.home-lab-fog {
+    inset: 5% -8% 0;
     background:
-        linear-gradient(90deg, rgba(255, 79, 95, 0.18), transparent 42%, rgba(102, 227, 255, 0.14)),
-        rgba(255, 255, 255, 0.02);
-    box-shadow: 0 0 34px rgba(255, 79, 95, 0.22);
+        radial-gradient(circle at 55% 60%, rgba(124, 255, 218, 0.16), transparent 34%),
+        radial-gradient(circle at 82% 42%, rgba(255, 200, 112, 0.1), transparent 24%),
+        linear-gradient(90deg, transparent, rgba(148, 241, 255, 0.08), transparent);
+    mix-blend-mode: screen;
+    opacity: calc(0.35 + (var(--scene-scroll-progress) * 0.22));
+    animation: labFogDrift 9s ease-in-out infinite alternate;
 }
 
-.character-static-fallback {
+.home-lab-data-lines {
+    opacity: calc(0.38 + (var(--scene-scroll-progress) * 0.18));
+    background:
+        linear-gradient(90deg, transparent 9%, rgba(109, 238, 255, 0.36) 9.15%, transparent 9.7%),
+        linear-gradient(115deg, transparent 64%, rgba(128, 255, 219, 0.28) 64.2%, transparent 64.7%),
+        linear-gradient(5deg, transparent 42%, rgba(255, 199, 106, 0.16) 42.15%, transparent 42.5%);
+    mix-blend-mode: screen;
+    animation: labSignalDrift 5.8s ease-in-out infinite alternate;
+}
+
+.home-lab-leds span {
     position: absolute;
-    right: calc(var(--character-rail-width) - 18rem);
-    bottom: 18svh;
-    display: block;
-    padding: 0.7rem 0.9rem;
-    border: 1px solid var(--line);
+    left: var(--x);
+    top: var(--y);
+    width: 0.42rem;
+    height: 0.42rem;
+    border-radius: 999px;
+    background: #80ffdb;
+    box-shadow: 0 0 16px #80ffdb, 0 0 34px rgba(128, 255, 219, 0.38);
+    animation: labLedBlink 1.85s ease-in-out infinite;
+    animation-delay: var(--delay);
+}
+
+.home-lab-module {
+    position: absolute;
+    border: 1px solid rgba(128, 255, 219, 0.26);
     border-radius: var(--radius);
-    background: rgba(7, 8, 11, 0.86);
-    color: var(--accent-2);
-    font-family: "IBM Plex Mono", monospace;
+    padding: 0.5rem 0.65rem;
+    background: rgba(5, 14, 18, 0.58);
+    backdrop-filter: blur(10px);
+    color: rgba(244, 246, 248, 0.86);
+    font: 700 0.72rem/1 "IBM Plex Mono", monospace;
+    box-shadow: 0 0 22px rgba(128, 255, 219, 0.08);
+    text-transform: uppercase;
 }
 
-.webgl-character-ready .character-static-fallback {
-    display: none;
+.module-maya {
+    inset-block-start: 22svh;
+    inset-inline-end: min(36vw, 37rem);
 }
 
-body.is-character-docked .character-guide {
-    transform: translateX(var(--character-dock-shift)) scale(1);
-    opacity: 1;
+.module-ha {
+    inset-block-start: 36svh;
+    inset-inline-end: min(38vw, 40rem);
 }
 
-body.is-character-walking .stage-ring {
-    box-shadow: 0 0 42px rgba(255, 79, 95, 0.28), 0 0 24px rgba(102, 227, 255, 0.1);
+.module-ai {
+    inset-block-start: 52svh;
+    inset-inline-end: min(35vw, 36rem);
 }
 
-body.is-character-pointing .stage-ring {
-    border-color: rgba(102, 227, 255, 0.45);
-    box-shadow: 0 0 46px rgba(102, 227, 255, 0.18), 0 0 36px rgba(255, 79, 95, 0.22);
+.module-pt {
+    inset-block-start: 32svh;
+    inset-inline-end: min(5vw, 5.5rem);
 }
 
-.no-webgl-character .character-canvas,
-.no-webgl-character .stage-ring {
-    display: none;
+.module-games {
+    inset-block-start: 55svh;
+    inset-inline-end: min(6vw, 6rem);
 }
 
-.no-webgl-character .character-static-fallback {
-    display: block;
+body.is-home-lab-background .home-lab-scene {
+    z-index: 0;
 }
 
-.using-procedural-character .character-canvas {
-    filter: saturate(1.02) contrast(1.02);
+body.is-home-lab-background .projects-section,
+body.is-home-lab-background .lab-gallery-section,
+body.is-home-lab-background .timeline-section,
+body.is-home-lab-background .skills-section,
+body.is-home-lab-background .contact-section {
+    backdrop-filter: blur(2px);
+}
+
+@keyframes labLedBlink {
+    0%,
+    100% {
+        opacity: 0.38;
+        transform: scale(0.82);
+    }
+
+    18%,
+    48% {
+        opacity: 1;
+        transform: scale(1.18);
+    }
+
+    62% {
+        opacity: 0.58;
+        transform: scale(0.96);
+    }
+}
+
+@keyframes labFogDrift {
+    from {
+        transform: translate3d(-1.6%, 0, 0) scale(1);
+    }
+
+    to {
+        transform: translate3d(1.8%, -1.4%, 0) scale(1.03);
+    }
+}
+
+@keyframes labSignalDrift {
+    from {
+        transform: translate3d(-0.8%, 0, 0);
+        opacity: 0.28;
+    }
+
+    to {
+        transform: translate3d(1.4%, -0.6%, 0);
+        opacity: 0.58;
+    }
 }
 
 .next-signal,
@@ -806,23 +897,9 @@ body.is-character-pointing .stage-ring {
     direction: rtl;
 }
 
-[dir="rtl"] .character-canvas {
-    right: auto;
-    left: max(0.4rem, calc(var(--page-gutter) * 0.45));
-}
-
-[dir="rtl"] .stage-ring {
-    right: auto;
-    left: max(0.6rem, calc(var(--page-gutter) * 0.7));
-}
-
-[dir="rtl"] body.is-character-docked .character-guide {
-    transform: translateX(calc(var(--character-dock-shift) * -1)) scale(0.88);
-}
-
 @media (max-width: 1180px) {
     :root {
-        --character-rail-width: clamp(15rem, 32vw, 22rem);
+        --scene-rail-width: clamp(18rem, 34vw, 28rem);
         --content-max: 760px;
     }
 
@@ -836,23 +913,20 @@ body.is-character-pointing .stage-ring {
         padding-bottom: clamp(1rem, 3vw, 1.6rem);
     }
 
-    .character-canvas {
-        right: max(0.25rem, calc(var(--page-gutter) * 0.35));
-        width: min(46vw, 500px);
-        height: min(60svh, 620px);
+    .home-lab-visual {
+        width: min(62vw, 760px);
+        height: min(68svh, 660px);
     }
 
-    .stage-ring {
-        right: max(0.4rem, calc(var(--page-gutter) * 0.55));
-        width: min(38vw, 420px);
+    .module-maya,
+    .module-ha,
+    .module-ai {
+        inset-inline-end: min(42vw, 31rem);
     }
 
-    [dir="rtl"] .character-canvas {
-        left: max(0.25rem, calc(var(--page-gutter) * 0.35));
-    }
-
-    [dir="rtl"] .stage-ring {
-        left: max(0.4rem, calc(var(--page-gutter) * 0.55));
+    .module-pt,
+    .module-games {
+        opacity: 0.72;
     }
 
     .section {
@@ -965,9 +1039,8 @@ body.is-character-pointing .stage-ring {
 @media (max-width: 720px) {
     :root {
         --page-gutter: 0.85rem;
-        --character-rail-width: clamp(9.75rem, 42vw, 10.6rem);
-        --content-width: calc(100% - var(--character-rail-width) - var(--page-gutter));
-        --character-dock-shift: 0rem;
+        --scene-rail-width: 0rem;
+        --content-width: calc(100% - (var(--page-gutter) * 2));
     }
 
     body {
@@ -989,9 +1062,8 @@ body.is-character-pointing .stage-ring {
     .next-signal,
     .section,
     .contact-section {
-        width: max(9.5rem, var(--content-width));
-        margin-inline-start: var(--page-gutter);
-        margin-inline-end: auto;
+        width: var(--content-width);
+        margin-inline: var(--page-gutter);
     }
 
     .cinematic-hero {
@@ -1038,58 +1110,25 @@ body.is-character-pointing .stage-ring {
         margin: 0.14rem 0;
     }
 
-    .character-guide {
+    .home-lab-scene {
         position: fixed;
         inset: 0;
-        z-index: 3;
+        z-index: 1;
         overflow: visible;
-        opacity: 1;
+        opacity: 0.32;
     }
 
-    .character-canvas {
+    .home-lab-visual {
         inset-block-start: 5.15rem;
-        inset-inline-end: 0.2rem;
-        right: 0.2rem;
-        left: auto;
+        inset-inline-end: -20vw;
         bottom: auto;
-        width: 9.4rem;
-        height: 13.8rem;
+        width: min(118vw, 620px);
+        height: 46svh;
         min-height: 0;
-        transform: none;
     }
 
-    [dir="rtl"] .character-canvas {
-        inset-inline-start: 0.2rem;
-        inset-inline-end: auto;
-        left: 0.2rem;
-        right: auto;
-        transform: none;
-    }
-
-    .stage-ring {
-        inset-block-start: 17rem;
-        inset-inline-end: calc(var(--character-rail-width) - 6.2rem);
-        right: calc(var(--character-rail-width) - 6.2rem);
-        left: auto;
-        bottom: auto;
-        transform: perspective(780px) rotateX(68deg);
-        width: 6.2rem;
-        height: 2.4rem;
-        opacity: 0.8;
-    }
-
-    [dir="rtl"] .stage-ring {
-        inset-inline-start: calc(var(--character-rail-width) - 6.2rem);
-        inset-inline-end: auto;
-        left: calc(var(--character-rail-width) - 6.2rem);
-        right: auto;
-        transform: perspective(780px) rotateX(68deg);
-    }
-
-    body.is-character-docked .character-guide,
-    [dir="rtl"] body.is-character-docked .character-guide {
-        transform: none;
-        opacity: 1;
+    .home-lab-modules {
+        display: none;
     }
 
     .desktop-label {
@@ -1933,15 +1972,6 @@ body.is-character-pointing .stage-ring {
     margin-top: 0.35rem;
 }
 
-body.is-character-docked .character-guide {
-    transform: translateX(var(--character-dock-shift)) scale(0.92);
-    opacity: 0.3;
-}
-
-[dir="rtl"] body.is-character-docked .character-guide {
-    transform: translateX(calc(var(--character-dock-shift) * -1)) scale(0.84);
-}
-
 @media (max-width: 1180px) {
     :root {
         --content-max: 860px;
@@ -1981,7 +2011,7 @@ body.is-character-docked .character-guide {
 
 @media (max-width: 760px) {
     :root {
-        --character-rail-width: 0rem;
+        --scene-rail-width: 0rem;
         --content-width: calc(100% - (var(--page-gutter) * 2));
         --project-pad: 1rem;
     }
@@ -2099,29 +2129,20 @@ body.is-character-docked .character-guide {
         padding: 1rem;
     }
 
-    .character-guide {
-        z-index: 1;
-        opacity: 0.28;
+    .home-lab-scene {
+        opacity: 0.32;
     }
 
-    .character-canvas {
-        opacity: 0.7;
-        transform: scale(0.86);
-        transform-origin: top right;
+    .home-lab-visual {
+        inset-block-start: 4.8rem;
+        inset-block-end: auto;
+        inset-inline-end: -20vw;
+        width: min(118vw, 620px);
+        height: 46svh;
     }
 
-    [dir="rtl"] .character-canvas {
-        transform-origin: top left;
-    }
-
-    .stage-ring {
-        opacity: 0.22;
-    }
-
-    body.is-character-docked .character-guide,
-    [dir="rtl"] body.is-character-docked .character-guide {
-        transform: none;
-        opacity: 0.28;
+    .home-lab-modules {
+        display: none;
     }
 }
 
@@ -2135,8 +2156,13 @@ body.is-character-docked .character-guide {
         transition-duration: 0.001ms !important;
     }
 
-    .character-guide {
-        opacity: 0.72;
+    .home-lab-scene {
         transform: none !important;
+    }
+
+    .home-lab-fog,
+    .home-lab-data-lines,
+    .home-lab-leds span {
+        animation: none !important;
     }
 }

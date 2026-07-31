@@ -869,131 +869,52 @@ test("project media uses stable local assets instead of expiring LinkedIn URLs",
     assertSourceDoesNotMatch(publicSiteSource, /\.superpowers[\\/]/, "Public source should not reference .superpowers files.");
 });
 
-test("Three.js character stage and GLB/procedural fallback hooks exist", () => {
+test("home lab hero replaces the old rabbit stage", () => {
     assert.match(indexHtml, /type=["']importmap["']/);
     assert.match(indexHtml, /type=["']module["'][^>]+src=["']script\.js/);
-    assert.match(indexHtml, /data-character-guide/);
-    assert.match(indexHtml, /data-three-character-stage/);
-    assert.match(indexHtml, /rotem\.z/);
-    assert.match(indexHtml, /character-static-fallback/);
-    assert.match(scriptJs, /class\s+RotemCharacterScene/);
-    assert.match(scriptJs, /GLTFLoader/);
-    assert.match(scriptJs, /import\("three"\)/);
-    assert.match(scriptJs, /import\("three\/addons\/loaders\/GLTFLoader\.js"\)/);
-    assert.doesNotMatch(scriptJs, /^import\s+.*from\s+["']three/m);
-    assert.match(scriptJs, /assets\/3d\/rotem-z-rabbit\.glb/);
-    assert.doesNotMatch(`${indexHtml}\n${scriptJs}\n${read("assets/3d/character-manifest.json")}`, /night-city-resident\.glb/);
-    assert.match(scriptJs, /createProceduralRabbit/);
-    assert.match(scriptJs, /WebGL/);
-    assert.match(scriptJs, /no-webgl-character/);
+    assert.match(indexHtml, /data-home-lab-scene/);
+    assert.match(indexHtml, /home-lab-hero-concept\.png/);
+    assert.match(indexHtml, /home-lab-leds/);
+    assert.match(indexHtml, /home-lab-fog/);
+    assert.match(indexHtml, /Maya/);
+    assert.match(indexHtml, /Local AI/);
+    assert.doesNotMatch(`${indexHtml}\n${stylesCss}\n${scriptJs}`, /data-three-character-stage/);
+    assert.doesNotMatch(`${indexHtml}\n${stylesCss}\n${scriptJs}`, /rotem-z-rabbit\.glb/);
+    assert.doesNotMatch(`${indexHtml}\n${stylesCss}\n${scriptJs}`, /procedural-rabbit/i);
 });
 
-test("3d character manifest enables the live rabbit mascot asset", () => {
-    const manifest = JSON.parse(read("assets/3d/character-manifest.json"));
-    const modelUrl = manifest.model;
-    const modelPath = path.join(repoRoot, modelUrl.split("?")[0]);
-
-    assert.equal(manifest.ready, true);
-    assert.match(modelUrl, /^assets\/3d\/rotem-z-rabbit\.glb\?v=20260728-rabbit-live$/);
-    assert.equal(fs.existsSync(modelPath), true);
-    assert.ok(fs.statSync(modelPath).size > 1_000_000);
+test("home lab scene becomes a blurred scroll background", () => {
+    assert.match(stylesCss, /--scene-scroll-progress/);
+    assert.match(stylesCss, /--scene-blur/);
+    assert.match(stylesCss, /--scene-opacity/);
+    assert.match(stylesCss, /--scene-scale/);
+    assert.match(stylesCss, /\.home-lab-scene/);
+    assert.match(stylesCss, /\.home-lab-fog/);
+    assert.match(stylesCss, /@keyframes\s+labLedBlink/);
+    assert.match(stylesCss, /@keyframes\s+labFogDrift/);
+    assert.match(scriptJs, /function\s+initHomeLabScene/);
+    assert.match(scriptJs, /requestAnimationFrame/);
+    assert.match(scriptJs, /is-home-lab-background/);
+    assert.match(scriptJs, /setProperty\("--scene-blur"/);
 });
 
-test("live rabbit mascot asset ships as a deployable GLB", () => {
-    const manifest = JSON.parse(read("assets/3d/character-manifest.json"));
-    const modelPath = path.join(repoRoot, manifest.model.split("?")[0]);
-    const buffer = fs.readFileSync(modelPath);
-    const jsonLength = buffer.readUInt32LE(12);
-    const gltf = JSON.parse(buffer.toString("utf8", 20, 20 + jsonLength));
+test("home lab hero asset ships locally", () => {
+    const assetPath = path.join(repoRoot, "assets/3d/home-lab-hero-concept.png");
 
-    assert.equal(buffer.toString("utf8", 0, 4), "glTF");
-    assert.ok((gltf.meshes || []).length >= 1);
-    assert.ok((gltf.nodes || []).length >= 1);
-    assert.equal((gltf.skins || []).length, 0);
+    assert.equal(fs.existsSync(assetPath), true);
+    assert.ok(fs.statSync(assetPath).size > 100_000);
+    assertSourceMatches(publicSiteSource, /assets\/3d\/home-lab-hero-concept\.png/, "Expected site to reference Home Lab concept image.");
 });
 
-test("motion, visibility, fallback, and mobile safety are explicitly handled", () => {
+test("home lab scene keeps mobile and reduced-motion safety", () => {
     assert.match(stylesCss, /overflow-x:\s*hidden/);
-    assert.match(stylesCss, /@media\s*\(\s*max-width\s*:\s*720px\s*\)/);
+    assert.match(stylesCss, /@media\s*\(\s*max-width\s*:\s*760px\s*\)/);
     assert.match(stylesCss, /max-width:\s*100%/);
     assert.match(stylesCss, /prefers-reduced-motion/);
-    assert.match(stylesCss, /\.no-webgl-character/);
-    assert.match(stylesCss, /\.using-procedural-character/);
+    assert.match(stylesCss, /\.home-lab-modules\s*{[\s\S]*display:\s*none/);
     assert.match(scriptJs, /matchMedia\("\(prefers-reduced-motion:\s*reduce\)"\)/);
-    assert.match(scriptJs, /IntersectionObserver/);
-    assert.match(scriptJs, /typeof\s+window\.IntersectionObserver\s*!==\s*"function"/);
-    assert.match(scriptJs, /is-character-docked/);
-    assert.match(scriptJs, /if\s*\(!this\.reducedMotion\)\s*{\s*this\.animate\(\);/);
-    assert.match(scriptJs, /if\s*\(this\.reducedMotion\)\s*{[\s\S]*this\.renderFrame\(\);/);
-    assert.match(scriptJs, /userData\.baseY/);
-    assert.doesNotMatch(scriptJs, /pointermove[\s\S]{0,240}classList\.add\("is-character-docked"\)/);
-});
-
-test("character motion is scroll-driven and ready for real GLB animation clips", () => {
-    assert.match(scriptJs, /CHARACTER_ANIMATION_NAMES/);
-    assert.match(scriptJs, /\bIdle\b/);
-    assert.match(scriptJs, /\bWalkToSide\b/);
-    assert.match(scriptJs, /\bPoint\b/);
-    assert.match(scriptJs, /setCharacterState/);
-    assert.match(scriptJs, /playCharacterAnimation/);
-    assert.match(scriptJs, /applyProceduralCharacterMotion/);
-    assert.match(scriptJs, /document\.body\.dataset\.characterState/);
-    assert.match(scriptJs, /walkProgress/);
-    assert.match(scriptJs, /pointProgress/);
-    assert.match(scriptJs, /getCharacterDirection/);
-    assert.match(scriptJs, /pointDirection/);
-    assert.match(scriptJs, /prepareExternalModel/);
-    assert.match(scriptJs, /cacheRiggedCharacterBones/);
-    assert.match(scriptJs, /applyRiggedCharacterMotion/);
-    assert.match(scriptJs, /RIGGED_BONE_NAMES/);
-    assert.match(scriptJs, /EXTERNAL_CHARACTER_MODEL_NAME/);
-    assert.match(scriptJs, /THREE\.DoubleSide/);
-    assert.match(scriptJs, /scale\s*\*\s*mirror/);
-    assert.doesNotMatch(scriptJs, /pointermove[\s\S]{0,320}is-character-docked/);
-});
-
-test("purchased GLB is rendered without runtime-added shirt text or fake limbs", () => {
-    assert.doesNotMatch(scriptJs, /createTextPlane\("rotem\.z"\)/);
-    assert.doesNotMatch(scriptJs, /rotem-z-external-shirt-label/);
-    assert.doesNotMatch(scriptJs, /createExternalPointerArm/);
-    assert.doesNotMatch(scriptJs, /rotem-z-external-pointer-arm/);
-    assert.doesNotMatch(scriptJs, /applyExternalPointerMotion/);
-    assert.doesNotMatch(scriptJs, /external-pointer-(sleeve|forearm|palm|finger)/);
-    assert.doesNotMatch(read("assets/3d/character-manifest.json"), /shirt label overlay/i);
-});
-
-test("rigged GLB has visible scroll choreography and real-bone gestures", () => {
-    assert.match(scriptJs, /EXTERNAL_SCROLL_MOTION/);
-    assert.match(scriptJs, /desktopTravel:\s*0\.34/);
-    assert.match(scriptJs, /mobileTravel:\s*0\.3/);
-    assert.match(scriptJs, /getExternalScrollTransform/);
-    assert.match(scriptJs, /stepPulse/);
-    assert.match(scriptJs, /rotationZ/);
-    assert.match(scriptJs, /externalMotion/);
-    assert.match(scriptJs, /this\.model\.rotation\.z/);
-    assert.match(scriptJs, /bones\.pointHand/);
-    assert.match(scriptJs, /bones\.pointForeArm/);
-    assert.match(scriptJs, /bones\.head/);
-    assert.match(scriptJs, /restQuaternion/);
-    assert.match(scriptJs, /setFromEuler/);
-    assert.match(scriptJs, /premultiply/);
-    assert.doesNotMatch(scriptJs, /isExternalModel[\s\S]{0,140}\?\s*window\.matchMedia\("\(max-width:\s*720px\)"\)\.matches\s*\?\s*0\.04\s*:\s*0\.08/);
-});
-
-test("character lane reserves space and mirrors direction between English and Hebrew", () => {
-    assert.match(stylesCss, /--character-rail-width/);
-    assert.match(stylesCss, /--content-max/);
-    assert.match(stylesCss, /calc\(100%\s*-\s*var\(--character-rail-width\)/);
-    assert.match(stylesCss, /margin-inline-start/);
-    assert.match(stylesCss, /\[dir="rtl"\]\s+\.character-canvas/);
-    assert.match(stylesCss, /inset-inline-end/);
-    assert.match(
-        stylesCss,
-        /body\.is-character-docked\s+\.character-guide\s*{[^}]*opacity\s*:/,
-        "Expected docked character styles to keep an explicit opacity state."
-    );
-    assert.match(scriptJs, /document\.documentElement\.dir\s*===\s*"rtl"\s*\?\s*-1\s*:\s*1/);
-    assert.match(scriptJs, /document\.documentElement\.dir\s*===\s*"rtl"\s*\?\s*1\s*:\s*-1/);
+    assert.doesNotMatch(scriptJs, /import\("three"\)/);
+    assert.doesNotMatch(scriptJs, /GLTFLoader/);
 });
 
 test("preserves approved contact targets", () => {
