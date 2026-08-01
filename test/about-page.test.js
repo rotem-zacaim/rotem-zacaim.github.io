@@ -856,6 +856,15 @@ test("project media uses stable local assets instead of expiring LinkedIn URLs",
         "assets/projects/chatgpt-shared-links-risk.jpg",
         "assets/projects/apartment-plan-app.png",
         "assets/projects/home-assistant-wall-panel.png",
+        "assets/projects/android-companion-app.jpg",
+        "assets/projects/game-ui-qa-lab.jpg",
+        "assets/projects/fortysevenms-vision-farmer.jpg",
+        "assets/projects/sale-im-mvp.jpg",
+        "assets/projects/group-buying-pwa.jpg",
+        "assets/projects/quake-qwasm-browser-games.jpg",
+        "assets/projects/openai-usage-dashboard.jpg",
+        "assets/projects/ai-super-analyst-dashboard.jpg",
+        "assets/projects/private-control-center-labs.jpg",
     ];
 
     for (const assetPath of projectAssetPaths) {
@@ -867,6 +876,48 @@ test("project media uses stable local assets instead of expiring LinkedIn URLs",
 
     assertSourceDoesNotMatch(publicSiteSource, /media\.licdn\.com/, "Public source should not hotlink LinkedIn media.");
     assertSourceDoesNotMatch(publicSiteSource, /\.superpowers[\\/]/, "Public source should not reference .superpowers files.");
+});
+
+test("project cards use project-specific media instead of recycled placeholders", () => {
+    const primaryProjectsBlock = getArrayBlock(executableScriptJs, "PRIMARY_PROJECTS");
+    const secondaryProjectsBlock = getArrayBlock(executableScriptJs, "SECONDARY_PROJECTS");
+    const renderProjectsBlock = getFunctionBlock(executableScriptJs, "renderProjects");
+    const renderLabGalleryBlock = getFunctionBlock(executableScriptJs, "renderLabGallery");
+    const projectDetailMarkupBlock = getFunctionBlock(executableScriptJs, "projectDetailMarkup");
+
+    assertSourceMatches(
+        primaryProjectsBlock,
+        /id:\s*"home-assistant-maya"[\s\S]*?media:\s*\[[\s\S]*?src:\s*"assets\/projects\/home-assistant-maya\.jpg"/,
+        "Home Assistant + Maya should lead with the real dashboard image sourced from the LinkedIn post."
+    );
+
+    for (const assetPath of [
+        "assets/projects/android-companion-app.jpg",
+        "assets/projects/game-ui-qa-lab.jpg",
+        "assets/projects/fortysevenms-vision-farmer.jpg",
+        "assets/projects/sale-im-mvp.jpg",
+        "assets/projects/group-buying-pwa.jpg",
+        "assets/projects/quake-qwasm-browser-games.jpg",
+        "assets/projects/openai-usage-dashboard.jpg",
+        "assets/projects/ai-super-analyst-dashboard.jpg",
+    ]) {
+        assertSourceMatches(
+            secondaryProjectsBlock,
+            new RegExp(escapeRegExp(`media: "${assetPath}"`)),
+            `Expected SECONDARY_PROJECTS to use project-specific media ${assetPath}.`
+        );
+    }
+
+    assertSourceDoesNotMatch(
+        secondaryProjectsBlock,
+        /title:\s*\{[^}]*?(?:Android Lab|Clash Royale|FortySevenMS|Sale-im|Group-Buying|Quake\/Qwasm|OpenAI Usage|AI Super-Analyst)[\s\S]{0,420}?media:\s*"assets\/projects\/(?:about-framer-prototype|maya-whatsapp-agent-2|apartment-plan-app)\.(?:jpg|png)"/,
+        "Secondary projects should not reuse unrelated placeholder images."
+    );
+    assertSourceMatches(scriptJs, /\bconst\s+PROJECT_MEDIA_VERSION\s*=/, "Expected project media URLs to have a cache-busting version.");
+    assertSourceMatches(scriptJs, /\bfunction\s+projectMediaSrc\s*\(/, "Expected a helper for stable project media cache-busting.");
+    assertSourceMatches(renderProjectsBlock, /projectMediaSrc\s*\(\s*media\.src\s*\)/, "Expected primary project cards to use cache-busted media URLs.");
+    assertSourceMatches(projectDetailMarkupBlock, /projectMediaSrc\s*\(\s*item\.src\s*\)/, "Expected project detail images to use cache-busted media URLs.");
+    assertSourceMatches(renderLabGalleryBlock, /projectMediaSrc\s*\(\s*project\.media\s*\)/, "Expected secondary project cards to use cache-busted media URLs.");
 });
 
 test("home lab hero replaces the old rabbit stage", () => {

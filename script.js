@@ -600,7 +600,7 @@ const PRIMARY_PROJECTS = [
         },
         media: [
             {
-                src: "assets/projects/ai-risk-local-model.jpg",
+                src: "assets/projects/private-control-center-labs.jpg",
                 alt: {
                     he: "דשבורד מעבדה למעקב שימוש וסיכוני AI",
                     en: "Lab dashboard for AI usage and risk tracking",
@@ -654,7 +654,7 @@ const SECONDARY_PROJECTS = [
     {
         title: { he: "Android Lab / Companion App", en: "Android Lab / Companion App" },
         category: "automation",
-        media: "assets/projects/maya-whatsapp-agent-2.jpg",
+        media: "assets/projects/android-companion-app.jpg",
         summary: {
             he: "אפליקציית companion לניסויי Android Lab, חיבורי כלי עזר וזרימות בדיקה סביב Maya בלי לחשוף מכשירים או מזהים פרטיים.",
             en: "A companion app for Android Lab experiments, helper-tool connections, and Maya-adjacent test flows without exposing devices or private identifiers.",
@@ -664,7 +664,7 @@ const SECONDARY_PROJECTS = [
     {
         title: { he: "Clash Royale automation", en: "Clash Royale automation" },
         category: "lab",
-        media: "assets/projects/about-framer-prototype.jpg",
+        media: "assets/projects/game-ui-qa-lab.jpg",
         summary: {
             he: "ניסוי מעבדה באוטומציית UI, זיהוי מצבים ובדיקת זרימות משחק בסביבה אישית ומורשית בלבד.",
             en: "A lab experiment in UI automation, state detection, and game-flow testing inside a personal authorized environment only.",
@@ -674,7 +674,7 @@ const SECONDARY_PROJECTS = [
     {
         title: { he: "FortySevenMS GUI / Vision Farmer", en: "FortySevenMS GUI / Vision Farmer" },
         category: "tools",
-        media: "assets/projects/about-framer-prototype.jpg",
+        media: "assets/projects/fortysevenms-vision-farmer.jpg",
         summary: {
             he: "כלי GUI למעבדת vision ואוטומציה שמתרגם תצפית חזותית לפעולות בדיקה מבוקרות ומדידות.",
             en: "A GUI tool for a vision and automation lab that turns visual observation into controlled, measurable test actions.",
@@ -684,7 +684,7 @@ const SECONDARY_PROJECTS = [
     {
         title: { he: "Sale-ים MVP", en: "Sale-im MVP" },
         category: "product",
-        media: "assets/projects/apartment-plan-app.png",
+        media: "assets/projects/sale-im-mvp.jpg",
         summary: {
             he: "MVP מוצרי לזרימת מבצעים ורכישה קבוצתית, עם מסכי החלטה מהירים, בדיקות שימושיות ומחשבה על mobile-first.",
             en: "A product MVP for deals and group-buying flow, with fast decision screens, usability checks, and mobile-first thinking.",
@@ -704,7 +704,7 @@ const SECONDARY_PROJECTS = [
     {
         title: { he: "AI Super-Analyst Dashboard", en: "AI Super-Analyst Dashboard" },
         category: "ai",
-        media: "assets/projects/ai-risk-local-model.jpg",
+        media: "assets/projects/ai-super-analyst-dashboard.jpg",
         summary: {
             he: "דשבורד מחקר שמציג איך AI יכול לעזור בסיכום סיגנלים, סיכונים והחלטות ללא חשיפת מידע פרטי.",
             en: "A research dashboard showing how AI can summarize signals, risks, and decisions without exposing private information.",
@@ -714,7 +714,7 @@ const SECONDARY_PROJECTS = [
     {
         title: { he: "Group-Buying PWA", en: "Group-Buying PWA" },
         category: "product",
-        media: "assets/projects/about-framer-prototype.jpg",
+        media: "assets/projects/group-buying-pwa.jpg",
         summary: {
             he: "ניסוי מוצר לזרימת רכישה קבוצתית, מסכי החלטה מהירים וחוויית mobile-first.",
             en: "A product experiment for group-buying flow, fast decision screens, and a mobile-first experience.",
@@ -724,7 +724,7 @@ const SECONDARY_PROJECTS = [
     {
         title: { he: "Quake/Qwasm browser games", en: "Quake/Qwasm browser games" },
         category: "lab",
-        media: "assets/projects/about-framer-prototype.jpg",
+        media: "assets/projects/quake-qwasm-browser-games.jpg",
         summary: {
             he: "ניסויי games בדפדפן, WebAssembly ואריזת חוויות מורכבות לתוך סביבת web.",
             en: "Browser games experiments with WebAssembly and packaging complex experiences into the web.",
@@ -734,7 +734,7 @@ const SECONDARY_PROJECTS = [
     {
         title: { he: "OpenAI Usage Dashboard", en: "OpenAI Usage Dashboard" },
         category: "automation",
-        media: "assets/projects/ai-risk-local-model.jpg",
+        media: "assets/projects/openai-usage-dashboard.jpg",
         summary: {
             he: "דשבורד שימוש שעוזר לראות עלויות, מגמות ובקרת צריכה במערכות AI.",
             en: "A usage dashboard for costs, trends, and consumption control in AI systems.",
@@ -936,6 +936,7 @@ const SKILL_GROUPS = [
 let activeProjectId = "";
 let lastPortfolioLanguage = DEFAULT_LANGUAGE;
 let projectInteractionsInitialized = false;
+const PROJECT_MEDIA_VERSION = "20260801-project-media";
 
 function localizedList(values, language) {
     const list = Array.isArray(values) ? values : localized(values, language);
@@ -951,6 +952,12 @@ function escapeHtml(value) {
         "\"": "&quot;",
         "'": "&#39;",
     })[character]);
+}
+
+function projectMediaSrc(src) {
+    if (!src) return "";
+
+    return src.includes("?") ? `${src}&v=${PROJECT_MEDIA_VERSION}` : `${src}?v=${PROJECT_MEDIA_VERSION}`;
 }
 
 function renderCategoryChips(categories, language) {
@@ -1028,7 +1035,7 @@ function renderProjects(language) {
         const source = localized(project.source, language);
 
         if (media) {
-            image.src = media.src;
+            image.src = projectMediaSrc(media.src);
             image.alt = localized(media.alt, language);
             image.loading = "lazy";
             figure.appendChild(image);
@@ -1084,7 +1091,7 @@ function detailSectionMarkup(title, bodyMarkup, language) {
 function projectDetailMarkup(project, language = lastPortfolioLanguage) {
     const mediaMarkup = (project.media || []).map((item) => `
         <figure class="project-detail-media-item">
-            <img src="${escapeHtml(item.src)}" alt="${escapeHtml(localized(item.alt, language))}" loading="lazy">
+            <img src="${escapeHtml(projectMediaSrc(item.src))}" alt="${escapeHtml(localized(item.alt, language))}" loading="lazy">
         </figure>
     `).join("");
     const outcomes = detailListMarkup(localizedList(project.outcomes, language));
@@ -1215,7 +1222,7 @@ function renderLabGallery(language) {
         const image = createTag("img", "", null);
         const categoryLabel = PROJECT_CATEGORY_LABELS[project.category] || project.category;
 
-        image.src = project.media;
+        image.src = projectMediaSrc(project.media);
         image.alt = localized(project.title, language);
         image.loading = "lazy";
         figure.appendChild(image);
