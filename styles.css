@@ -2124,19 +2124,20 @@ body.is-project-detail-open::before {
     }
 
     .cinematic-hero {
-        min-height: auto;
-        padding: 0.75rem 0 0.45rem;
+        justify-content: center;
+        min-height: clamp(26.5rem, 58svh, 30rem);
+        padding: 2rem 0 1.75rem;
     }
 
     .projects-section {
-        row-gap: 0.75rem;
-        padding-block-start: 0.85rem;
+        row-gap: 1.1rem;
+        padding-block-start: 1.65rem;
     }
 
     .projects-section .section-heading p {
-        margin-top: 0.55rem;
-        font-size: 0.9rem;
-        line-height: 1.36;
+        margin-top: 0.72rem;
+        font-size: 0.94rem;
+        line-height: 1.52;
     }
 
     .projects-section .section-heading h2 {
@@ -2152,16 +2153,34 @@ body.is-project-detail-open::before {
     .skills-grid,
     .credential-grid {
         grid-template-columns: 1fr;
+        gap: 1.1rem;
     }
 
     .project-card-media {
-        aspect-ratio: 16 / 9;
+        aspect-ratio: 16 / 8.4;
+    }
+
+    .project-card,
+    .lab-project,
+    .lab-card {
+        min-height: 25rem;
+    }
+
+    .project-card-body {
+        gap: 0.9rem;
+        padding: 1.12rem;
     }
 
     .project-card h3,
     .lab-project h3,
     .lab-card h3 {
-        font-size: 1.02rem;
+        font-size: 1.06rem;
+        line-height: 1.3;
+    }
+
+    .project-card-summary {
+        font-size: 0.98rem;
+        line-height: 1.56;
     }
 
     .project-detail-panel {
@@ -2178,26 +2197,26 @@ body.is-project-detail-open::before {
     }
 
     .project-detail-case-study {
-        gap: 1.15rem;
-        padding: 0 var(--page-gutter) 1.4rem;
+        gap: 1.3rem;
+        padding: 0 var(--page-gutter) 1.65rem;
     }
 
     .project-detail-hero {
         grid-template-columns: 1fr;
-        gap: 1rem;
+        gap: 1.15rem;
         align-items: start;
     }
 
     .project-detail-hero-media {
         order: -1;
-        aspect-ratio: 16 / 10.5;
+        aspect-ratio: 16 / 9.4;
         border-radius: 18px;
     }
 
     .project-detail-hero-copy h3 {
         max-width: 100%;
-        font-size: 1.72rem;
-        line-height: 1.08;
+        font-size: 1.64rem;
+        line-height: 1.14;
     }
 
     .project-detail-lede {
@@ -2216,13 +2235,13 @@ body.is-project-detail-open::before {
 
     .project-detail-accordion-body {
         font-size: 0.98rem;
-        line-height: 1.68;
+        line-height: 1.72;
     }
 
     .timeline article {
         grid-template-columns: 1fr;
-        gap: 0.55rem;
-        padding: 1rem 0;
+        gap: 0.72rem;
+        padding: 1.18rem 0 1.3rem;
     }
 
     .timeline article::before {
@@ -2242,21 +2261,36 @@ body.is-project-detail-open::before {
         justify-self: start;
     }
 
+    .timeline h3 {
+        font-size: 1.05rem;
+        line-height: 1.34;
+    }
+
+    .timeline p,
+    .timeline ul {
+        line-height: 1.62;
+    }
+
     .skills-grid article,
     .credential-grid article {
-        padding: 1rem;
+        padding: 1.15rem;
+    }
+
+    .skills-grid p,
+    .credential-grid p {
+        line-height: 1.62;
     }
 
     .home-lab-scene {
-        opacity: 0.32;
+        opacity: 0.36;
     }
 
     .home-lab-visual {
-        inset-block-start: 4.8rem;
+        inset-block-start: 4.4rem;
         inset-block-end: auto;
-        inset-inline-end: -20vw;
-        width: min(118vw, 620px);
-        height: 46svh;
+        inset-inline-end: -26vw;
+        width: min(136vw, 680px);
+        height: min(56svh, 560px);
     }
 
     .home-lab-modules {
