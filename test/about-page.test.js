@@ -698,18 +698,13 @@ test("timeline and courses reflect the CV year by year", () => {
         },
         {
             period: new RegExp(String.raw`2020${periodSeparator}2021`),
-            label: "2020-2021 Israel Police patrol training",
-            signals: [/Israel Police/i, /patrol/i, /training/i],
+            label: "2020-2021 Israel Police Intelligence Unit",
+            signals: [/Israel Police/i, /Intelligence Unit/i, /reporting/i],
         },
         {
             period: new RegExp(String.raw`2014${periodSeparator}2017`),
             label: "2014-2017 IDF SAP logistics and inventory",
             signals: [/\bIDF\b/i, /\bSAP\b/i, /logistics/i, /inventory/i],
-        },
-        {
-            period: new RegExp(String.raw`2013${periodSeparator}2017`),
-            label: "2013-2017 branch manager food retail",
-            signals: [/Branch manager/i, /food retail/i],
         },
     ];
     const expectedCourseSignals = [
@@ -746,6 +741,8 @@ test("timeline and courses reflect the CV year by year", () => {
         assert.match(skillsBlock, pattern, `Expected SKILL_GROUPS to include ${pattern}.`);
     }
 
+    assert.doesNotMatch(timelineBlock, /Branch manager|food retail|Burger Ranch/i);
+    assert.doesNotMatch(timelineBlock, /patrol training|field operations|סיור/i);
     assert.doesNotMatch(skillsBlock, /AWS Certified Developer/i);
     assert.doesNotMatch(skillsBlock, /Meta Front-End Developer/i);
 });
