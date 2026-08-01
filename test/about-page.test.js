@@ -1108,6 +1108,19 @@ test("Maya chatbot public answers do not expose implementation details", () => {
     assertSourceDoesNotMatch(chatbotCopySource, /גרסת mock|mock מקומית|בלי לשלוח מידע לשרת|local mock and does not send/i, "Maya answers should not mention mock mode or server behavior to site visitors.");
 });
 
+test("Maya chatbot module graph is cache-busted for content updates", () => {
+    const chatbotEntrySource = readIfExists("assets/chatbot/chatbot.js");
+    const chatbotUiSource = readIfExists("assets/chatbot/chatbot-ui.js");
+    const chatbotStateSource = readIfExists("assets/chatbot/chatbot.state.js");
+    const chatbotServiceSource = readIfExists("assets/chatbot/chatbot.service.js");
+
+    assertSourceMatches(indexHtml, /assets\/chatbot\/chatbot\.js\?v=20260802-maya-chatbot-depth/, "Expected the chatbot entry script to use the current content cache key.");
+    assertSourceMatches(chatbotEntrySource, /chatbot-ui\.js\?v=20260802-maya-chatbot-depth/, "Expected chatbot entry to cache-bust the UI module.");
+    assertSourceMatches(chatbotUiSource, /chatbot\.i18n\.js\?v=20260802-maya-chatbot-depth/, "Expected chatbot UI to cache-bust translated copy.");
+    assertSourceMatches(chatbotStateSource, /chatbot\.service\.js\?v=20260802-maya-chatbot-depth/, "Expected chatbot state to cache-bust service responses.");
+    assertSourceMatches(chatbotServiceSource, /chatbot\.i18n\.js\?v=20260802-maya-chatbot-depth/, "Expected chatbot service to cache-bust response copy.");
+});
+
 test("Maya chatbot project answers are technical, comprehensive, and public-safe", async () => {
     const chatbotI18nUrl = `${pathToFileURL(path.join(repoRoot, "assets/chatbot/chatbot.i18n.js")).href}?v=${Date.now()}`;
     const { CHATBOT_I18N } = await import(chatbotI18nUrl);

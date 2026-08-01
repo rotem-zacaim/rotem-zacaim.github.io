@@ -1,6 +1,6 @@
-import { getChatbotCopy, getChatbotDirection, normalizeChatbotLanguage } from "./chatbot.i18n.js";
-import { useChatbot } from "./chatbot.state.js";
-import { createMayaOrb } from "./maya-orb.js";
+import { getChatbotCopy, getChatbotDirection, normalizeChatbotLanguage } from "./chatbot.i18n.js?v=20260802-maya-chatbot-depth";
+import { useChatbot } from "./chatbot.state.js?v=20260802-maya-chatbot-depth";
+import { createMayaOrb } from "./maya-orb.js?v=20260802-maya-chatbot-depth";
 
 const FOCUSABLE_SELECTOR = [
     "button:not([disabled])",

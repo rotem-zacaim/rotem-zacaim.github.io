@@ -1,4 +1,4 @@
-import { createChatbotUi } from "./chatbot-ui.js";
+import { createChatbotUi } from "./chatbot-ui.js?v=20260802-maya-chatbot-depth";
 
 function initMayaChatbot() {
     if (document.querySelector("[data-maya-chatbot-root]")) return;

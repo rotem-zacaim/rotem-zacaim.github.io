@@ -1,5 +1,5 @@
-import { getChatbotCopy, normalizeChatbotLanguage } from "./chatbot.i18n.js";
-import { sendChatMessage } from "./chatbot.service.js";
+import { getChatbotCopy, normalizeChatbotLanguage } from "./chatbot.i18n.js?v=20260802-maya-chatbot-depth";
+import { sendChatMessage } from "./chatbot.service.js?v=20260802-maya-chatbot-depth";
 
 let messageCounter = 0;
 
