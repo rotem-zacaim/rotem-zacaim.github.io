@@ -916,8 +916,64 @@ test("project cards use project-specific media instead of recycled placeholders"
     assertSourceMatches(scriptJs, /\bconst\s+PROJECT_MEDIA_VERSION\s*=/, "Expected project media URLs to have a cache-busting version.");
     assertSourceMatches(scriptJs, /\bfunction\s+projectMediaSrc\s*\(/, "Expected a helper for stable project media cache-busting.");
     assertSourceMatches(renderProjectsBlock, /projectMediaSrc\s*\(\s*media\.src\s*\)/, "Expected primary project cards to use cache-busted media URLs.");
-    assertSourceMatches(projectDetailMarkupBlock, /projectMediaSrc\s*\(\s*item\.src\s*\)/, "Expected project detail images to use cache-busted media URLs.");
+    assertSourceMatches(projectDetailMarkupBlock, /projectMediaSrc\s*\(\s*primaryMedia\.src\s*\)/, "Expected project detail hero image to use cache-busted media URLs.");
     assertSourceMatches(renderLabGalleryBlock, /projectMediaSrc\s*\(\s*project\.media\s*\)/, "Expected secondary project cards to use cache-busted media URLs.");
+});
+
+test("project cards are concise single-accent glass previews", () => {
+    const renderProjectsBlock = getFunctionBlock(executableScriptJs, "renderProjects");
+    const renderLabGalleryBlock = getFunctionBlock(executableScriptJs, "renderLabGallery");
+    const renderCategoryChipsBlock = getFunctionBlock(executableScriptJs, "renderCategoryChips");
+
+    assertSourceDoesNotMatch(renderProjectsBlock, /project-meta|project-source|metaParts|project\.source/, "Primary cards should not render metadata or source paragraphs.");
+    assertSourceMatches(renderCategoryChipsBlock, /\.slice\s*\(\s*0\s*,\s*limit\s*\)/, "Category chip rendering should support an explicit visible tag limit.");
+    assertSourceMatches(renderProjectsBlock, /renderCategoryChips\s*\(\s*project\.categories\s*,\s*language\s*,\s*3\s*\)/, "Primary cards should show at most three tags.");
+    assertSourceMatches(renderLabGalleryBlock, /renderCategoryChips\s*\(\s*project\.tools\s*,\s*language\s*,\s*3\s*\)/, "Lab cards should show at most three tags.");
+    assertSourceMatches(stylesCss, /--project-accent:\s*#[0-9a-f]{6}/i, "Project cards should share one ice-blue accent variable.");
+    assertSourceDoesNotMatch(stylesCss, /\.project-card:nth-child|\.lab-project:nth-child|\.lab-card:nth-child/, "Project cards should not rotate accent colors by card position.");
+    assertSourceDoesNotMatch(stylesCss, /\.project-category-chips li:nth-child/, "Project tags should not rotate accent colors by tag position.");
+    assertSourceMatches(stylesCss, /-webkit-line-clamp:\s*2/, "Project descriptions should be clamped to two lines.");
+    assertSourceMatches(stylesCss, /\.project-card[\s\S]{0,900}backdrop-filter:\s*blur\((?:1[6-9]|2[0-9])px\)/, "Project cards should use a subtle glass blur instead of an opaque panel.");
+    assertSourceMatches(stylesCss, /\.project-card[\s\S]{0,900}min-height:\s*[\w(]/, "Project cards should keep a stable uniform height.");
+});
+
+test("project detail opens as a premium case study with tabs and mobile accordion", () => {
+    const projectDetailMarkupBlock = getFunctionBlock(executableScriptJs, "projectDetailMarkup");
+    const detailTechnologyMarkupBlock = getFunctionBlock(executableScriptJs, "detailTechnologyMarkup");
+    const openProjectDetailBlock = getFunctionBlock(executableScriptJs, "openProjectDetail");
+    const closeProjectDetailBlock = getFunctionBlock(executableScriptJs, "closeProjectDetail");
+    const initProjectInteractionsBlock = getFunctionBlock(executableScriptJs, "initProjectInteractions");
+
+    for (const requiredClass of [
+        "project-detail-case-study",
+        "project-detail-hero",
+        "project-detail-tabs",
+        "project-tab-panel",
+        "project-detail-accordion",
+    ]) {
+        assertSourceMatches(projectDetailMarkupBlock, new RegExp(requiredClass), `Expected project detail markup to include .${requiredClass}.`);
+    }
+
+    for (const tabName of ["overview", "architecture", "technologies", "results"]) {
+        assertSourceMatches(projectDetailMarkupBlock, new RegExp(`id:\\s*["']${tabName}["']`), `Expected ${tabName} tab configuration.`);
+        assertSourceMatches(projectDetailMarkupBlock, /data-project-tab="\$\{escapeHtml\(tab\.id\)\}"/, "Expected tab buttons to bind data-project-tab from tab data.");
+        assertSourceMatches(projectDetailMarkupBlock, /data-project-tab-panel="\$\{escapeHtml\(tab\.id\)\}"/, "Expected tab panels to bind data-project-tab-panel from tab data.");
+    }
+
+    assertSourceMatches(detailTechnologyMarkupBlock, /\.slice\s*\(\s*0\s*,\s*5\s*\)/, "Project detail should limit visible technologies to five central items.");
+    assertSourceMatches(scriptJs, /function\s+setProjectDetailTab\s*\(/, "Expected a tab switching helper for project detail.");
+    assertSourceMatches(initProjectInteractionsBlock, /closest\s*\(\s*["']\[data-project-tab\]["']\s*\)/, "Project detail tabs should be handled by delegated click events.");
+    assertSourceMatches(initProjectInteractionsBlock, /closest\s*\(\s*["']\[data-project-accordion\]["']\s*\)/, "Project detail accordions should keep mobile sections tidy.");
+    assertSourceMatches(openProjectDetailBlock, /document\.body\.classList\.add\s*\(\s*["']is-project-detail-open["']\s*\)/, "Opening project detail should darken and blur the page backdrop.");
+    assertSourceMatches(closeProjectDetailBlock, /document\.body\.classList\.remove\s*\(\s*["']is-project-detail-open["']\s*\)/, "Closing project detail should restore the page backdrop.");
+    assertSourceMatches(stylesCss, /body\.is-project-detail-open::before/, "Expected a single page backdrop overlay behind the case study.");
+    assertSourceMatches(stylesCss, /\.project-detail-panel[\s\S]{0,700}position:\s*fixed/, "Project detail should behave like a focused modal surface.");
+    assertSourceMatches(stylesCss, /\.project-detail-panel[\s\S]{0,900}backdrop-filter:\s*blur\((?:2[4-9]|30)px\)/, "Project detail should use 24-30px backdrop blur.");
+    assertSourceMatches(stylesCss, /\.project-detail-panel[\s\S]{0,900}border-radius:\s*(?:2[6-9]|30)px/, "Project detail should use a 26-30px radius.");
+    assertSourceMatches(stylesCss, /\.project-detail-hero[\s\S]{0,500}grid-template-columns:\s*minmax\(0,\s*3fr\)\s+minmax\([^)]*,\s*2fr\)/, "Desktop project detail hero should use a 60/40 two-column layout.");
+    assertSourceMatches(stylesCss, /@media\s*\(max-width:\s*760px\)[\s\S]*\.project-detail-panel[\s\S]{0,520}inset:\s*0/, "Mobile project detail should become full screen.");
+    assertSourceMatches(stylesCss, /@media\s*\(max-width:\s*760px\)[\s\S]*\.project-detail-tabs[\s\S]{0,160}display:\s*none/, "Mobile project detail should hide tabs.");
+    assertSourceMatches(stylesCss, /@media\s*\(max-width:\s*760px\)[\s\S]*\.project-detail-accordion[\s\S]{0,160}display:\s*grid/, "Mobile project detail should show accordion sections.");
 });
 
 test("home lab hero replaces the old rabbit stage", () => {

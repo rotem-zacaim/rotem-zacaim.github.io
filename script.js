@@ -36,6 +36,8 @@ const I18N = {
         skillsTitle: "Courses & Skills",
         skillsIntro: "Courses, certifications, and tool knowledge from my CV and independent research.",
         projectDetailCloseLabel: "Close project detail",
+        projectCaseStudyLabel: "Case Study",
+        projectOpenLabel: "View project",
         profileTitle: "Security operator. Infrastructure builder. AI experimenter.",
         profileIntro: "I work where alerts, infrastructure, code, and people meet.",
         profileCopyOne: "I bring hands-on experience from government-scale environments: SIEM, WAF, proxy, load balancing, SSL, API gateways, monitoring, Windows/Linux servers, and incident response workflows.",
@@ -159,6 +161,8 @@ const I18N = {
         skillsTitle: "קורסים וכישורים",
         skillsIntro: "קורסים, הסמכות וקבוצות ידע מתוך קורות החיים ומחקר עצמאי.",
         projectDetailCloseLabel: "סגירת פרטי פרויקט",
+        projectCaseStudyLabel: "Case Study",
+        projectOpenLabel: "צפייה בפרויקט",
         profileTitle: "אופרייטור אבטחה. בונה תשתיות. מתנסה ב־AI.",
         profileIntro: "אני עובד בדיוק במקום שבו התרעות, תשתיות, קוד ואנשים נפגשים.",
         profileCopyOne: "אני מביא ניסיון מעשי מסביבות ממשלתיות רחבות: SIEM, WAF, Proxy, Load Balancer, SSL, API Gateway, ניטור, שרתי Windows/Linux ותהליכי Incident Response.",
@@ -960,10 +964,10 @@ function projectMediaSrc(src) {
     return src.includes("?") ? `${src}&v=${PROJECT_MEDIA_VERSION}` : `${src}?v=${PROJECT_MEDIA_VERSION}`;
 }
 
-function renderCategoryChips(categories, language) {
+function renderCategoryChips(categories, language, limit = Infinity) {
     const list = createTag("ul", "inline-list project-category-chips");
 
-    (categories || []).forEach((category) => {
+    (categories || []).slice(0, limit).forEach((category) => {
         const label = PROJECT_CATEGORY_LABELS[category] || category;
         list.appendChild(createTag("li", "", localized(label, language)));
     });
@@ -979,11 +983,9 @@ function findProjectToggle(projectId) {
     return document.querySelector(`[data-project-toggle="${projectId}"]`);
 }
 
-function moveProjectDetailPanelAfterCard(panel, projectId) {
-    const activeCard = findProjectToggle(projectId)?.closest(".project-card");
-
-    if (activeCard?.parentElement) {
-        activeCard.insertAdjacentElement("afterend", panel);
+function moveProjectDetailPanelToModalRoot(panel) {
+    if (panel && panel.parentElement !== document.body) {
+        document.body.appendChild(panel);
     }
 }
 
@@ -1023,16 +1025,11 @@ function renderProjects(language) {
         const media = project.media?.[0];
         const figure = createTag("figure", "project-card-media");
         const image = createTag("img", "", null);
+        const body = createTag("div", "project-card-body");
         const categoryLabel = PROJECT_CATEGORY_LABELS[project.category] || project.category;
         const selected = activeProjectId === project.id;
         const projectTitle = localized(project.title, language);
         const button = createTag("button", "button button-secondary project-detail-toggle", getText(language, "projectOpenLabel") || localized({ he: "לפתוח פרטים", en: "Open details" }, language));
-        const metaParts = [
-            localized(project.proofLabel, language),
-            project.year,
-            localized(project.status, language),
-        ].filter(Boolean);
-        const source = localized(project.source, language);
 
         if (media) {
             image.src = projectMediaSrc(media.src);
@@ -1042,12 +1039,10 @@ function renderProjects(language) {
             article.appendChild(figure);
         }
 
-        article.appendChild(createTag("span", "project-label", localized(categoryLabel, language)));
-        article.appendChild(createTag("h3", "", projectTitle));
-        if (metaParts.length) article.appendChild(createTag("p", "project-meta", metaParts.join(" · ")));
-        article.appendChild(createTag("p", "", localized(project.summary, language)));
-        if (source) article.appendChild(createTag("p", "project-source", source));
-        article.appendChild(renderCategoryChips(project.categories, language));
+        body.appendChild(createTag("span", "project-label", localized(categoryLabel, language)));
+        body.appendChild(createTag("h3", "", projectTitle));
+        body.appendChild(createTag("p", "project-card-summary", localized(project.summary, language)));
+        body.appendChild(renderCategoryChips(project.categories, language, 3));
 
         button.type = "button";
         button.dataset.projectToggle = project.id;
@@ -1055,7 +1050,8 @@ function renderProjects(language) {
         button.setAttribute("aria-controls", detailPanelId);
         button["setAttribute"]("aria-label", `${button["textContent"]}: ${projectTitle}`);
         button.setAttribute("aria-expanded", selected ? "true" : "false");
-        article.appendChild(button);
+        body.appendChild(button);
+        article.appendChild(body);
 
         grid.appendChild(article);
     });
@@ -1074,63 +1070,166 @@ function detailTextMarkup(value, language) {
 function detailBulletMarkup(values, language) {
     const items = localizedList(values, language);
 
-    return items.length ? `<ul class="inline-list">${detailListMarkup(items)}</ul>` : "";
+    return items.length ? `<ul class="project-detail-list">${detailListMarkup(items)}</ul>` : "";
 }
 
-function detailSectionMarkup(title, bodyMarkup, language) {
-    if (!bodyMarkup) return "";
+function detailTechnologyMarkup(values) {
+    const items = (values || []).slice(0, 5);
 
-    return `
-        <section>
-            <h4>${escapeHtml(localized(title, language))}</h4>
-            ${bodyMarkup}
-        </section>
-    `;
+    return items.length ? `<ul class="inline-list project-detail-tech-list">${detailListMarkup(items)}</ul>` : "";
 }
 
 function projectDetailMarkup(project, language = lastPortfolioLanguage) {
-    const mediaMarkup = (project.media || []).map((item) => `
-        <figure class="project-detail-media-item">
-            <img src="${escapeHtml(projectMediaSrc(item.src))}" alt="${escapeHtml(localized(item.alt, language))}" loading="lazy">
+    const primaryMedia = project.media?.[0];
+    const heroImageMarkup = primaryMedia ? `
+        <figure class="project-detail-hero-media">
+            <img src="${escapeHtml(projectMediaSrc(primaryMedia.src))}" alt="${escapeHtml(localized(primaryMedia.alt, language))}" loading="lazy">
         </figure>
-    `).join("");
+    ` : "";
     const outcomes = detailListMarkup(localizedList(project.outcomes, language));
-    const technologies = detailListMarkup(project.technologies || project.tools);
+    const technologies = detailTechnologyMarkup(project.technologies || project.tools);
     const safety = localized(project.safety, language);
-    const builtMarkup = [
+    const overviewMarkup = [
+        detailTextMarkup(project.challenge, language),
         detailTextMarkup(project.built, language),
+    ].filter(Boolean).join("");
+    const architectureMarkup = [
+        detailTextMarkup(project.howItWorks, language),
         detailBulletMarkup(project.works, language),
     ].filter(Boolean).join("");
-    const howItWorksMarkup = detailTextMarkup(project.howItWorks, language);
-    const proofMarkup = detailTextMarkup(project.proof, language);
+    const technologyMarkup = [
+        technologies,
+        safety ? `<p>${escapeHtml(safety)}</p>` : "",
+    ].filter(Boolean).join("");
+    const resultsMarkup = [
+        detailTextMarkup(project.proof, language),
+        outcomes ? `<ul class="project-detail-list">${outcomes}</ul>` : "",
+    ].filter(Boolean).join("");
     const sourceContextLines = [
         [project.year, localized(project.status, language)].filter(Boolean).join(" / "),
         localized(project.source, language),
-        safety,
     ].filter(Boolean);
-    const sourceContextMarkup = sourceContextLines.map((line) => `<p>${escapeHtml(line)}</p>`).join("");
+    const sourceContextMarkup = sourceContextLines.length
+        ? `<div class="project-detail-context">${sourceContextLines.map((line) => `<p>${escapeHtml(line)}</p>`).join("")}</div>`
+        : "";
+    const fallbackMarkup = `<p>${escapeHtml(localized({ he: "מידע ציבורי בטוח לפרסום יוצג כאן בהמשך.", en: "Public-safe detail will be added here soon." }, language))}</p>`;
+    const tabData = [
+        {
+            id: "overview",
+            label: localized({ he: "סקירה", en: "Overview" }, language),
+            body: [overviewMarkup, sourceContextMarkup].filter(Boolean).join(""),
+        },
+        {
+            id: "architecture",
+            label: localized({ he: "ארכיטקטורה", en: "Architecture" }, language),
+            body: architectureMarkup,
+        },
+        {
+            id: "technologies",
+            label: localized({ he: "טכנולוגיות", en: "Technologies" }, language),
+            body: technologyMarkup,
+        },
+        {
+            id: "results",
+            label: localized({ he: "תוצאות", en: "Results" }, language),
+            body: resultsMarkup,
+        },
+    ];
+    const tabButtons = tabData.map((tab, index) => {
+        const selected = index === 0;
+        const panelId = `project-detail-${project.id}-${tab.id}`;
+
+        return `
+            <button
+                class="project-detail-tab${selected ? " is-active" : ""}"
+                type="button"
+                role="tab"
+                id="${escapeHtml(panelId)}-tab"
+                aria-controls="${escapeHtml(panelId)}"
+                aria-selected="${selected ? "true" : "false"}"
+                tabindex="${selected ? "0" : "-1"}"
+                data-project-tab="${escapeHtml(tab.id)}"
+            >
+                ${escapeHtml(tab.label)}
+            </button>
+        `;
+    }).join("");
+    const tabPanels = tabData.map((tab, index) => {
+        const selected = index === 0;
+        const panelId = `project-detail-${project.id}-${tab.id}`;
+
+        return `
+            <section
+                class="project-tab-panel"
+                id="${escapeHtml(panelId)}"
+                role="tabpanel"
+                aria-labelledby="${escapeHtml(panelId)}-tab"
+                data-project-tab-panel="${escapeHtml(tab.id)}"
+                ${selected ? "" : "hidden"}
+            >
+                ${tab.body || fallbackMarkup}
+            </section>
+        `;
+    }).join("");
+    const accordionMarkup = tabData.map((tab, index) => `
+        <details class="project-detail-accordion-item" data-project-accordion ${index === 0 ? "open" : ""}>
+            <summary>${escapeHtml(tab.label)}</summary>
+            <div class="project-detail-accordion-body">${tab.body || fallbackMarkup}</div>
+        </details>
+    `).join("");
 
     return `
-        <div class="project-detail-inner">
-            <div class="project-detail-media">${mediaMarkup}</div>
-            <div class="project-detail-copy">
-                <p class="project-label">${escapeHtml(localized(PROJECT_CATEGORY_LABELS[project.category], language))}</p>
-                <h3>${escapeHtml(localized(project.title, language))}</h3>
-                <p>${escapeHtml(localized(project.summary, language))}</p>
-                <div class="project-detail-lists">
-                    ${detailSectionMarkup({ he: "מה נבנה", en: "What was built" }, builtMarkup, language)}
-                    ${detailSectionMarkup({ he: "איך זה עובד", en: "How it works" }, howItWorksMarkup, language)}
-                    ${detailSectionMarkup({ he: "מה זה מוכיח", en: "What it proves" }, proofMarkup, language)}
-                    ${detailSectionMarkup({ he: "טכנולוגיות", en: "Technologies" }, `<ul class="inline-list">${technologies}</ul>`, language)}
-                    ${detailSectionMarkup({ he: "מקור והקשר", en: "Source/context" }, sourceContextMarkup, language)}
-                    <section>
-                        <h4>${escapeHtml(localized({ he: "תוצאות", en: "Outcomes" }, language))}</h4>
-                        <ul class="inline-list">${outcomes}</ul>
-                    </section>
+        <div class="project-detail-case-study" dir="${language === "he" ? "rtl" : "ltr"}">
+            <section class="project-detail-hero">
+                <div class="project-detail-hero-copy">
+                    <p class="project-label">${escapeHtml(localized(PROJECT_CATEGORY_LABELS[project.category], language))}</p>
+                    <h3>${escapeHtml(localized(project.title, language))}</h3>
+                    <p class="project-detail-lede">${escapeHtml(localized(project.summary, language))}</p>
+                </div>
+                ${heroImageMarkup}
+            </section>
+            <div class="project-detail-study-body">
+                <div class="project-detail-tabs" role="tablist" aria-label="${escapeHtml(localized({ he: "אזורי Case Study", en: "Case study sections" }, language))}">
+                    ${tabButtons}
+                </div>
+                <div class="project-detail-tab-panels">
+                    ${tabPanels}
+                </div>
+                <div class="project-detail-accordion">
+                    ${accordionMarkup}
                 </div>
             </div>
         </div>
     `;
+}
+
+function setProjectDetailTab(tabButton) {
+    const panel = tabButton?.closest("[data-project-detail-panel]");
+    const nextTab = tabButton?.dataset.projectTab;
+
+    if (!panel || !nextTab) return;
+
+    panel.querySelectorAll("[data-project-tab]").forEach((button) => {
+        const selected = button.dataset.projectTab === nextTab;
+
+        button.classList.toggle("is-active", selected);
+        button.setAttribute("aria-selected", selected ? "true" : "false");
+        button.setAttribute("tabindex", selected ? "0" : "-1");
+    });
+
+    panel.querySelectorAll("[data-project-tab-panel]").forEach((tabPanel) => {
+        tabPanel.hidden = tabPanel.dataset.projectTabPanel !== nextTab;
+    });
+}
+
+function syncProjectDetailAccordion(openItem) {
+    const panel = openItem?.closest("[data-project-detail-panel]");
+
+    if (!panel || !openItem.open) return;
+
+    panel.querySelectorAll("[data-project-accordion]").forEach((item) => {
+        if (item !== openItem) item.removeAttribute("open");
+    });
 }
 
 function openProjectDetail(projectOrId, options = {}) {
@@ -1142,11 +1241,12 @@ function openProjectDetail(projectOrId, options = {}) {
     if (!project || !panel || !content) return false;
 
     content.innerHTML = projectDetailMarkup(project, lastPortfolioLanguage);
-    moveProjectDetailPanelAfterCard(panel, project.id);
+    moveProjectDetailPanelToModalRoot(panel);
     panel.hidden = false;
     panel.setAttribute("aria-hidden", "false");
     panel.dataset.activeProject = project.id;
     panel.classList.add("is-open");
+    document.body.classList.add("is-project-detail-open");
     activeProjectId = project.id;
 
     document.querySelectorAll("[data-project-toggle]").forEach((control) => {
@@ -1197,6 +1297,7 @@ function closeProjectDetail(options = {}) {
         panel.setAttribute("aria-hidden", "true");
         panel.removeAttribute("data-active-project");
         panel.classList.remove("is-open");
+        document.body.classList.remove("is-project-detail-open");
         restoreProjectDetailPanelPosition(panel);
     }
 
@@ -1220,6 +1321,7 @@ function renderLabGallery(language) {
         const article = createTag("article", "lab-project panel");
         const figure = createTag("figure", "project-card-media");
         const image = createTag("img", "", null);
+        const body = createTag("div", "project-card-body");
         const categoryLabel = PROJECT_CATEGORY_LABELS[project.category] || project.category;
 
         image.src = projectMediaSrc(project.media);
@@ -1228,10 +1330,11 @@ function renderLabGallery(language) {
         figure.appendChild(image);
 
         article.appendChild(figure);
-        article.appendChild(createTag("span", "project-label", localized(categoryLabel, language)));
-        article.appendChild(createTag("h3", "", localized(project.title, language)));
-        article.appendChild(createTag("p", "", localized(project.summary, language)));
-        article.appendChild(renderCategoryChips(project.tools, language));
+        body.appendChild(createTag("span", "project-label", localized(categoryLabel, language)));
+        body.appendChild(createTag("h3", "", localized(project.title, language)));
+        body.appendChild(createTag("p", "project-card-summary", localized(project.summary, language)));
+        body.appendChild(renderCategoryChips(project.tools, language, 3));
+        article.appendChild(body);
 
         gallery.appendChild(article);
     });
@@ -1339,6 +1442,23 @@ function initProjectInteractions() {
     document.querySelector("[data-project-detail-close]")?.addEventListener("click", () => {
         closeProjectDetail();
     });
+
+    document.querySelector("[data-project-detail-panel]")?.addEventListener("click", (event) => {
+        const tabButton = event.target.closest("[data-project-tab]");
+
+        if (!tabButton) return;
+
+        event.preventDefault();
+        setProjectDetailTab(tabButton);
+    });
+
+    document.querySelector("[data-project-detail-panel]")?.addEventListener("toggle", (event) => {
+        const accordionItem = event.target.closest("[data-project-accordion]");
+
+        if (!accordionItem) return;
+
+        syncProjectDetailAccordion(accordionItem);
+    }, true);
 
     document.addEventListener("keydown", (event) => {
         if (event.key === "Escape" && activeProjectId) closeProjectDetail();
