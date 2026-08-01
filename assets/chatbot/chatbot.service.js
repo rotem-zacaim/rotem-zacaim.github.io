@@ -19,20 +19,44 @@ function resolveReply(message, language) {
     const copy = getChatbotCopy(normalized);
     const text = message.toLowerCase();
 
-    if (includesAny(text, ["בנה", "פרויקטים", "פרויקט", "built", "projects", "portfolio"])) {
-        return copy.responses.built;
+    if (includesAny(text, ["מה את יכולה", "מה אתה יכול", "מה אפשר לשאול", "מה אפשר לעשות", "יכולה לעשות", "יכול לעשות", "help", "what can you do", "what can i ask"])) {
+        return copy.responses.capabilities;
     }
 
     if (includesAny(text, ["maya", "מאיה", "וואטסאפ", "whatsapp", "agent", "סוכנת"])) {
         return copy.responses.maya;
     }
 
+    if (includesAny(text, ["home assistant", "בית חכם", "ha", "smart home"])) {
+        return copy.responses.homeAssistant;
+    }
+
+    if (includesAny(text, ["local llm", "llm", "מודל מקומי", "מודלים מקומיים", "gguf", "inference", "local model"])) {
+        return copy.responses.localLlm;
+    }
+
+    if (includesAny(text, ["redlab", "red lab", "מעבדת אבטחה", "מחקר אבטחה", "authorized research"])) {
+        return copy.responses.redlab;
+    }
+
+    if (includesAny(text, ["wifi", "wi-fi", "raspberry", "pi", "זכאים wifi", "zacaim-wifi", "רשת"])) {
+        return copy.responses.wifi;
+    }
+
+    if (includesAny(text, ["monitoring", "control center", "ניטור", "דשבורד", "dashboard", "observability"])) {
+        return copy.responses.monitoring;
+    }
+
+    if (includesAny(text, ["game", "games", "משחק", "משחקים", "ui lab", "browser games"])) {
+        return copy.responses.games;
+    }
+
     if (includesAny(text, ["סייבר", "אבטחה", "security", "cyber", "siem", "waf"])) {
         return copy.responses.cyber;
     }
 
-    if (includesAny(text, ["home assistant", "בית חכם", "ha", "smart home"])) {
-        return copy.responses.homeAssistant;
+    if (includesAny(text, ["בנה", "פרויקטים", "פרויקט", "built", "projects", "portfolio"])) {
+        return copy.responses.built;
     }
 
     if (includesAny(text, ["צור קשר", "קשר", "מייל", "email", "linkedin", "contact"])) {

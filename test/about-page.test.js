@@ -2,6 +2,7 @@ const assert = require("node:assert/strict");
 const fs = require("node:fs");
 const path = require("node:path");
 const test = require("node:test");
+const { pathToFileURL } = require("node:url");
 
 const repoRoot = path.resolve(__dirname, "..");
 const read = (file) => fs.readFileSync(path.join(repoRoot, file), "utf8");
@@ -1105,6 +1106,39 @@ test("Maya chatbot public answers do not expose implementation details", () => {
     const chatbotCopySource = readIfExists("assets/chatbot/chatbot.i18n.js");
 
     assertSourceDoesNotMatch(chatbotCopySource, /גרסת mock|mock מקומית|בלי לשלוח מידע לשרת|local mock and does not send/i, "Maya answers should not mention mock mode or server behavior to site visitors.");
+});
+
+test("Maya chatbot project answers are technical, comprehensive, and public-safe", async () => {
+    const chatbotI18nUrl = `${pathToFileURL(path.join(repoRoot, "assets/chatbot/chatbot.i18n.js")).href}?v=${Date.now()}`;
+    const { CHATBOT_I18N } = await import(chatbotI18nUrl);
+    const hebrewMayaAnswer = CHATBOT_I18N.he.responses.maya;
+    const englishMayaAnswer = CHATBOT_I18N.en.responses.maya;
+    const publicAnswerText = [
+        ...Object.values(CHATBOT_I18N.he.responses),
+        ...Object.values(CHATBOT_I18N.en.responses),
+    ].join("\n");
+
+    assert.ok(hebrewMayaAnswer.length > 650, "Expected the Hebrew Maya answer to be a technical case-study response, not a short summary.");
+    assert.ok(englishMayaAnswer.length > 800, "Expected the English Maya answer to be a technical case-study response, not a short summary.");
+
+    for (const pattern of [/ארכיטקטורה|שכבות/, /WhatsApp/i, /orchestrator|אורקסטרציה/i, /tool layer|שכבת כלים/i, /observability|ניטור/i]) {
+        assert.match(publicAnswerText, pattern, `Expected technical chatbot answers to include ${pattern}.`);
+    }
+
+    const forbiddenPublicAnswerSignals = [
+        /\b(?:localhost|127\.0\.0\.1|0\.0\.0\.0):\d{2,5}\b/i,
+        /\b[a-z0-9-]+\.trycloudflare\.com\b/i,
+        /\b(?:\d{1,3}\.){3}\d{1,3}\b/,
+        /\b(?:sk-[A-Za-z0-9_-]{20,}|AKIA[0-9A-Z]{16}|xox[baprs]-[A-Za-z0-9-]{20,})\b/,
+        /-----BEGIN (?:RSA |OPENSSH |EC |DSA )?PRIVATE KEY-----/,
+        /\b120363\d+@g\.us\b/i,
+        /\b972\d+@c\.us\b/i,
+        /\b(?:sensor|switch|camera|light|automation|script|device_tracker|person|lock|calendar)\.[a-z0-9_]+\b/i,
+    ];
+
+    for (const pattern of forbiddenPublicAnswerSignals) {
+        assert.doesNotMatch(publicAnswerText, pattern, `Maya public answers must not expose sensitive operational detail matching ${pattern}.`);
+    }
 });
 
 test("no sensitive operational details are exposed", () => {
