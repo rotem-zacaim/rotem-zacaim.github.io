@@ -328,6 +328,7 @@ main {
     position: fixed;
     inset: 0;
     z-index: 1;
+    overflow: hidden;
     pointer-events: none;
     opacity: var(--scene-opacity);
     transform: translate3d(0, var(--scene-parallax-y), 0) scale(var(--scene-scale));
@@ -335,12 +336,26 @@ main {
     transition: opacity 180ms ease, filter 180ms ease;
 }
 
+.home-lab-scene::before {
+    content: "";
+    position: absolute;
+    inset: -10%;
+    background:
+        linear-gradient(90deg, rgba(7, 8, 11, 0.82), rgba(7, 8, 11, 0.35) 38%, rgba(7, 8, 11, 0.56)),
+        url("assets/3d/home-lab-hero-concept.png");
+    background-size: cover;
+    background-position: center;
+    filter: blur(22px) saturate(1.08) contrast(1.05);
+    opacity: calc(0.13 + (var(--scene-scroll-progress) * 0.13));
+    transform: scale(1.08);
+}
+
 .home-lab-visual {
     position: absolute;
-    inset-block-end: -3svh;
-    inset-inline-end: 0;
-    width: min(58vw, 960px);
-    height: min(86svh, 860px);
+    inset-block-end: -8svh;
+    inset-inline-end: -8vw;
+    width: min(76vw, 1240px);
+    height: min(102svh, 980px);
     filter: blur(var(--scene-blur)) saturate(1.12) contrast(1.04);
     transform-origin: center bottom;
 }
@@ -349,8 +364,8 @@ main {
     display: block;
     width: 100%;
     height: 100%;
-    object-fit: contain;
-    object-position: center bottom;
+    object-fit: cover;
+    object-position: 62% bottom;
 }
 
 .home-lab-fog,
@@ -383,17 +398,38 @@ main {
     animation: labSignalDrift 5.8s ease-in-out infinite alternate;
 }
 
-.home-lab-leds span {
+.home-lab-rack-led {
     position: absolute;
-    left: var(--x);
-    top: var(--y);
-    width: 0.42rem;
-    height: 0.42rem;
+    left: var(--rack-led-x);
+    top: var(--rack-led-y);
+    width: var(--rack-led-size, 0.24rem);
+    height: var(--rack-led-size, 0.24rem);
     border-radius: 999px;
-    background: #80ffdb;
-    box-shadow: 0 0 16px #80ffdb, 0 0 34px rgba(128, 255, 219, 0.38);
+    color: var(--rack-led-color, #80ffdb);
+    background: var(--rack-led-color, #80ffdb);
+    box-shadow:
+        0 0 8px var(--rack-led-color, #80ffdb),
+        0 0 18px rgba(128, 255, 219, 0.34);
     animation: labLedBlink 1.85s ease-in-out infinite;
     animation-delay: var(--delay);
+}
+
+.home-lab-rack-led::after {
+    content: "";
+    position: absolute;
+    inset: -0.22rem;
+    border-radius: inherit;
+    background: currentColor;
+    opacity: 0.12;
+    filter: blur(6px);
+}
+
+.home-lab-rack-led--amber {
+    --rack-led-color: #ffc66d;
+}
+
+.home-lab-rack-led--tiny {
+    --rack-led-size: 0.18rem;
 }
 
 .home-lab-module {
@@ -2162,7 +2198,7 @@ body.is-home-lab-background .contact-section {
 
     .home-lab-fog,
     .home-lab-data-lines,
-    .home-lab-leds span {
+    .home-lab-rack-led {
         animation: none !important;
     }
 }

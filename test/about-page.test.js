@@ -889,6 +889,7 @@ test("home lab scene becomes a blurred scroll background", () => {
     assert.match(stylesCss, /--scene-opacity/);
     assert.match(stylesCss, /--scene-scale/);
     assert.match(stylesCss, /\.home-lab-scene/);
+    assert.match(stylesCss, /\.home-lab-scene::before[\s\S]*home-lab-hero-concept\.png[\s\S]*background-size:\s*cover/);
     assert.match(stylesCss, /\.home-lab-fog/);
     assert.match(stylesCss, /@keyframes\s+labLedBlink/);
     assert.match(stylesCss, /@keyframes\s+labFogDrift/);
@@ -896,6 +897,23 @@ test("home lab scene becomes a blurred scroll background", () => {
     assert.match(scriptJs, /requestAnimationFrame/);
     assert.match(scriptJs, /is-home-lab-background/);
     assert.match(scriptJs, /setProperty\("--scene-blur"/);
+});
+
+test("home lab LEDs are anchored to rack hardware instead of floating", () => {
+    const ledContainer = /<div class="home-lab-leds">([\s\S]*?)<\/div>/.exec(indexHtml)?.[1] || "";
+    const ledTags = findTagsByName(ledContainer, "span");
+
+    assert.ok(ledTags.length >= 10, "Expected a dense rack LED cluster, not a few floating markers.");
+    ledTags.forEach((tag) => {
+        assert.match(tag, /class="home-lab-rack-led/, "Each LED marker should use the rack LED class.");
+        assert.match(tag, /--rack-led-x:/, "Each LED marker should use rack-local x positioning.");
+        assert.match(tag, /--rack-led-y:/, "Each LED marker should use rack-local y positioning.");
+    });
+    assertSourceDoesNotMatch(ledContainer, /--x:/, "Old floating LED x coordinates should be removed.");
+    assertSourceDoesNotMatch(ledContainer, /--y:/, "Old floating LED y coordinates should be removed.");
+    assert.match(stylesCss, /\.home-lab-rack-led/);
+    assert.match(stylesCss, /left:\s*var\(--rack-led-x\)/);
+    assert.match(stylesCss, /top:\s*var\(--rack-led-y\)/);
 });
 
 test("home lab hero asset ships locally", () => {
