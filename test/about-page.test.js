@@ -5,6 +5,11 @@ const test = require("node:test");
 
 const repoRoot = path.resolve(__dirname, "..");
 const read = (file) => fs.readFileSync(path.join(repoRoot, file), "utf8");
+const readIfExists = (file) => {
+    const absolutePath = path.join(repoRoot, file);
+
+    return fs.existsSync(absolutePath) ? fs.readFileSync(absolutePath, "utf8") : "";
+};
 
 const indexHtml = read("index.html");
 const stylesCss = read("styles.css");
@@ -1042,6 +1047,64 @@ test("home lab scene keeps mobile and reduced-motion safety", () => {
 test("preserves approved contact targets", () => {
     assert.match(indexHtml, /mailto:Rotemvnkll@gmail\.com/);
     assert.match(indexHtml, /https:\/\/www\.linkedin\.com\/in\/rotem-zacaim-b4a709223\//);
+});
+
+test("Maya chatbot ships as a local accessible mock assistant without frontend secrets", () => {
+    const expectedFiles = [
+        "assets/rive/maya-orb.riv",
+        "assets/vendor/rive/rive.js",
+        "assets/vendor/rive/rive.wasm",
+        "assets/vendor/rive/rive_fallback.wasm",
+        "assets/chatbot/chatbot.i18n.js",
+        "assets/chatbot/chatbot.service.js",
+        "assets/chatbot/maya-orb.js",
+        "assets/chatbot/chatbot-ui.js",
+        "assets/chatbot/chatbot.js",
+    ];
+
+    for (const file of expectedFiles) {
+        const absolutePath = path.join(repoRoot, file);
+
+        assert.equal(fs.existsSync(absolutePath), true, `${file} should be shipped as a local static asset.`);
+        assert.ok(fs.statSync(absolutePath).size > 100, `${file} should not be an empty placeholder.`);
+    }
+
+    const chatbotSources = [
+        readIfExists("assets/chatbot/chatbot.i18n.js"),
+        readIfExists("assets/chatbot/chatbot.service.js"),
+        readIfExists("assets/chatbot/maya-orb.js"),
+        readIfExists("assets/chatbot/chatbot-ui.js"),
+        readIfExists("assets/chatbot/chatbot.js"),
+    ].join("\n");
+
+    assertSourceMatches(indexHtml, /assets\/vendor\/rive\/rive\.js\?v=2\.39\.1/, "Expected Rive runtime to be pinned and served locally.");
+    assertSourceMatches(indexHtml, /assets\/chatbot\/chatbot\.js\?v=/, "Expected the chatbot to load as a separate module.");
+    assertSourceDoesNotMatch(indexHtml, /unpkg\.com\/@rive-app\/canvas-lite@2(?!\.39\.1)/, "Chatbot must not load a floating Rive major version from a CDN.");
+    assertSourceDoesNotMatch(indexHtml, /cdn\.jsdelivr\.net\/npm\/@rive-app\/canvas-lite@2(?!\.39\.1)/, "Chatbot must not load a floating Rive fallback from a CDN.");
+    assertSourceMatches(chatbotSources, /RuntimeLoader\.setWasmUrl\(["']assets\/vendor\/rive\/rive\.wasm["']\)/, "Expected Rive WASM URL to point to the local primary WASM file.");
+    assertSourceMatches(chatbotSources, /RuntimeLoader\.setWasmFallbackUrl\(["']assets\/vendor\/rive\/rive_fallback\.wasm["']\)/, "Expected Rive fallback WASM URL to point to the local fallback file.");
+    assertSourceMatches(chatbotSources, /artboard:\s*["']Artboard["']/, "Expected the real Rive artboard name to be used.");
+    assertSourceMatches(chatbotSources, /stateMachine:\s*["']State Machine 1["']/, "Expected the real Rive state machine name to be recorded.");
+    assertSourceMatches(chatbotSources, /Idle[\s\S]*Typing[\s\S]*Correct[\s\S]*Wrong[\s\S]*Jump[\s\S]*Reveal/, "Expected chat states to map to real animation names found in the Rive file.");
+    assertSourceMatches(chatbotSources, /site-language-change/, "Expected the chatbot to follow the existing Hebrew/English language event.");
+    assertSourceMatches(chatbotSources, /דברו עם Maya/, "Expected Hebrew launcher copy.");
+    assertSourceMatches(chatbotSources, /Chat with Maya/, "Expected English launcher copy.");
+    assertSourceMatches(chatbotSources, /role["']?\s*,\s*["']dialog["']|role:\s*["']dialog["']/, "Expected the panel to expose dialog semantics.");
+    assertSourceMatches(chatbotSources, /aria-live/, "Expected new assistant messages to be announced accessibly.");
+    assertSourceMatches(chatbotSources, /Escape/, "Expected Escape to close the chatbot.");
+    assertSourceMatches(chatbotSources, /trapFocus|focusTrap|handleFocusTrap/, "Expected a focus trap while the chatbot is open.");
+    assertSourceMatches(chatbotSources, /textarea/, "Expected the chat input to use a textarea.");
+    assertSourceMatches(chatbotSources, /\.textContent\s*=|createTextNode\(/, "Expected message rendering to use text nodes instead of HTML injection.");
+    assertSourceMatches(chatbotSources, /export\s+async\s+function\s+sendChatMessage/, "Expected a service boundary for future backend integration.");
+    assertSourceMatches(chatbotSources, /\/api\/chat/, "Expected the future backend endpoint to be documented in the service layer.");
+    assertSourceDoesNotMatch(chatbotSources, /\bfetch\s*\(|XMLHttpRequest|WebSocket|EventSource/, "The first version should not call an external or backend service.");
+    assertSourceDoesNotMatch(chatbotSources, /OPENAI_API_KEY|apiKey|Authorization|Bearer|dangerouslySetInnerHTML|\.innerHTML\s*=|insertAdjacentHTML|eval\s*\(|new Function/, "Chatbot frontend must not expose secrets or inject user-controlled HTML.");
+});
+
+test("Maya chatbot public answers do not expose implementation details", () => {
+    const chatbotCopySource = readIfExists("assets/chatbot/chatbot.i18n.js");
+
+    assertSourceDoesNotMatch(chatbotCopySource, /גרסת mock|mock מקומית|בלי לשלוח מידע לשרת|local mock and does not send/i, "Maya answers should not mention mock mode or server behavior to site visitors.");
 });
 
 test("no sensitive operational details are exposed", () => {

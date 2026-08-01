@@ -2481,6 +2481,460 @@ body.is-project-detail-open::before {
     }
 }
 
+.maya-chatbot {
+    --maya-chat-accent: #9edfff;
+    --maya-chat-line: rgba(255, 255, 255, 0.14);
+    --maya-chat-line-strong: rgba(210, 238, 255, 0.26);
+    --maya-chat-surface: rgba(9, 14, 22, 0.58);
+    --maya-chat-surface-strong: rgba(9, 14, 22, 0.72);
+    position: fixed;
+    inset-inline-end: clamp(1rem, 2.2vw, 1.75rem);
+    inset-block-end: calc(1.15rem + env(safe-area-inset-bottom, 0px));
+    z-index: 46;
+    direction: inherit;
+    color: var(--text);
+    pointer-events: none;
+}
+
+.maya-chatbot *,
+.maya-chatbot *::before,
+.maya-chatbot *::after {
+    box-sizing: border-box;
+}
+
+.maya-chatbot-launcher,
+.maya-chatbot-panel {
+    pointer-events: auto;
+}
+
+.maya-chatbot-launcher {
+    position: relative;
+    isolation: isolate;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.8rem;
+    inline-size: min(22rem, calc(100vw - 2rem));
+    min-block-size: 4.35rem;
+    padding: 0.55rem 1rem 0.55rem 0.62rem;
+    border: 1px solid var(--maya-chat-line);
+    border-radius: 999px;
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.1), transparent 46%),
+        var(--maya-chat-surface);
+    box-shadow: 0 22px 70px rgba(0, 0, 0, 0.36);
+    color: var(--text);
+    font: inherit;
+    text-align: start;
+    cursor: pointer;
+    backdrop-filter: blur(26px);
+    -webkit-backdrop-filter: blur(26px);
+    transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
+}
+
+[dir="rtl"] .maya-chatbot-launcher {
+    padding-inline: 1rem 0.62rem;
+}
+
+.maya-chatbot-launcher::before,
+.maya-chatbot-panel::before {
+    content: "";
+    position: absolute;
+    inset-inline: 1.1rem;
+    inset-block-start: 0;
+    block-size: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.36), transparent);
+    pointer-events: none;
+}
+
+.maya-chatbot-launcher:hover,
+.maya-chatbot-launcher:focus-visible,
+.maya-chatbot.is-open .maya-chatbot-launcher {
+    border-color: var(--maya-chat-line-strong);
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.12), transparent 50%),
+        rgba(10, 18, 28, 0.68);
+    transform: translateY(-2px);
+}
+
+.maya-chatbot-launcher:focus-visible,
+.maya-chatbot-icon-button:focus-visible,
+.maya-chatbot-suggestion:focus-visible,
+.maya-chatbot-send:focus-visible,
+.maya-chatbot-form textarea:focus-visible {
+    outline: 2px solid rgba(158, 223, 255, 0.72);
+    outline-offset: 3px;
+}
+
+.maya-orb-shell {
+    position: relative;
+    display: grid;
+    flex: 0 0 auto;
+    place-items: center;
+    inline-size: 3.35rem;
+    block-size: 3.35rem;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 999px;
+    background:
+        radial-gradient(circle at 50% 42%, rgba(158, 223, 255, 0.18), transparent 64%),
+        rgba(255, 255, 255, 0.045);
+    overflow: hidden;
+}
+
+.maya-orb-shell::after {
+    content: "";
+    position: absolute;
+    inset: 0.42rem;
+    border-radius: inherit;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    pointer-events: none;
+}
+
+.maya-orb-shell[data-orb-state="thinking"],
+.maya-orb-shell[data-orb-state="responding"] {
+    animation: mayaOrbBreath 1.35s ease-in-out infinite;
+}
+
+.maya-orb-shell[data-orb-state="error"] {
+    animation: mayaOrbError 360ms ease;
+}
+
+.maya-orb-shell canvas {
+    inline-size: 100%;
+    block-size: 100%;
+}
+
+.maya-orb-shell canvas[data-rive-reduced-motion="true"],
+.maya-orb-shell canvas[data-rive-error="true"] {
+    background:
+        radial-gradient(circle at 48% 36%, rgba(255, 255, 255, 0.66), transparent 14%),
+        radial-gradient(circle at 50% 55%, rgba(158, 223, 255, 0.72), rgba(72, 106, 130, 0.32) 46%, transparent 70%);
+    border-radius: inherit;
+}
+
+.maya-chatbot-launcher-copy {
+    display: grid;
+    gap: 0.22rem;
+    min-inline-size: 0;
+}
+
+.maya-chatbot-launcher-title {
+    color: rgba(244, 246, 248, 0.96);
+    font-weight: 750;
+    line-height: 1.08;
+}
+
+.maya-chatbot-launcher-subtitle {
+    color: rgba(205, 214, 224, 0.74);
+    font-size: 0.78rem;
+    line-height: 1.25;
+}
+
+.maya-chatbot-panel {
+    position: absolute;
+    inset-inline-end: 0;
+    inset-block-end: calc(100% + 0.85rem);
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr) auto auto;
+    inline-size: min(400px, calc(100vw - 2rem));
+    max-block-size: min(680px, calc(100dvh - 8.5rem));
+    min-block-size: min(620px, calc(100dvh - 8.5rem));
+    border: 1px solid var(--maya-chat-line);
+    border-radius: 28px;
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.1), transparent 28%),
+        var(--maya-chat-surface-strong);
+    box-shadow: 0 34px 110px rgba(0, 0, 0, 0.52);
+    overflow: hidden;
+    backdrop-filter: blur(28px);
+    -webkit-backdrop-filter: blur(28px);
+    opacity: 0;
+    transform: translateY(0.65rem) scale(0.98);
+    transform-origin: bottom right;
+    transition: opacity 180ms ease, transform 180ms ease;
+}
+
+[dir="rtl"] .maya-chatbot-panel {
+    transform-origin: bottom left;
+}
+
+.maya-chatbot.is-open .maya-chatbot-panel {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+
+.maya-chatbot-panel[hidden] {
+    display: none;
+}
+
+.maya-chatbot-header {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 1rem 1rem 0.75rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.09);
+}
+
+.maya-chatbot-header .maya-orb-shell {
+    inline-size: 2.7rem;
+    block-size: 2.7rem;
+}
+
+.maya-chatbot-title-group {
+    min-inline-size: 0;
+}
+
+.maya-chatbot-title-group h2,
+.maya-chatbot-title-group p {
+    margin: 0;
+}
+
+.maya-chatbot-title-group h2 {
+    font-size: 1rem;
+    line-height: 1.1;
+}
+
+.maya-chatbot-title-group p {
+    margin-top: 0.18rem;
+    color: rgba(205, 214, 224, 0.72);
+    font-size: 0.78rem;
+    line-height: 1.25;
+}
+
+.maya-chatbot-header-actions {
+    display: inline-flex;
+    gap: 0.35rem;
+}
+
+.maya-chatbot-icon-button,
+.maya-chatbot-send {
+    display: inline-grid;
+    place-items: center;
+    min-inline-size: 2.5rem;
+    min-block-size: 2.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.11);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.055);
+    color: rgba(244, 246, 248, 0.92);
+    cursor: pointer;
+}
+
+.maya-chatbot-messages {
+    display: grid;
+    align-content: start;
+    gap: 0.8rem;
+    min-block-size: 0;
+    padding: 1rem;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+}
+
+.maya-chatbot-message {
+    display: grid;
+}
+
+.maya-chatbot-message--user {
+    justify-items: end;
+}
+
+.maya-chatbot-message--assistant {
+    justify-items: start;
+}
+
+.maya-chatbot-bubble {
+    max-inline-size: min(88%, 19rem);
+    margin: 0;
+    padding: 0.78rem 0.9rem;
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.075);
+    color: rgba(244, 246, 248, 0.92);
+    font-size: 0.95rem;
+    line-height: 1.58;
+    white-space: pre-wrap;
+}
+
+.maya-chatbot-message--user .maya-chatbot-bubble {
+    background: rgba(158, 223, 255, 0.15);
+    color: #f8fbff;
+}
+
+.maya-chatbot-suggestions {
+    display: grid;
+    gap: 0.55rem;
+    padding: 0 1rem 0.9rem;
+}
+
+.maya-chatbot-suggestions[hidden] {
+    display: none;
+}
+
+.maya-chatbot-suggestions-label,
+.maya-chatbot-status {
+    margin: 0;
+    color: rgba(205, 214, 224, 0.68);
+    font: 700 0.68rem/1.1 "IBM Plex Mono", monospace;
+}
+
+.maya-chatbot-suggestion-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+}
+
+.maya-chatbot-suggestion {
+    min-block-size: 2.2rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 999px;
+    padding: 0 0.75rem;
+    background: rgba(255, 255, 255, 0.05);
+    color: rgba(244, 246, 248, 0.86);
+    font: 650 0.77rem/1.15 "Space Grotesk", Arial, sans-serif;
+    cursor: pointer;
+}
+
+.maya-chatbot-status {
+    min-block-size: 1.15rem;
+    padding: 0 1rem;
+}
+
+.maya-chatbot-form {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+    gap: 0.65rem;
+    padding: 0.85rem 1rem 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.09);
+}
+
+.maya-chatbot-form textarea {
+    display: block;
+    inline-size: 100%;
+    max-block-size: 7rem;
+    min-block-size: 2.65rem;
+    resize: none;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 18px;
+    padding: 0.74rem 0.85rem;
+    background: rgba(3, 8, 14, 0.38);
+    color: var(--text);
+    font: 500 0.94rem/1.45 "Space Grotesk", Arial, sans-serif;
+}
+
+.maya-chatbot-form textarea::placeholder {
+    color: rgba(205, 214, 224, 0.5);
+}
+
+.maya-chatbot-send {
+    color: #06121b;
+    background: var(--maya-chat-accent);
+}
+
+.maya-chatbot-send:disabled,
+.maya-chatbot-form textarea:disabled {
+    cursor: not-allowed;
+    opacity: 0.58;
+}
+
+@keyframes mayaOrbBreath {
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.04);
+    }
+}
+
+@keyframes mayaOrbError {
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    32% {
+        transform: translateX(-2px);
+    }
+
+    64% {
+        transform: translateX(2px);
+    }
+}
+
+@media (max-width: 900px) {
+    .maya-chatbot {
+        inset-inline-end: 1rem;
+        inset-block-end: calc(5.85rem + env(safe-area-inset-bottom, 0px));
+    }
+
+    .maya-chatbot-launcher {
+        inline-size: min(18.5rem, calc(100vw - 2rem));
+        min-block-size: 3.7rem;
+        padding-block: 0.45rem;
+    }
+
+    .maya-chatbot-launcher-subtitle {
+        display: none;
+    }
+}
+
+@media (max-width: 640px) {
+    .maya-chatbot {
+        inset-inline: 0.7rem;
+        inset-block-end: calc(6.45rem + env(safe-area-inset-bottom, 0px));
+        display: grid;
+        justify-items: end;
+    }
+
+    .maya-chatbot-launcher {
+        inline-size: min(16.5rem, calc(100vw - 1.4rem));
+        min-block-size: 3.35rem;
+        gap: 0.62rem;
+        padding-inline: 0.72rem;
+    }
+
+    .maya-chatbot-launcher .maya-orb-shell {
+        inline-size: 2.55rem;
+        block-size: 2.55rem;
+    }
+
+    .maya-chatbot-launcher-title {
+        font-size: 0.92rem;
+    }
+
+    .maya-chatbot-panel {
+        position: fixed;
+        inset-inline: 0.55rem;
+        inset-block-start: auto;
+        inset-block-end: calc(0.55rem + env(safe-area-inset-bottom, 0px));
+        inline-size: auto;
+        block-size: min(86dvh, calc(100dvh - 1.1rem - env(safe-area-inset-bottom, 0px)));
+        min-block-size: 0;
+        max-block-size: min(86dvh, calc(100dvh - 1.1rem - env(safe-area-inset-bottom, 0px)));
+        border-radius: 28px 28px 22px 22px;
+        transform-origin: bottom center;
+    }
+
+    .maya-chatbot-header {
+        padding: 0.9rem 0.9rem 0.7rem;
+    }
+
+    .maya-chatbot-messages {
+        padding: 0.9rem;
+    }
+
+    .maya-chatbot-bubble {
+        max-inline-size: 92%;
+        font-size: 0.92rem;
+        line-height: 1.54;
+    }
+
+    .maya-chatbot-suggestions,
+    .maya-chatbot-form {
+        padding-inline: 0.9rem;
+    }
+}
+
 @media (prefers-reduced-motion: reduce) {
     *,
     *::before,
@@ -2497,7 +2951,8 @@ body.is-project-detail-open::before {
 
     .home-lab-fog,
     .home-lab-data-lines,
-    .home-lab-rack-led {
+    .home-lab-rack-led,
+    .maya-orb-shell {
         animation: none !important;
     }
 }
