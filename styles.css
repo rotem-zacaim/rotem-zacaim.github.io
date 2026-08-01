@@ -2124,9 +2124,21 @@ body.is-project-detail-open::before {
     }
 
     .cinematic-hero {
-        justify-content: center;
-        min-height: clamp(26.5rem, 58svh, 30rem);
-        padding: 2rem 0 1.75rem;
+        justify-content: flex-end;
+        min-height: clamp(37rem, 82svh, 43rem);
+        padding: 9.5rem 0 2.4rem;
+    }
+
+    .cinematic-hero::after {
+        content: "";
+        position: absolute;
+        inset: auto -0.85rem 0;
+        z-index: 2;
+        height: min(66%, 30rem);
+        background:
+            linear-gradient(180deg, transparent 0%, rgba(7, 8, 11, 0.42) 34%, rgba(7, 8, 11, 0.9) 100%),
+            radial-gradient(circle at 50% 44%, rgba(102, 227, 255, 0.14), transparent 48%);
+        pointer-events: none;
     }
 
     .projects-section {
@@ -2282,19 +2294,190 @@ body.is-project-detail-open::before {
     }
 
     .home-lab-scene {
-        opacity: 0.36;
+        opacity: clamp(0.36, calc(0.82 - (var(--scene-scroll-progress) * 0.46)), 0.82);
     }
 
     .home-lab-visual {
-        inset-block-start: 4.4rem;
+        inset-block-start: 3.25rem;
         inset-block-end: auto;
-        inset-inline-end: -26vw;
-        width: min(136vw, 680px);
-        height: min(56svh, 560px);
+        inset-inline-end: auto;
+        left: 50%;
+        width: min(168vw, 760px);
+        height: min(73svh, 680px);
+        filter: blur(calc(var(--scene-blur) * 0.55)) saturate(1.2) contrast(1.08);
+        transform: translateX(-50%);
+    }
+
+    .home-lab-image {
+        object-position: 58% bottom;
+    }
+
+    .home-lab-scene::before {
+        background-position: 58% bottom;
+        filter: blur(16px) saturate(1.12) contrast(1.08);
+        opacity: calc(0.18 + (var(--scene-scroll-progress) * 0.08));
+    }
+
+    .home-lab-scene::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background:
+            linear-gradient(180deg, rgba(7, 8, 11, 0.1) 0%, rgba(7, 8, 11, 0.22) 42%, rgba(7, 8, 11, 0.68) 100%),
+            linear-gradient(90deg, rgba(7, 8, 11, 0.42), transparent 30%, transparent 70%, rgba(7, 8, 11, 0.42));
+        pointer-events: none;
     }
 
     .home-lab-modules {
         display: none;
+    }
+}
+
+@media (max-width: 640px) {
+    body {
+        padding-bottom: calc(7.5rem + env(safe-area-inset-bottom, 0px));
+    }
+
+    .mobile-action-dock {
+        inset-block-end: calc(0.75rem + env(safe-area-inset-bottom, 0px));
+        border-radius: 18px;
+    }
+
+    .projects-section {
+        padding-block-end: calc(4.8rem + env(safe-area-inset-bottom, 0px));
+    }
+
+    .project-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.7rem;
+    }
+
+    .project-card {
+        min-height: 0;
+        height: clamp(10.5rem, 21.5svh, 11.4rem);
+        border-color: rgba(255, 255, 255, 0.14);
+        border-radius: 18px;
+        background:
+            linear-gradient(180deg, rgba(255, 255, 255, 0.075), transparent 42%),
+            rgba(9, 15, 24, 0.58);
+        backdrop-filter: blur(16px);
+        box-shadow: 0 14px 38px rgba(0, 0, 0, 0.24);
+    }
+
+    .project-card::before {
+        opacity: 0.42;
+    }
+
+    .project-card:hover,
+    .project-card:focus-within {
+        border-color: rgba(255, 255, 255, 0.22);
+        background:
+            linear-gradient(180deg, rgba(255, 255, 255, 0.09), transparent 46%),
+            rgba(10, 18, 28, 0.64);
+    }
+
+    .project-card-media {
+        height: 4.75rem;
+        max-height: 47%;
+        aspect-ratio: auto;
+        flex: 0 0 auto;
+    }
+
+    .project-card-media img {
+        object-fit: cover;
+        object-position: center center;
+    }
+
+    .project-card-body {
+        position: static;
+        min-height: 0;
+        gap: 0.34rem;
+        padding: 0.58rem 0.62rem 0.68rem;
+    }
+
+    .project-card-body > .project-label {
+        min-height: 0;
+        color: var(--project-accent);
+        font-size: 0.62rem;
+        line-height: 1.18;
+        text-transform: uppercase;
+    }
+
+    .project-card h3 {
+        display: -webkit-box;
+        min-height: 2.38em;
+        margin: 0;
+        font-size: 0.86rem;
+        line-height: 1.19;
+        overflow: hidden;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+    }
+
+    .project-card-summary,
+    .project-card-body > .project-category-chips {
+        display: none;
+    }
+
+    .project-card .project-detail-toggle {
+        position: absolute;
+        inset: 0;
+        z-index: 6;
+        display: block;
+        width: auto;
+        min-height: 0;
+        margin: 0;
+        border: 0;
+        border-radius: inherit;
+        padding: 0;
+        background: transparent;
+        color: rgba(244, 246, 248, 0.8);
+        font-size: 0;
+        line-height: 1;
+        text-align: start;
+        cursor: pointer;
+    }
+
+    .project-card .project-detail-toggle::before {
+        content: "Details";
+        position: absolute;
+        inset-block-end: 0.58rem;
+        inset-inline-start: 0.62rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.28rem;
+        color: rgba(244, 246, 248, 0.74);
+        font: 700 0.67rem/1.1 "IBM Plex Mono", monospace;
+        letter-spacing: 0;
+    }
+
+    [dir="rtl"] .project-card .project-detail-toggle::before {
+        content: "לפרטים";
+    }
+
+    .project-card .project-detail-toggle::after {
+        content: "←";
+        position: absolute;
+        inset-block-end: 0.52rem;
+        inset-inline-end: 0.62rem;
+        display: inline-grid;
+        place-items: center;
+        inline-size: 1.28rem;
+        block-size: 1.28rem;
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        border-radius: 999px;
+        color: rgba(244, 246, 248, 0.76);
+        font: 700 0.78rem/1 "IBM Plex Mono", monospace;
+    }
+
+    [dir="ltr"] .project-card .project-detail-toggle::after {
+        content: "→";
+    }
+
+    .project-card .project-detail-toggle:focus-visible {
+        outline: 2px solid rgba(102, 227, 255, 0.74);
+        outline-offset: -4px;
     }
 }
 
