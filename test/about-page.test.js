@@ -940,6 +940,17 @@ test("project cards are concise single-accent glass previews", () => {
     assertSourceMatches(stylesCss, /\.project-card[\s\S]{0,900}min-height:\s*[\w(]/, "Project cards should keep a stable uniform height.");
 });
 
+test("mobile lab gallery cards keep visible project context", () => {
+    const mobileCss = /@media\s*\(max-width:\s*640px\)\s*\{[\s\S]*?\.maya-chatbot\s*\{/.exec(stylesCss)?.[0] || "";
+
+    assert.ok(mobileCss, "Expected mobile CSS rules for 640px.");
+    assertSourceMatches(mobileCss, /\.project-card\s+\.project-card-summary\s*,\s*\.project-card\s+\.project-card-body\s*>\s*\.project-category-chips\s*\{[\s\S]{0,80}display:\s*none/, "Primary project card summary hiding should be scoped to .project-card only.");
+    assertSourceDoesNotMatch(mobileCss, /(?:^|\n)\s*\.project-card-summary\s*,\s*\.project-card-body\s*>\s*\.project-category-chips\s*\{[\s\S]{0,80}display:\s*none/, "Global mobile summary hiding must not remove lab gallery context.");
+    assertSourceMatches(mobileCss, /\.lab-project[\s\S]{0,260}min-height:\s*auto/, "Mobile lab cards should not reserve a large empty body.");
+    assertSourceMatches(mobileCss, /\.lab-project\s+\.project-card-summary[\s\S]{0,220}display:\s*-webkit-box/, "Mobile lab cards should keep a clamped summary visible.");
+    assertSourceMatches(mobileCss, /\.lab-project\s+\.project-card-body\s*>\s*\.project-category-chips[\s\S]{0,160}display:\s*flex/, "Mobile lab cards should keep concise technology chips visible.");
+});
+
 test("project detail opens as a premium case study with tabs and mobile accordion", () => {
     const projectDetailMarkupBlock = getFunctionBlock(executableScriptJs, "projectDetailMarkup");
     const detailTechnologyMarkupBlock = getFunctionBlock(executableScriptJs, "detailTechnologyMarkup");
