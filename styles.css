@@ -2617,27 +2617,19 @@ body.is-project-detail-open::before {
 }
 
 .maya-orb-shell {
+    --maya-orb-canvas-scale: 2.75;
     position: relative;
     display: grid;
     flex: 0 0 auto;
     place-items: center;
     inline-size: 3.35rem;
     block-size: 3.35rem;
-    border: 1px solid rgba(255, 255, 255, 0.12);
     border-radius: 999px;
-    background:
-        radial-gradient(circle at 50% 42%, rgba(158, 223, 255, 0.18), transparent 64%),
-        rgba(255, 255, 255, 0.045);
     overflow: hidden;
 }
 
 .maya-orb-shell::after {
-    content: "";
-    position: absolute;
-    inset: 0.42rem;
-    border-radius: inherit;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    pointer-events: none;
+    content: none;
 }
 
 .maya-orb-shell[data-orb-state="thinking"],
@@ -2652,6 +2644,9 @@ body.is-project-detail-open::before {
 .maya-orb-shell canvas {
     inline-size: 100%;
     block-size: 100%;
+    border-radius: inherit;
+    transform: scale(var(--maya-orb-canvas-scale));
+    transform-origin: center;
 }
 
 .maya-orb-shell canvas[data-rive-reduced-motion="true"],

@@ -609,7 +609,7 @@ test("first viewport is projects-first with Hebrew default and approved nav", ()
         expectedEnglishNavLabels,
         "Expected English i18n labels for the approved top nav links."
     );
-    assertSourceMatches(publicSiteSource, /אנליסט אבטחת מידע ותשתיות שבונה מערכות AI/, "Expected Hebrew hero lede.");
+    assertSourceMatches(publicSiteSource, /אנליסט אבטחת מידע שמשלב AI, אוטומציה ותשתיות/, "Expected Hebrew hero lede.");
     assertI18nAnchorTarget("heroPrimary", "#projects");
     assertI18nAnchorTarget("heroSecondary", "#timeline");
     assertHebrewDefaultLanguage(scriptJs);
@@ -1117,6 +1117,13 @@ test("Maya chatbot public answers do not expose implementation details", () => {
     const chatbotCopySource = readIfExists("assets/chatbot/chatbot.i18n.js");
 
     assertSourceDoesNotMatch(chatbotCopySource, /גרסת mock|mock מקומית|בלי לשלוח מידע לשרת|local mock and does not send/i, "Maya answers should not mention mock mode or server behavior to site visitors.");
+});
+
+test("Maya chatbot orb is the visual object instead of a ringed shell", () => {
+    assertSourceMatches(stylesCss, /\.maya-orb-shell\s*\{[\s\S]{0,180}--maya-orb-canvas-scale:\s*2\.[4-9]/, "Expected the Rive orb canvas to be enlarged inside its shell.");
+    assertSourceDoesNotMatch(stylesCss, /\.maya-orb-shell\s*\{[\s\S]{0,260}border:\s*1px/, "Orb shell should not draw an outer ring around Maya.");
+    assertSourceMatches(stylesCss, /\.maya-orb-shell::after\s*\{[\s\S]{0,80}content:\s*none/, "Orb shell should not draw the old inner ring.");
+    assertSourceMatches(stylesCss, /\.maya-orb-shell canvas\s*\{[\s\S]{0,180}transform:\s*scale\(var\(--maya-orb-canvas-scale\)\)/, "Expected the animation itself to fill the former ring area.");
 });
 
 test("Maya chatbot module graph is cache-busted for content updates", () => {
