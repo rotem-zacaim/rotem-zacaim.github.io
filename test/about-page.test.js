@@ -15,7 +15,8 @@ const readIfExists = (file) => {
 const indexHtml = read("index.html");
 const stylesCss = read("styles.css");
 const scriptJs = read("script.js");
-const publicSiteSource = [indexHtml, stylesCss, scriptJs].join("\n");
+const llmRegistrationJs = readIfExists("assets/llm-access/registration.js");
+const publicSiteSource = [indexHtml, stylesCss, scriptJs, llmRegistrationJs].join("\n");
 
 function escapeRegExp(value) {
     return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -593,8 +594,8 @@ test("custom domain stays mapped to about.rotem-dev.org", () => {
 test("first viewport is projects-first with Hebrew default and approved nav", () => {
     const htmlTag = findTagsByName(indexHtml, "html")[0] || "";
     const topNavLinks = getTopNavLinks(indexHtml);
-    const expectedTopNavHrefs = ["#projects", "#lab-gallery", "#timeline", "#skills", "#contact"];
-    const expectedEnglishNavLabels = ["Projects", "Lab Gallery", "Timeline", "Courses & Skills", "Contact"];
+    const expectedTopNavHrefs = ["#projects", "#lab-gallery", "#timeline", "#skills", "#llm-access", "#contact"];
+    const expectedEnglishNavLabels = ["Projects", "Lab Gallery", "Timeline", "Courses & Skills", "LLM Access", "Contact"];
 
     assert.equal(getAttributeValue(htmlTag, "lang"), "he", "Expected document to default to Hebrew.");
     assert.equal(getAttributeValue(htmlTag, "dir"), "rtl", "Expected document to default to RTL.");
@@ -1059,6 +1060,52 @@ test("home lab scene keeps mobile and reduced-motion safety", () => {
 test("preserves approved contact targets", () => {
     assert.match(indexHtml, /mailto:Rotemvnkll@gmail\.com/);
     assert.match(indexHtml, /https:\/\/www\.linkedin\.com\/in\/rotem-zacaim-b4a709223\//);
+});
+
+test("public LLM access registration is visible, private, and public-safe", () => {
+    const llmAccessSource = [indexHtml, llmRegistrationJs].join("\n");
+
+    assert.ok(sectionExists(indexHtml, "llm-access"), "Expected a public LLM access section.");
+    assert.ok(elementWithIdExists(indexHtml, "llm-access-title"), "Expected the LLM section title id.");
+    assertSourceMatches(indexHtml, /<form\b[^>]*class=["'][^"']*\bllm-access-form\b[^"']*["'][^>]*data-llm-access-form\b/i, "Expected a visible LLM access registration form.");
+    assertSourceMatches(indexHtml, /assets\/llm-access\/registration\.js\?v=20260813-public-llm/, "Expected the public LLM registration module to be loaded.");
+    assertSourceMatches(indexHtml, /<div class="section-index">05<\/div>[\s\S]{0,500}<h2 id="llm-access-title" data-i18n="llmAccessTitle"/, "Expected LLM access to be section 05.");
+    assertSourceMatches(indexHtml, /<section class="contact-section" id="contact"[\s\S]{0,120}<div class="section-index">06<\/div>/, "Expected Contact to be renumbered to section 06.");
+
+    for (const fieldName of ["username", "fullName", "phone"]) {
+        assertSourceMatches(indexHtml, new RegExp(`<input\\b(?=[^>]*\\bname=["']${fieldName}["'])(?=[^>]*\\brequired\\b)[^>]*>`, "i"), `Expected required ${fieldName} input.`);
+    }
+    assertSourceDoesNotMatch(indexHtml, /name=["']password["']/i, "ABOUT should not collect a password before approval.");
+
+    assertSourceMatches(indexHtml, /name=["']phone["'][^>]*aria-describedby=["']llm-phone-example["']|aria-describedby=["']llm-phone-example["'][^>]*name=["']phone["']/i, "Expected phone input to reference its public example.");
+    assertSourceMatches(indexHtml, /id=["']llm-phone-example["'][\s\S]{0,160}(?:0501234567|\+972501234567)/, "Expected a safe phone-format hint.");
+    assertSourceMatches(indexHtml, /<input\b[^>]*\bname=["']email["'][^>]*>/i, "Expected optional email input.");
+    assertSourceMatches(indexHtml, /<textarea\b[^>]*\bname=["']reason["'][^>]*>/i, "Expected optional reason textarea.");
+
+    for (const consentName of ["privacy", "terms", "whatsapp", "legalWarning"]) {
+        assertSourceMatches(indexHtml, new RegExp(`<input\\b(?=[^>]*\\btype=["']checkbox["'])(?=[^>]*\\bname=["']${consentName}["'])(?=[^>]*\\brequired\\b)[^>]*>`, "i"), `Expected required ${consentName} consent checkbox.`);
+    }
+
+    assertSourceMatches(indexHtml, /https:\/\/llm\.rotem-dev\.org\/llm\/privacy/, "Expected public privacy link.");
+    assertSourceMatches(indexHtml, /https:\/\/llm\.rotem-dev\.org\/llm\/terms/, "Expected public terms link.");
+    assertSourceMatches(indexHtml, /פרטיות|privacy/i, "Expected public privacy copy.");
+    assertSourceMatches(indexHtml, /תנאי|terms/i, "Expected public legal terms copy.");
+    assertSourceMatches(indexHtml, /WhatsApp/, "Expected public WhatsApp delivery copy.");
+    assertSourceMatches(indexHtml, /data-llm-access-status/, "Expected an accessible public status target.");
+
+    assertSourceMatches(llmRegistrationJs, /const\s+ENDPOINT\s*=\s*["']https:\/\/llm\.rotem-dev\.org\/api\/public-llm\/register["']/, "Expected the public registration endpoint.");
+    assertSourceMatches(llmRegistrationJs, /preventDefault\(\)/, "Expected form submission to stay on-page.");
+    assertSourceMatches(llmRegistrationJs, /fetch\(\s*ENDPOINT[\s\S]{0,500}method:\s*["']POST["']/, "Expected a POST to the public registration endpoint.");
+    assertSourceMatches(llmRegistrationJs, /Content-Type["']?\s*:\s*["']application\/json["']/, "Expected JSON content type.");
+    assertSourceMatches(llmRegistrationJs, /consents\s*:\s*\{[\s\S]{0,220}privacy[\s\S]{0,220}terms[\s\S]{0,220}whatsapp[\s\S]{0,220}legalWarning/, "Expected all consent booleans in the payload.");
+    assertSourceMatches(llmRegistrationJs, /PHONE_PATTERN/, "Expected explicit phone validation before public submission.");
+    assertSourceMatches(llmRegistrationJs, /reportValidity\(\)/, "Expected browser validity reporting before public submission.");
+    assertSourceMatches(llmRegistrationJs, /\.textContent\s*=/, "Expected status updates to use textContent.");
+    assertSourceMatches(llmRegistrationJs, /הבקשה התקבלה\. רותם יבדוק אותה, ואם תאושר מאיה תשלח לך הודעת WhatsApp עם קישור הגישה\./, "Expected the approved Hebrew success message.");
+    assertSourceDoesNotMatch(llmRegistrationJs, /password\s*:/, "Public registration payload should not include password before approval.");
+
+    assertSourceDoesNotMatch(llmAccessSource, /\bmon\.rotem-dev\.org\b/i, "Public LLM registration must not expose the private monitoring host.");
+    assertSourceDoesNotMatch(llmAccessSource, /OPENAI_API_KEY|Authorization|Bearer|sk-[A-Za-z0-9_-]+/, "Public LLM registration must not expose frontend secrets or auth headers.");
 });
 
 test("Maya chatbot ships as a local accessible mock assistant without frontend secrets", () => {

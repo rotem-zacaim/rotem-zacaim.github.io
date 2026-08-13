@@ -50,6 +50,7 @@
     <link rel="stylesheet" href="styles.css?v=20260802-hero-orb">
     <script src="assets/vendor/rive/rive.js?v=2.39.1" defer></script>
     <script type="module" src="script.js?v=20260802-hero-lede"></script>
+    <script type="module" src="assets/llm-access/registration.js?v=20260813-public-llm"></script>
     <script type="module" src="assets/chatbot/chatbot.js?v=20260802-maya-chatbot-depth"></script>
 </head>
 <body>
@@ -66,6 +67,7 @@
             <a href="#lab-gallery" data-i18n="navLabGallery">גלריית מעבדה</a>
             <a href="#timeline" data-i18n="navTimeline">ציר זמן</a>
             <a href="#skills" data-i18n="navSkills">קורסים וכישורים</a>
+            <a href="#llm-access" data-i18n="navLlmAccess">גישה ל-LLM</a>
             <a href="#contact" data-i18n="navContact">קשר</a>
         </nav>
 
@@ -271,8 +273,67 @@
             </noscript>
         </section>
 
-        <section class="contact-section" id="contact" aria-labelledby="contact-title">
+        <section class="section llm-access-section" id="llm-access" aria-labelledby="llm-access-title">
             <div class="section-index">05</div>
+            <div class="section-heading">
+                <h2 id="llm-access-title" data-i18n="llmAccessTitle">גישה ל-LLM</h2>
+                <p data-i18n="llmAccessIntro">
+                    בקשת הרשמה לשימוש ציבורי מבוקר בממשק ה-LLM. רותם בודק כל בקשה לפני פתיחת גישה, ומאיה שולחת קישור רק לאחר אישור.
+                </p>
+            </div>
+            <form class="llm-access-form" data-llm-access-form>
+                <div class="llm-access-fields">
+                    <label class="llm-access-field">
+                        <span>שם משתמש</span>
+                        <input type="text" name="username" autocomplete="username" minlength="3" maxlength="32" pattern="[A-Za-z0-9._-]{3,32}" required>
+                    </label>
+                    <label class="llm-access-field">
+                        <span>שם מלא</span>
+                        <input type="text" name="fullName" autocomplete="name" minlength="2" maxlength="80" required>
+                    </label>
+                    <label class="llm-access-field">
+                        <span>טלפון WhatsApp</span>
+                        <input type="tel" name="phone" inputmode="tel" autocomplete="tel" aria-describedby="llm-phone-example" pattern="(?:05[0-9]{8}|\+?9725[0-9]{8})" required>
+                        <small id="llm-phone-example">לדוגמה: 0501234567 או +972501234567</small>
+                    </label>
+                    <label class="llm-access-field">
+                        <span>אימייל</span>
+                        <input type="email" name="email" autocomplete="email">
+                    </label>
+                    <label class="llm-access-field llm-access-field-wide">
+                        <span>סיבה לבקשת הגישה</span>
+                        <textarea name="reason" rows="4" maxlength="500"></textarea>
+                    </label>
+                </div>
+
+                <div class="llm-access-consents" aria-label="אישורים משפטיים ופרטיות">
+                    <label>
+                        <input type="checkbox" name="privacy" required>
+                        <span>קראתי ואני מסכים/ה ל<a href="https://llm.rotem-dev.org/llm/privacy" target="_blank" rel="noopener noreferrer">מדיניות הפרטיות</a>, כולל שמירת פרטי ההרשמה לצורך בדיקה ותפעול הגישה.</span>
+                    </label>
+                    <label>
+                        <input type="checkbox" name="terms" required>
+                        <span>קראתי ואני מסכים/ה ל<a href="https://llm.rotem-dev.org/llm/terms" target="_blank" rel="noopener noreferrer">תנאי השימוש</a> ולשימוש חוקי, אחראי ומורשה בלבד.</span>
+                    </label>
+                    <label>
+                        <input type="checkbox" name="whatsapp" required>
+                        <span>אני מאשר/ת שמאיה תשלח אליי הודעת WhatsApp עם קישור הגישה אם הבקשה תאושר.</span>
+                    </label>
+                    <label>
+                        <input type="checkbox" name="legalWarning" required>
+                        <span>אני מבין/ה שהגישה ניתנת לשימוש אישי ומבוקר, ושאין להשתמש בה לפעילות פוגענית, בלתי חוקית או לא מורשית.</span>
+                    </label>
+                </div>
+
+                <div class="llm-access-actions">
+                    <button class="button button-primary" type="submit">שליחת בקשה</button>
+                    <p class="llm-access-status" data-llm-access-status role="status" aria-live="polite"></p>
+                </div>
+            </form>
+        </section>
+
+        <section class="contact-section" id="contact" aria-labelledby="contact-title">
+            <div class="section-index">06</div>
             <div class="contact-copy">
                 <h2 id="contact-title" data-i18n="contactTitle">מוזמנים ליצור קשר</h2>
                 <p data-i18n="contactCopy">
